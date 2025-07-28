@@ -194,9 +194,14 @@ angular-team-project/
 │   │   ├── interceptors/        # HTTP interceptors
 │   │   ├── pipes/               # Custom pipes
 │   │   ├── shared/              # 🆕 Shared components library
-│   │   │   ├── components/      # Reusable UI components
-│   │   │   ├── index.ts        # Barrel exports for easy imports
-│   │   │   └── README.md       # Component library documentation
+│   │   │   ├── components/      # Organized component folders
+│   │   │   │   ├── button/      # Button component with docs
+│   │   │   │   ├── feature-card/# Feature card component
+│   │   │   │   ├── status-badge/# Status badge component
+│   │   │   │   ├── status-indicator/ # Status indicator component
+│   │   │   │   └── index.ts     # Components barrel export
+│   │   │   ├── index.ts         # Main shared library export
+│   │   │   └── README.md        # Component library documentation
 │   │   ├── app.ts              # Main app component
 │   │   ├── app.html            # App template with Tailwind CSS
 │   │   ├── app.config.ts       # App configuration
