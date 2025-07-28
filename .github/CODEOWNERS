@@ -1,0 +1,20 @@
+# CODEOWNERS file for repository protection
+
+# Global ownership - all files require review from repository owner
+* @Wotusay
+
+# Specific ownership for critical files
+/.github/ @Wotusay
+/package.json @Wotusay
+/package-lock.json @Wotusay
+/angular.json @Wotusay
+/tsconfig*.json @Wotusay
+/tailwind.config.js @Wotusay
+/postcss.config.js @Wotusay
+
+# Source code ownership
+/src/ @Wotusay
+
+# Configuration files
+*.config.js @Wotusay
+*.config.ts @Wotusay

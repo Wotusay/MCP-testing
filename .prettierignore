@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+dist/
+coverage/
+
+# Angular specific
+.angular/
+
+# Build outputs
+*.js.map
+*.d.ts
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lock files (don't format these)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.tsbuildinfo
