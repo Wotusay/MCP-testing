@@ -11,6 +11,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       class="font-bold rounded-lg transition duration-200"
       [class]="buttonClasses"
       (click)="buttonClick.emit()"
+      (keydown)="handleKeydown($event)"
       [disabled]="disabled"
     >
       {{ text }}
@@ -23,6 +24,13 @@ export class ButtonComponent {
   @Input() size: ButtonSize = 'md';
   @Input() disabled: boolean = false;
   @Output() buttonClick = new EventEmitter<void>();
+
+  handleKeydown(event: KeyboardEvent): void {
+    if (!this.disabled && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      this.buttonClick.emit();
+    }
+  }
 
   get buttonClasses(): string {
     const baseClasses = this.getVariantClasses() + ' ' + this.getSizeClasses();

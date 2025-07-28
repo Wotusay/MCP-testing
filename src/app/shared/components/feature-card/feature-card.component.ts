@@ -15,6 +15,8 @@ import { Component, Input } from '@angular/core';
             [class]="iconColorClass"
             fill="currentColor"
             viewBox="0 0 24 24"
+            [attr.aria-label]="iconLabel || null"
+            [attr.aria-hidden]="!iconLabel"
           >
             <path [attr.d]="iconPath" />
           </svg>
@@ -30,6 +32,7 @@ export class FeatureCardComponent {
   @Input() description: string = '';
   @Input() iconPath: string = '';
   @Input() iconColor: 'red' | 'cyan' | 'green' | 'blue' | 'purple' = 'blue';
+  @Input() iconLabel?: string;
 
   get iconBackgroundClass(): string {
     const colors = {
