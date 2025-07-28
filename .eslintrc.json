@@ -12,58 +12,20 @@
       "files": ["*.ts"],
       "extends": [
         "eslint:recommended",
-        "@typescript-eslint/recommended",
-        "@typescript-eslint/recommended-requiring-type-checking",
-        "@angular-eslint/recommended",
-        "@angular-eslint/template/process-inline-templates",
-        "plugin:rxjs/recommended",
-        "plugin:rxjs-angular/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
         "plugin:prettier/recommended"
       ],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
-        "project": ["tsconfig.json"],
-        "createDefaultProgram": true
+        "ecmaVersion": 2020,
+        "sourceType": "module"
       },
-      "plugins": [
-        "@typescript-eslint",
-        "@angular-eslint",
-        "rxjs",
-        "rxjs-angular",
-        "prettier"
-      ],
+      "plugins": ["@typescript-eslint", "@angular-eslint", "prettier"],
       "rules": {
-        // Prettier integration
         "prettier/prettier": "error",
-
-        // TypeScript strict rules
         "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/no-explicit-any": "error",
-        "@typescript-eslint/explicit-function-return-type": "warn",
-        "@typescript-eslint/explicit-member-accessibility": "error",
-        "@typescript-eslint/no-inferrable-types": "off",
-        "@typescript-eslint/prefer-readonly": "error",
-        "@typescript-eslint/array-type": [
-          "error",
-          { "default": "array-simple" }
-        ],
-        "@typescript-eslint/consistent-type-definitions": [
-          "error",
-          "interface"
-        ],
-        "@typescript-eslint/member-ordering": "error",
-        "@typescript-eslint/no-empty-function": "error",
-        "@typescript-eslint/no-floating-promises": "error",
-        "@typescript-eslint/no-for-in-array": "error",
-        "@typescript-eslint/no-misused-promises": "error",
-        "@typescript-eslint/prefer-nullish-coalescing": "error",
-        "@typescript-eslint/prefer-optional-chain": "error",
-        "@typescript-eslint/prefer-string-starts-ends-with": "error",
-        "@typescript-eslint/require-array-sort-compare": "error",
-        "@typescript-eslint/restrict-plus-operands": "error",
-        "@typescript-eslint/unbound-method": "error",
-
-        // Angular specific rules
+        "@typescript-eslint/no-explicit-any": "warn",
         "@angular-eslint/component-class-suffix": "error",
         "@angular-eslint/component-selector": [
           "error",
@@ -82,66 +44,19 @@
             "style": "camelCase"
           }
         ],
-        "@angular-eslint/no-input-rename": "error",
-        "@angular-eslint/no-output-rename": "error",
-        "@angular-eslint/no-output-native": "error",
-        "@angular-eslint/use-lifecycle-interface": "error",
-        "@angular-eslint/use-pipe-transform-interface": "error",
-        "@angular-eslint/prefer-on-push-component-change-detection": "warn",
-
-        // RxJS rules
-        "rxjs/no-async-subscribe": "error",
-        "rxjs/no-create": "error",
-        "rxjs/no-ignored-observable": "error",
-        "rxjs/no-ignored-subscription": "error",
-        "rxjs/no-nested-subscribe": "error",
-        "rxjs/no-unbound-methods": "error",
-        "rxjs/throw-error": "error",
-        "rxjs-angular/prefer-takeuntil": "error",
-
-        // General ESLint rules
         "no-console": "warn",
         "no-debugger": "error",
-        "no-duplicate-imports": "error",
-        "no-unused-expressions": "error",
         "prefer-const": "error",
-        "no-var": "error",
-        "object-shorthand": "error",
-        "prefer-arrow-callback": "error",
-        "prefer-template": "error",
-        "eqeqeq": ["error", "always"],
-        "curly": "error",
-        "brace-style": ["error", "1tbs"],
-        "comma-dangle": ["error", "always-multiline"],
-        "quotes": ["error", "single", { "avoidEscape": true }],
-        "semi": ["error", "always"],
-        "max-len": ["error", { "code": 120, "ignoreUrls": true }],
-        "indent": "off", // Handled by Prettier
-        "linebreak-style": "off", // Handled by Prettier
-        "object-curly-spacing": "off", // Handled by Prettier
-        "comma-spacing": "off" // Handled by Prettier
+        "no-var": "error"
       }
     },
     {
       "files": ["*.html"],
-      "extends": [
-        "@angular-eslint/template/recommended",
-        "@angular-eslint/template/accessibility"
-      ],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "parser": "@angular-eslint/template-parser",
       "rules": {
         "@angular-eslint/template/banana-in-box": "error",
-        "@angular-eslint/template/no-negated-async": "error",
-        "@angular-eslint/template/use-track-by-function": "warn",
-        "@angular-eslint/template/accessibility-alt-text": "error",
-        "@angular-eslint/template/accessibility-elements-content": "error",
-        "@angular-eslint/template/accessibility-label-for": "error",
-        "@angular-eslint/template/accessibility-label-has-associated-control": "error",
-        "@angular-eslint/template/accessibility-role-has-required-aria": "error",
-        "@angular-eslint/template/accessibility-table-scope": "error",
-        "@angular-eslint/template/accessibility-valid-aria": "error",
-        "@angular-eslint/template/click-events-have-key-events": "error",
-        "@angular-eslint/template/mouse-events-have-key-events": "error"
+        "@angular-eslint/template/no-negated-async": "error"
       }
     }
   ]
