@@ -64,7 +64,7 @@ This project is a team-based Angular application with Tailwind CSS, created for 
 - **🔧 Issue encountered:** Terminal working directory not properly set for npm commands
 - **❌ Error details:** `npm error: Could not read package.json: ENOENT: no such file or directory, open '/Users/wout/Desktop/POC AI Projects/package.json'`
 - **🔍 Root cause:** Terminal was looking for package.json in parent directory instead of project directory
-- **⚠️ User assistance needed:** Multiple terminal sessions caused directory confusion  
+- **⚠️ User assistance needed:** Multiple terminal sessions caused directory confusion
 - **🔧 Resolution needed:** Must ensure terminal is in `/Users/wout/Desktop/POC AI Projects/angular-team-project/` before running npm commands
 
 #### 10. Development Server Startup & Tailwind CSS Issues
@@ -193,6 +193,10 @@ angular-team-project/
 │   │   ├── guards/              # Route guards for authentication/authorization
 │   │   ├── interceptors/        # HTTP interceptors
 │   │   ├── pipes/               # Custom pipes
+│   │   ├── shared/              # 🆕 Shared components library
+│   │   │   ├── components/      # Reusable UI components
+│   │   │   ├── index.ts        # Barrel exports for easy imports
+│   │   │   └── README.md       # Component library documentation
 │   │   ├── app.ts              # Main app component
 │   │   ├── app.html            # App template with Tailwind CSS
 │   │   ├── app.config.ts       # App configuration
@@ -208,6 +212,85 @@ angular-team-project/
 └── README.md                   # This file
 ```
 
+## 🧩 Shared Components Library
+
+This project includes a **reusable components library** built with Tailwind CSS for consistent UI development across the application.
+
+### Available Components
+
+#### 📛 StatusBadgeComponent
+Display status information with colored badges (success, warning, error, info).
+
+```html
+<app-status-badge text="Development" variant="success"></app-status-badge>
+```
+
+#### 🃏 FeatureCardComponent  
+Display features with icons, titles, and descriptions in a card layout.
+
+```html
+<app-feature-card
+  title="Angular 20"
+  description="Latest Angular version with zoneless architecture."
+  iconPath="M12 2L2 7v10c0 5.55 3.84 12 9 12s9-6.45 9-12V7l-10-5z"
+  iconColor="red">
+</app-feature-card>
+```
+
+#### 🔘 StatusIndicatorComponent
+Show operational status with colored dots and descriptive text.
+
+```html
+<app-status-indicator text="Server Running" status="success"></app-status-indicator>
+```
+
+#### 🔲 ButtonComponent
+Reusable button with multiple variants (primary, secondary, success, danger) and sizes.
+
+```html
+<app-button 
+  text="Get Started" 
+  variant="primary" 
+  size="md"
+  (buttonClick)="handleClick()">
+</app-button>
+```
+
+### Usage
+
+```typescript
+// Import components in your module
+import { 
+  StatusBadgeComponent,
+  FeatureCardComponent, 
+  StatusIndicatorComponent,
+  ButtonComponent 
+} from './shared';
+
+@Component({
+  imports: [
+    StatusBadgeComponent,
+    FeatureCardComponent,
+    StatusIndicatorComponent,
+    ButtonComponent
+  ],
+  // ... rest of component
+})
+```
+
+### 📖 Complete Documentation
+For detailed component documentation with all properties, variants, and examples, see:
+- **[Shared Components Library README](src/app/shared/README.md)**
+- Individual component documentation in `src/app/shared/components/`
+
+### Benefits
+- ✅ **Consistent UI** across the application
+- ✅ **Reusable components** reduce code duplication  
+- ✅ **Type-safe** with TypeScript interfaces
+- ✅ **Well-documented** with usage examples
+- ✅ **Tailwind CSS** powered styling
+- ✅ **Standalone components** for better tree-shaking
+
 ## 🎨 Styling with Tailwind CSS
 
 This project uses Tailwind CSS for styling. Key features:
@@ -219,7 +302,7 @@ This project uses Tailwind CSS for styling. Key features:
 
 ### Example Usage
 ```html
-<div class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+<div class="px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700">
   Button
 </div>
 ```
