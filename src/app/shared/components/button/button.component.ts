@@ -47,10 +47,14 @@ export class ButtonComponent {
 
   private getVariantClasses(): string {
     const variants = {
-      primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-      secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
-      success: 'bg-green-600 hover:bg-green-700 text-white',
-      danger: 'bg-red-600 hover:bg-red-700 text-white',
+      primary:
+        'bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white',
+      secondary:
+        'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700',
+      success:
+        'bg-success-600 hover:bg-success-700 dark:bg-success-500 dark:hover:bg-success-600 text-white',
+      danger:
+        'bg-danger-600 hover:bg-danger-700 dark:bg-danger-500 dark:hover:bg-danger-600 text-white',
     };
     return variants[this.variant];
   }

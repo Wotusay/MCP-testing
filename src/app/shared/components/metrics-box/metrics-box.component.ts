@@ -19,30 +19,33 @@ export class MetricsBoxComponent {
 
   get boxClass(): string {
     const variants = {
-      info: 'bg-blue-50 border-blue-200',
-      success: 'bg-green-50 border-green-200',
-      warning: 'bg-yellow-50 border-yellow-200',
-      error: 'bg-red-50 border-red-200',
+      info: 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700',
+      success:
+        'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-700',
+      warning:
+        'bg-warning-50 border-warning-200 dark:bg-warning-900/20 dark:border-warning-700',
+      error:
+        'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-700',
     };
     return variants[this.variant];
   }
 
   get titleClass(): string {
     const variants = {
-      info: 'text-blue-900',
-      success: 'text-green-900',
-      warning: 'text-yellow-900',
-      error: 'text-red-900',
+      info: 'text-gray-900 dark:text-gray-100',
+      success: 'text-success-900 dark:text-success-200',
+      warning: 'text-warning-900 dark:text-warning-200',
+      error: 'text-danger-900 dark:text-danger-200',
     };
     return variants[this.variant];
   }
 
   get contentClass(): string {
     const variants = {
-      info: 'text-blue-800',
-      success: 'text-green-800',
-      warning: 'text-yellow-800',
-      error: 'text-red-800',
+      info: 'text-gray-700 dark:text-gray-300',
+      success: 'text-success-800 dark:text-success-300',
+      warning: 'text-warning-800 dark:text-warning-300',
+      error: 'text-danger-800 dark:text-danger-300',
     };
     return variants[this.variant];
   }
