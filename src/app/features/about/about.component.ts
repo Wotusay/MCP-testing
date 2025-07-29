@@ -7,11 +7,13 @@ import { ButtonComponent, InfoSectionComponent, InfoItem } from '../../shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonComponent, InfoSectionComponent],
   template: `
-    <div class="bg-white rounded-lg shadow-md p-8">
+    <div class="bg-theme-primary rounded-lg shadow-md p-8 border border-theme">
       <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">About Our Project</h2>
+        <h2 class="text-3xl font-bold text-theme-primary mb-6">
+          About Our Project
+        </h2>
 
-        <div class="prose max-w-none text-gray-600 mb-8">
+        <div class="prose max-w-none text-theme-secondary mb-8">
           <p class="text-lg mb-4">
             This Angular Team Project demonstrates modern web development
             practices and performance optimizations for enterprise-grade

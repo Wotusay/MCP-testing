@@ -12,12 +12,14 @@ import {
   imports: [FeatureCardComponent, StatusIndicatorComponent, ButtonComponent],
   template: `
     <!-- Welcome Section -->
-    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+    <div
+      class="bg-theme-primary rounded-lg shadow-md p-8 mb-8 border border-theme"
+    >
       <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+        <h2 class="text-3xl font-bold text-theme-primary mb-4">
           Welcome to Angular Team Project
         </h2>
-        <p class="text-lg text-gray-600 mb-6">
+        <p class="text-lg text-theme-secondary mb-6">
           A modern Angular application with Tailwind CSS, ESLint, and Prettier
           configured for team development.
         </p>
@@ -66,8 +68,10 @@ import {
     </div>
 
     <!-- Status Section -->
-    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Project Status</h3>
+    <div class="bg-theme-secondary rounded-lg p-6 border border-theme">
+      <h3 class="text-lg font-semibold text-theme-primary mb-4">
+        Project Status
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <app-status-indicator
           text="Development server running"

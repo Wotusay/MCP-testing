@@ -23,10 +23,13 @@ export class StatusBadgeComponent {
 
   get badgeClasses(): string {
     const variants = {
-      success: 'bg-green-100 text-green-800',
-      warning: 'bg-yellow-100 text-yellow-800',
-      error: 'bg-red-100 text-red-800',
-      info: 'bg-blue-100 text-blue-800',
+      success:
+        'bg-success-100 text-success-800 dark:bg-success-900/20 dark:text-success-200',
+      warning:
+        'bg-warning-100 text-warning-800 dark:bg-warning-900/20 dark:text-warning-200',
+      error:
+        'bg-danger-100 text-danger-800 dark:bg-danger-900/20 dark:text-danger-200',
+      info: 'bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-200',
     };
     return variants[this.variant];
   }

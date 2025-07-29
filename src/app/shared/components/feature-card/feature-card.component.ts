@@ -5,7 +5,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="bg-theme-primary rounded-lg shadow-md p-6 border border-theme">
       <div class="flex items-center mb-4">
         <div
           class="w-12 h-12 rounded-lg flex items-center justify-center"
@@ -22,9 +22,11 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
             <path [attr.d]="iconPath" />
           </svg>
         </div>
-        <h3 class="ml-3 text-lg font-semibold text-gray-900">{{ title }}</h3>
+        <h3 class="ml-3 text-lg font-semibold text-theme-primary">
+          {{ title }}
+        </h3>
       </div>
-      <p class="text-gray-600">{{ description }}</p>
+      <p class="text-theme-secondary">{{ description }}</p>
     </div>
   `,
 })

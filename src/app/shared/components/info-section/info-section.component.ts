@@ -13,11 +13,11 @@ export interface InfoItem {
   imports: [CommonModule],
   template: `
     <div class="mb-6">
-      <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ title }}</h3>
+      <h3 class="text-xl font-semibold text-theme-primary mb-3">{{ title }}</h3>
       <ul class="list-disc list-inside space-y-2 mb-6">
-        <li *ngFor="let item of items" class="text-gray-600">
-          <span class="text-gray-900">{{ item.text }}</span>
-          <span *ngIf="item.description" class="text-gray-600">
+        <li *ngFor="let item of items" class="text-theme-secondary">
+          <span class="text-theme-primary">{{ item.text }}</span>
+          <span *ngIf="item.description" class="text-theme-secondary">
             - {{ item.description }}</span
           >
         </li>

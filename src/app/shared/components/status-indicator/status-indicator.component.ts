@@ -9,7 +9,7 @@ export type StatusType = 'success' | 'warning' | 'error' | 'info';
   template: `
     <div class="flex items-center">
       <div class="w-3 h-3 rounded-full mr-3" [class]="statusColor"></div>
-      <span class="text-sm text-gray-700">{{ text }}</span>
+      <span class="text-sm text-theme-secondary">{{ text }}</span>
     </div>
   `,
 })

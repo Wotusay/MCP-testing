@@ -18,12 +18,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonComponent, InfoCardComponent, MetricsBoxComponent],
   template: `
-    <div class="bg-white rounded-lg shadow-md p-8">
+    <div class="bg-theme-primary rounded-lg shadow-md p-8 border border-theme">
       <div class="max-w-2xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Contact Us</h2>
+        <h2 class="text-3xl font-bold text-theme-primary mb-6">Contact Us</h2>
 
         <div class="mb-8">
-          <p class="text-lg text-gray-600 mb-6">
+          <p class="text-lg text-theme-secondary mb-6">
             Get in touch with our development team for questions, suggestions,
             or collaboration opportunities.
           </p>
