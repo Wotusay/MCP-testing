@@ -1,3 +1,16 @@
+// Angular Material Theme
+// =====================
+@use "@angular/material" as mat;
+
+// Include the common styles
+@include mat.core();
+
+// Define a theme - this is a minimal setup that should work
+$theme: mat.define-theme();
+
+// Apply the theme to all components
+@include mat.all-component-themes($theme);
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

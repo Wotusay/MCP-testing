@@ -24,6 +24,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'material-demo',
+    loadComponent: () =>
+      import('./features/material-demo/material-demo.component').then(
+        (m) => m.MaterialDemoComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/home',
   },
