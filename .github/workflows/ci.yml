@@ -48,14 +48,21 @@ jobs:
       run: npm ci
       
     - name: Run tests with coverage
-      run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+      run: npm run test:ci
       
-    - name: Upload coverage artifacts
+    - name: Upload coverage to GitHub
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: coverage/
         retention-days: 7
+
+    - name: Comment coverage report
+      if: github.event_name == 'pull_request'
+      run: |
+        if [ -f coverage/angular-team-project/lcov.info ]; then
+          echo "Coverage report generated successfully"
+        fi
 
   build:
     runs-on: ubuntu-latest

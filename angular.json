@@ -76,7 +76,13 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "codeCoverage": false
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "src/test.ts",
+              "src/**/*.spec.ts",
+              "src/**/*.test.ts",
+              "src/environments/**"
+            ]
           }
         }
       }
