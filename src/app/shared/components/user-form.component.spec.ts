@@ -27,7 +27,11 @@ describe('UserFormComponent', () => {
     component.title = 'Test User Form';
     fixture.detectChanges();
 
-    TestUtils.expectElementToHaveText(fixture, 'h2', 'Test User Form');
+    TestUtils.expectElementToHaveText(
+      fixture,
+      'mat-card-title',
+      'Test User Form',
+    );
   });
 
   it('should initialize with default form data', () => {
@@ -69,16 +73,18 @@ describe('UserFormComponent', () => {
       expect(component.formData.email).toBe('jane@example.com');
     });
 
-    it('should toggle active checkbox', () => {
-      const checkbox = TestUtils.querySelector<HTMLInputElement>(
+    it('should toggle active checkbox', async () => {
+      // For Material checkbox, we need to click on the label part
+      const matCheckbox = TestUtils.querySelector<HTMLElement>(
         fixture,
-        '[data-testid="active-checkbox"]',
+        'mat-checkbox[data-testid="active-checkbox"] label',
       );
 
       expect(component.formData.active).toBe(true);
 
-      TestUtils.click(checkbox!);
+      TestUtils.click(matCheckbox!);
       fixture.detectChanges();
+      await fixture.whenStable();
 
       expect(component.formData.active).toBe(false);
     });
@@ -254,12 +260,13 @@ describe('UserFormComponent', () => {
       );
 
       // Toggle active checkbox to false
-      const checkbox = TestUtils.querySelector<HTMLInputElement>(
+      const checkbox = TestUtils.querySelector<HTMLElement>(
         fixture,
-        '[data-testid="active-checkbox"]',
+        'mat-checkbox[data-testid="active-checkbox"] label',
       );
       TestUtils.click(checkbox!);
       fixture.detectChanges();
+      await fixture.whenStable();
 
       // Submit the form
       const submitButton = TestUtils.querySelector(

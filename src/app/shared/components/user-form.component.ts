@@ -1,6 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export interface UserFormData {
   name: string;
@@ -11,159 +17,191 @@ export interface UserFormData {
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+  ],
   template: `
-    <form (ngSubmit)="onSubmit()" #userForm="ngForm" class="user-form">
-      <h2>{{ title }}</h2>
+    <mat-card class="user-form-card">
+      <mat-card-header>
+        <mat-card-title>{{ title }}</mat-card-title>
+      </mat-card-header>
 
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          [(ngModel)]="formData.name"
-          required
-          minlength="2"
-          class="form-control"
-          data-testid="name-input"
-        />
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #userForm="ngForm" class="user-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Name</mat-label>
+            <input
+              matInput
+              id="name"
+              name="name"
+              type="text"
+              [(ngModel)]="formData.name"
+              required
+              minlength="2"
+              data-testid="name-input"
+              placeholder="Enter full name"
+            />
+            <mat-error
+              *ngIf="userForm.submitted && userForm.controls['name']?.invalid"
+              data-testid="name-error"
+            >
+              Name is required and must be at least 2 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              id="email"
+              name="email"
+              type="email"
+              [(ngModel)]="formData.email"
+              required
+              email
+              data-testid="email-input"
+              placeholder="Enter email address"
+            />
+            <mat-error
+              *ngIf="userForm.submitted && userForm.controls['email']?.invalid"
+              data-testid="email-error"
+            >
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+
+          <div class="checkbox-field">
+            <mat-checkbox
+              name="active"
+              [(ngModel)]="formData.active"
+              data-testid="active-checkbox"
+              color="primary"
+            >
+              Active User
+            </mat-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="isSubmitting"
+              data-testid="submit-button"
+              class="submit-button"
+            >
+              <mat-spinner
+                *ngIf="isSubmitting"
+                diameter="16"
+                class="spinner"
+              ></mat-spinner>
+              {{ isSubmitting ? 'Saving...' : 'Save User' }}
+            </button>
+
+            <button
+              mat-button
+              type="button"
+              (click)="onCancel()"
+              data-testid="cancel-button"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+
+      <!-- Success/Error Messages -->
+      <mat-card-footer *ngIf="successMessage || errorMessage">
         <div
-          *ngIf="userForm.submitted && userForm.controls['name']?.invalid"
-          class="error-message"
-          data-testid="name-error"
+          *ngIf="successMessage"
+          class="success-message"
+          data-testid="success-message"
         >
-          Name is required and must be at least 2 characters
+          {{ successMessage }}
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          [(ngModel)]="formData.email"
-          required
-          email
-          class="form-control"
-          data-testid="email-input"
-        />
         <div
-          *ngIf="userForm.submitted && userForm.controls['email']?.invalid"
+          *ngIf="errorMessage"
           class="error-message"
-          data-testid="email-error"
+          data-testid="error-message"
         >
-          Please enter a valid email address
+          {{ errorMessage }}
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>
-          <input
-            name="active"
-            type="checkbox"
-            [(ngModel)]="formData.active"
-            data-testid="active-checkbox"
-          />
-          Active User
-        </label>
-      </div>
-
-      <div class="form-actions">
-        <button
-          type="submit"
-          [disabled]="isSubmitting"
-          class="btn btn-primary"
-          data-testid="submit-button"
-        >
-          {{ isSubmitting ? 'Saving...' : 'Save User' }}
-        </button>
-
-        <button
-          type="button"
-          (click)="onCancel()"
-          class="btn btn-secondary"
-          data-testid="cancel-button"
-        >
-          Cancel
-        </button>
-      </div>
-
-      <div
-        *ngIf="successMessage"
-        class="success-message"
-        data-testid="success-message"
-      >
-        {{ successMessage }}
-      </div>
-
-      <div
-        *ngIf="errorMessage"
-        class="error-message"
-        data-testid="error-message"
-      >
-        {{ errorMessage }}
-      </div>
-    </form>
+      </mat-card-footer>
+    </mat-card>
   `,
   styles: [
     `
-      .user-form {
-        max-width: 400px;
+      .user-form-card {
+        max-width: 500px;
         margin: 0 auto;
-        padding: 20px;
       }
 
-      .form-group {
-        margin-bottom: 16px;
+      .user-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
       }
 
-      .form-control {
+      .form-field {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
       }
 
-      .error-message {
-        color: #dc3545;
-        font-size: 14px;
-        margin-top: 4px;
-      }
-
-      .success-message {
-        color: #28a745;
-        font-size: 14px;
-        margin-top: 16px;
+      .checkbox-field {
+        margin: 8px 0;
       }
 
       .form-actions {
         display: flex;
-        gap: 8px;
+        gap: 12px;
         margin-top: 20px;
+        align-items: center;
       }
 
-      .btn {
-        padding: 8px 16px;
-        border: none;
+      .submit-button {
+        position: relative;
+      }
+
+      .spinner {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .success-message {
+        color: var(--mat-sys-success, #28a745);
+        font-size: 14px;
+        padding: 12px;
+        background-color: var(--mat-sys-success-container, #d4edda);
         border-radius: 4px;
-        cursor: pointer;
+        margin: 8px 0;
       }
 
-      .btn-primary {
-        background-color: #007bff;
-        color: white;
+      .error-message {
+        color: var(--mat-sys-error, #dc3545);
+        font-size: 14px;
+        padding: 12px;
+        background-color: var(--mat-sys-error-container, #f8d7da);
+        border-radius: 4px;
+        margin: 8px 0;
       }
 
-      .btn-primary:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
+      /* Ensure proper spacing for Material form fields */
+      ::ng-deep .mat-mdc-form-field {
+        margin-bottom: 8px;
       }
 
-      .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+      /* Custom styling for form field labels */
+      ::ng-deep .mat-mdc-form-field-label {
+        color: var(--mat-sys-on-surface-variant);
       }
     `,
   ],

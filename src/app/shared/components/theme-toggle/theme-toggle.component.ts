@@ -5,62 +5,69 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
-      class="relative p-2 rounded-lg transition-all duration-200 ease-in-out
-             hover:bg-gray-100 dark:hover:bg-gray-800 
-             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-             dark:focus:ring-offset-gray-900"
+      mat-icon-button
       (click)="toggleTheme()"
+      [matTooltip]="buttonTitle()"
       [attr.aria-label]="buttonAriaLabel()"
-      [title]="buttonTitle()"
+      [disabled]="isTransitioning"
+      class="theme-toggle-button"
     >
-      <!-- Sun Icon (Light Mode) -->
-      <svg
-        *ngIf="!isDark()"
-        class="w-5 h-5 text-yellow-500 transition-transform duration-200 hover:scale-110"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-          clip-rule="evenodd"
-        />
-      </svg>
+      <!-- Material Icons for theme states -->
+      <mat-icon *ngIf="!isDark() && !isTransitioning">light_mode</mat-icon>
+      <mat-icon *ngIf="isDark() && !isTransitioning">dark_mode</mat-icon>
 
-      <!-- Moon Icon (Dark Mode) -->
-      <svg
-        *ngIf="isDark()"
-        class="w-5 h-5 text-blue-400 transition-transform duration-200 hover:scale-110"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
+      <!-- Loading/Transition State with Material progress spinner -->
+      <mat-icon *ngIf="isTransitioning" class="transition-icon"
+        >refresh</mat-icon
       >
-        <path
-          d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-        />
-      </svg>
-
-      <!-- Loading/Transition State -->
-      <div
-        *ngIf="isTransitioning"
-        class="absolute inset-0 flex items-center justify-center"
-      >
-        <div
-          class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"
-        ></div>
-      </div>
     </button>
   `,
+  styles: [
+    `
+      .theme-toggle-button {
+        transition: all 0.2s ease-in-out;
+      }
+
+      .theme-toggle-button:hover {
+        transform: scale(1.05);
+      }
+
+      .transition-icon {
+        animation: spin 0.5s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Material theme colors */
+      .theme-toggle-button mat-icon {
+        color: var(--mat-sys-on-surface);
+        transition: color 0.2s ease-in-out;
+      }
+
+      .theme-toggle-button:hover mat-icon {
+        color: var(--mat-sys-primary);
+      }
+    `,
+  ],
 })
 export class ThemeToggleComponent {
   private readonly themeService = inject(ThemeService);
@@ -98,6 +105,6 @@ export class ThemeToggleComponent {
     // Reset transition state after animation
     setTimeout(() => {
       this.isTransitioning = false;
-    }, 200);
+    }, 500);
   }
 }

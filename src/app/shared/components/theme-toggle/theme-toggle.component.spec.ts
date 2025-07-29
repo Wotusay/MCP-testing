@@ -40,8 +40,10 @@ describe('ThemeToggleComponent', () => {
     expect(mockThemeService.toggleTheme).toHaveBeenCalled();
   });
 
-  it('should display sun icon in light mode', () => {
-    const sunIcon = fixture.nativeElement.querySelector('svg');
-    expect(sunIcon).toBeTruthy();
+  it('should display light mode icon in light mode', () => {
+    // Look for Material icon with light_mode content
+    const lightIcon = fixture.nativeElement.querySelector('mat-icon');
+    expect(lightIcon).toBeTruthy();
+    expect(lightIcon.textContent.trim()).toBe('light_mode');
   });
 });

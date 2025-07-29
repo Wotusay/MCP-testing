@@ -1,29 +1,45 @@
+// Angular Material theming
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+@use "@angular/material" as mat;
+
+// Tailwind CSS imports
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// Global styles
-// =============
-
-// Base typography using Tailwind
+// Angular Material Theme Configuration
 html {
-  font-family:
-    "Inter",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  // Support both light and dark themes
+  color-scheme: light dark;
+
+  // Set Material defaults alongside Tailwind
+  height: 100%;
+  margin: 0;
 }
 
-// Ensure smooth theme transitions
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Global styles - keeping existing functionality
+// =============
+
+// Ensure smooth theme transitions (preserved from original)
 * {
   transition:
     background-color 0.2s ease-in-out,
@@ -31,7 +47,7 @@ html {
     border-color 0.2s ease-in-out;
 }
 
-// Utility classes
+// Utility classes (preserved from original)
 // ===============
 
 @layer utilities {
