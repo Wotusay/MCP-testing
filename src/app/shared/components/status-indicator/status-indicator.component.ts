@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 export type StatusType = 'success' | 'warning' | 'error' | 'info';
 
 @Component({
   selector: 'app-status-indicator',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center">
       <div class="w-3 h-3 rounded-full mr-3" [class]="statusColor"></div>

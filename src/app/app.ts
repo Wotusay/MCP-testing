@@ -1,33 +1,29 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
 import {
-  StatusBadgeComponent,
-  FeatureCardComponent,
-  StatusIndicatorComponent,
-  ButtonComponent,
-} from './shared';
+  Component,
+  signal,
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  inject,
+} from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+
+import { StatusBadgeComponent, PerformanceMonitoringService } from './shared';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterOutlet,
-    StatusBadgeComponent,
-    FeatureCardComponent,
-    StatusIndicatorComponent,
-    ButtonComponent,
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, StatusBadgeComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   protected readonly title = signal('angular-team-project');
+  private readonly performanceService = inject(PerformanceMonitoringService);
 
-  onGetStarted(): void {
-    // TODO: Implement get started functionality
-  }
-
-  onLearnMore(): void {
-    // TODO: Implement learn more functionality
+  ngAfterViewInit(): void {
+    // Log performance metrics after the view is initialized
+    setTimeout(() => {
+      this.performanceService.logPerformance();
+    }, 1000);
   }
 }

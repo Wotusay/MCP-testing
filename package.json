@@ -5,6 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:analyze": "ng build --stats-json && npx webpack-bundle-analyzer dist/angular-team-project/stats.json",
+    "build:prod": "ng build --configuration production",
+    "analyze:performance": "./scripts/analyze-performance.sh",
+    "lighthouse": "lighthouse http://localhost:4200 --output html --output-path ./reports/lighthouse-report.html",
+    "perf:start": "ng serve --open",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:coverage": "ng test --code-coverage --watch=false --browsers=ChromeHeadless",
@@ -35,6 +40,7 @@
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "@angular/service-worker": "^20.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -61,11 +67,13 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "lighthouse": "^12.8.0",
     "lint-staged": "^16.1.2",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "~5.8.2"
+    "typescript": "~5.8.2",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "lint-staged": {
     "*.{ts,html}": [

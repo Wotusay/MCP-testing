@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 
 export type BadgeVariant = 'success' | 'warning' | 'error' | 'info';
@@ -6,6 +6,7 @@ export type BadgeVariant = 'success' | 'warning' | 'error' | 'info';
 @Component({
   selector: 'app-status-badge',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgClass],
   template: `
     <span

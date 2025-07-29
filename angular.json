@@ -38,9 +38,19 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
+                },
+                {
+                  "type": "any",
+                  "maximumWarning": "200kB",
+                  "maximumError": "400kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
