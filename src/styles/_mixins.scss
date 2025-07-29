@@ -1,0 +1,289 @@
+// Design System Mixins and Functions
+// ===================================
+
+// Color Functions
+// ---------------
+
+// Function to get a color from the color map
+@function color($color-name, $shade: 500) {
+  $color-map: map-get($colors, $color-name);
+  @if $color-map {
+    @return map-get($color-map, $shade);
+  } @else {
+    @error "Color '#{$color-name}' not found in $colors map.";
+  }
+}
+
+// Function to get theme-specific color
+@function theme-color($key, $theme: 'light') {
+  $theme-map: if($theme == 'dark', $dark-theme, $light-theme);
+  @return map-get($theme-map, $key);
+}
+
+// Typography Mixins
+// -----------------
+
+// Mixin to apply font size and line height
+@mixin font-size($size) {
+  $font-config: map-get($font-sizes, $size);
+  @if $font-config {
+    font-size: map-get($font-config, size);
+    line-height: map-get($font-config, line-height);
+  } @else {
+    @error "Font size '#{$size}' not found in $font-sizes map.";
+  }
+}
+
+// Mixin to apply typography styles
+@mixin typography($size: base, $weight: normal, $family: sans) {
+  @include font-size($size);
+  font-weight: map-get($font-weights, $weight);
+  font-family: #{map-get($font-families, $family)};
+}
+
+// Responsive Mixins
+// -----------------
+
+// Mixin for responsive breakpoints
+@mixin breakpoint($breakpoint) {
+  $breakpoint-value: map-get($breakpoints, $breakpoint);
+  @if $breakpoint-value {
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+  } @else {
+    @error "Breakpoint '#{$breakpoint}' not found in $breakpoints map.";
+  }
+}
+
+// Responsive typography mixin
+@mixin responsive-font($mobile-size, $desktop-size, $breakpoint: md) {
+  @include font-size($mobile-size);
+  
+  @include breakpoint($breakpoint) {
+    @include font-size($desktop-size);
+  }
+}
+
+// Layout Mixins
+// -------------
+
+// Flexbox center mixin
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Grid mixin with responsive columns
+@mixin grid-responsive($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3) {
+  display: grid;
+  grid-template-columns: repeat($mobile-cols, 1fr);
+  gap: map-get($spacing, 4);
+  
+  @include breakpoint(md) {
+    grid-template-columns: repeat($tablet-cols, 1fr);
+    gap: map-get($spacing, 6);
+  }
+  
+  @include breakpoint(lg) {
+    grid-template-columns: repeat($desktop-cols, 1fr);
+  }
+}
+
+// Spacing Mixins
+// --------------
+
+// Mixin to apply spacing using the spacing scale
+@mixin spacing($property, $value) {
+  $spacing-value: map-get($spacing, $value);
+  @if $spacing-value {
+    #{$property}: $spacing-value;
+  } @else {
+    @error "Spacing value '#{$value}' not found in $spacing map.";
+  }
+}
+
+// Mixin for consistent component spacing
+@mixin component-spacing($size: md) {
+  @if $size == sm {
+    @include spacing(padding, 2);
+    @include spacing(margin-bottom, 3);
+  } @else if $size == md {
+    @include spacing(padding, 4);
+    @include spacing(margin-bottom, 4);
+  } @else if $size == lg {
+    @include spacing(padding, 6);
+    @include spacing(margin-bottom, 6);
+  }
+}
+
+// Theme Mixins
+// ------------
+
+// Mixin to apply theme-specific styles
+@mixin theme($theme: light) {
+  @if $theme == dark {
+    background-color: theme-color(bg-primary, dark);
+    color: theme-color(text-primary, dark);
+    border-color: theme-color(border, dark);
+  } @else {
+    background-color: theme-color(bg-primary, light);
+    color: theme-color(text-primary, light);
+    border-color: theme-color(border, light);
+  }
+}
+
+// Mixin for theme transitions
+@mixin theme-transition($properties: all) {
+  transition: #{$properties} 0.2s ease-in-out;
+}
+
+// Card Mixins
+// -----------
+
+// Base card styling
+@mixin card($theme: light) {
+  border-radius: map-get($border-radius, lg);
+  box-shadow: #{map-get($shadows, base)};
+  @include theme-transition(box-shadow);
+  
+  @if $theme == dark {
+    background-color: theme-color(bg-secondary, dark);
+    border: 1px solid theme-color(border, dark);
+  } @else {
+    background-color: theme-color(bg-primary, light);
+    border: 1px solid theme-color(border, light);
+  }
+  
+  &:hover {
+    box-shadow: #{map-get($shadows, md)};
+  }
+}
+
+// Button Mixins
+// -------------
+
+// Base button styling
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: map-get($border-radius, md);
+  cursor: pointer;
+  @include typography(sm, medium);
+  @include theme-transition();
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Button variant mixin
+@mixin button-variant($color: primary) {
+  background-color: color($color, 600);
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: color($color, 700);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: color($color, 800);
+  }
+}
+
+// Button size mixin
+@mixin button-size($size: md) {
+  @if $size == sm {
+    @include spacing(padding-top, 1);
+    @include spacing(padding-bottom, 1);
+    @include spacing(padding-left, 3);
+    @include spacing(padding-right, 3);
+    @include font-size(sm);
+  } @else if $size == md {
+    @include spacing(padding-top, 2);
+    @include spacing(padding-bottom, 2);
+    @include spacing(padding-left, 4);
+    @include spacing(padding-right, 4);
+    @include font-size(base);
+  } @else if $size == lg {
+    @include spacing(padding-top, 3);
+    @include spacing(padding-bottom, 3);
+    @include spacing(padding-left, 6);
+    @include spacing(padding-right, 6);
+    @include font-size(lg);
+  }
+}
+
+// Form Mixins
+// -----------
+
+// Input field styling
+@mixin input-field($theme: light) {
+  @include typography(base, normal);
+  @include spacing(padding, 3);
+  border-radius: map-get($border-radius, md);
+  @include theme-transition(border-color);
+  
+  @if $theme == dark {
+    background-color: theme-color(bg-secondary, dark);
+    border: 1px solid theme-color(border, dark);
+    color: theme-color(text-primary, dark);
+    
+    &::placeholder {
+      color: theme-color(text-tertiary, dark);
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: color(primary, 500);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  } @else {
+    background-color: theme-color(bg-primary, light);
+    border: 1px solid theme-color(border, light);
+    color: theme-color(text-primary, light);
+    
+    &::placeholder {
+      color: theme-color(text-tertiary, light);
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: color(primary, 500);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+}
+
+// Utility Mixins
+// --------------
+
+// Screen reader only content
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Truncate text with ellipsis
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Focus ring for accessibility
+@mixin focus-ring($color: primary) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}

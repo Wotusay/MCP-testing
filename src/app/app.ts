@@ -7,12 +7,12 @@ import {
 } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
-import { StatusBadgeComponent, PerformanceMonitoringService } from './shared';
+import { StatusBadgeComponent, PerformanceMonitoringService, ThemeToggleComponent } from './shared';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, StatusBadgeComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, StatusBadgeComponent, ThemeToggleComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

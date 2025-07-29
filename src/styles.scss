@@ -1,0 +1,184 @@
+// Import design system
+@import './styles/variables';
+@import './styles/mixins';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Global styles
+// =============
+
+// Base typography
+html {
+  @include typography(base, normal, sans);
+}
+
+// Root CSS custom properties for theme switching
+:root {
+  // Light theme (default)
+  --color-bg-primary: #{theme-color(bg-primary, light)};
+  --color-bg-secondary: #{theme-color(bg-secondary, light)};
+  --color-bg-tertiary: #{theme-color(bg-tertiary, light)};
+  --color-text-primary: #{theme-color(text-primary, light)};
+  --color-text-secondary: #{theme-color(text-secondary, light)};
+  --color-text-tertiary: #{theme-color(text-tertiary, light)};
+  --color-border: #{theme-color(border, light)};
+  --color-border-hover: #{theme-color(border-hover, light)};
+}
+
+// Dark theme
+[data-theme="dark"] {
+  --color-bg-primary: #{theme-color(bg-primary, dark)};
+  --color-bg-secondary: #{theme-color(bg-secondary, dark)};
+  --color-bg-tertiary: #{theme-color(bg-tertiary, dark)};
+  --color-text-primary: #{theme-color(text-primary, dark)};
+  --color-text-secondary: #{theme-color(text-secondary, dark)};
+  --color-text-tertiary: #{theme-color(text-tertiary, dark)};
+  --color-border: #{theme-color(border, dark)};
+  --color-border-hover: #{theme-color(border-hover, dark)};
+}
+
+// Ensure smooth theme transitions
+* {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+// Component base styles
+// ====================
+
+// Cards
+.card {
+  @include card();
+  @include component-spacing(md);
+}
+
+.card-dark {
+  @include card(dark);
+  @include component-spacing(md);
+}
+
+// Buttons
+.btn {
+  @include button-base();
+  @include button-size(md);
+  @include button-variant(primary);
+}
+
+.btn-sm {
+  @include button-size(sm);
+}
+
+.btn-lg {
+  @include button-size(lg);
+}
+
+.btn-secondary {
+  @include button-variant(secondary);
+}
+
+.btn-success {
+  @include button-variant(success);
+}
+
+.btn-danger {
+  @include button-variant(danger);
+}
+
+// Form elements
+.form-input {
+  @include input-field();
+  width: 100%;
+}
+
+.form-input-dark {
+  @include input-field(dark);
+  width: 100%;
+}
+
+// Utility classes
+// ===============
+
+// Typography utilities
+.text-truncate {
+  @include truncate();
+}
+
+.sr-only {
+  @include sr-only();
+}
+
+// Focus utilities
+.focus-ring {
+  @include focus-ring();
+}
+
+// Responsive utilities
+@each $breakpoint, $value in $breakpoints {
+  .hide-#{$breakpoint} {
+    @include breakpoint($breakpoint) {
+      display: none !important;
+    }
+  }
+  
+  .show-#{$breakpoint} {
+    display: none !important;
+    
+    @include breakpoint($breakpoint) {
+      display: block !important;
+    }
+  }
+}
+
+// Grid utilities
+.grid-responsive {
+  @include grid-responsive();
+}
+
+.grid-responsive-2 {
+  @include grid-responsive(1, 2, 4);
+}
+
+.grid-responsive-4 {
+  @include grid-responsive(2, 3, 4);
+}
+
+// Custom Tailwind components
+// ==========================
+
+@layer components {
+  // Theme-aware backgrounds
+  .bg-theme-primary {
+    background-color: var(--color-bg-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+  
+  .bg-theme-tertiary {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  // Theme-aware text colors
+  .text-theme-primary {
+    color: var(--color-text-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--color-text-secondary);
+  }
+  
+  .text-theme-tertiary {
+    color: var(--color-text-tertiary);
+  }
+  
+  // Theme-aware borders
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  
+  .border-theme-hover:hover {
+    border-color: var(--color-border-hover);
+  }
+}
