@@ -3,3 +3,6 @@ export * from './components';
 export * from './services/performance-monitoring.service';
 export * from './services/cache.interceptor';
 export * from './services/theme.service';
+
+// Base component templates and utilities
+export * from './base';
