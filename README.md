@@ -1,5 +1,7 @@
 # Angular Team Project
 
+[![CI/CD Pipeline](https://github.com/Wotusay/MCP-testing/actions/workflows/ci.yml/badge.svg)](https://github.com/Wotusay/MCP-testing/actions/workflows/ci.yml)
+
 This project is a team-based Angular application with Tailwind CSS, created for collaborative development. Generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.3.
 
 ## 📋 Project Setup Progress (Ticket #1)
@@ -296,6 +298,27 @@ For detailed component documentation with all properties, variants, and examples
 - ✅ **Tailwind CSS** powered styling
 - ✅ **Standalone components** for better tree-shaking
 
+## 🚀 CI/CD Pipeline
+
+This project includes a comprehensive CI/CD pipeline using GitHub Actions that ensures code quality and reliability.
+
+### Pipeline Features
+- ✅ **Automated Testing**: Karma/Jasmine with 91%+ code coverage
+- ✅ **Code Quality**: ESLint linting with zero warnings policy
+- ✅ **Code Formatting**: Prettier formatting validation
+- ✅ **Build Validation**: Production Angular build verification
+- ✅ **Security Scanning**: npm audit for vulnerabilities
+- ✅ **Artifact Management**: Coverage reports and build files
+
+### Quality Gates
+All PRs must pass:
+- Linting checks (zero warnings)
+- Formatting validation
+- All tests passing
+- Successful production build
+
+For detailed CI/CD documentation, see [docs/CI-CD.md](./docs/CI-CD.md).
+
 ## 🎨 Styling with Tailwind CSS
 
 This project uses Tailwind CSS for styling. Key features:
@@ -323,7 +346,7 @@ This project uses Tailwind CSS for styling. Key features:
 
 ### Remaining Tickets:
 - **Ticket #2:** Development Environment Configuration
-- **Ticket #3:** CI/CD Pipeline Setup
+- **~~Ticket #3: CI/CD Pipeline Setup~~** ✅ **COMPLETED**
 - **Ticket #4:** UI Foundation & Design System
 - **Ticket #5:** Core Services & State Management
 - **Ticket #6:** Testing Framework Setup
