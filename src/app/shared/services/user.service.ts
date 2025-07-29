@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -12,28 +12,28 @@ export interface User {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private apiUrl = '/api/users';
   private usersSubject = new BehaviorSubject<User[]>([]);
   public users$ = this.usersSubject.asObservable();
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   /**
    * Get all users
    */
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl).pipe(
-      map(users => {
+      map((users) => {
         this.usersSubject.next(users);
         return users;
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching users:', error);
         return of([]);
-      })
+      }),
     );
   }
 
@@ -42,10 +42,11 @@ export class UserService {
    */
   getUserById(id: number): Observable<User | null> {
     return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching user:', error);
         return of(null);
-      })
+      }),
     );
   }
 
@@ -54,11 +55,11 @@ export class UserService {
    */
   createUser(user: Omit<User, 'id'>): Observable<User> {
     return this.http.post<User>(this.apiUrl, user).pipe(
-      map(newUser => {
+      map((newUser) => {
         const currentUsers = this.usersSubject.value;
         this.usersSubject.next([...currentUsers, newUser]);
         return newUser;
-      })
+      }),
     );
   }
 
@@ -67,15 +68,15 @@ export class UserService {
    */
   updateUser(id: number, user: Partial<User>): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${id}`, user).pipe(
-      map(updatedUser => {
+      map((updatedUser) => {
         const currentUsers = this.usersSubject.value;
-        const index = currentUsers.findIndex(u => u.id === id);
+        const index = currentUsers.findIndex((u) => u.id === id);
         if (index !== -1) {
           currentUsers[index] = updatedUser;
           this.usersSubject.next([...currentUsers]);
         }
         return updatedUser;
-      })
+      }),
     );
   }
 
@@ -86,14 +87,15 @@ export class UserService {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
       map(() => {
         const currentUsers = this.usersSubject.value;
-        const filteredUsers = currentUsers.filter(u => u.id !== id);
+        const filteredUsers = currentUsers.filter((u) => u.id !== id);
         this.usersSubject.next(filteredUsers);
         return true;
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error deleting user:', error);
         return of(false);
-      })
+      }),
     );
   }
 
@@ -102,7 +104,7 @@ export class UserService {
    */
   getActiveUsers(): Observable<User[]> {
     return this.users$.pipe(
-      map(users => users.filter(user => user.active))
+      map((users) => users.filter((user) => user.active)),
     );
   }
 }

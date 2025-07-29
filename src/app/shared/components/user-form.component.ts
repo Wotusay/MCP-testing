@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -15,7 +15,7 @@ export interface UserFormData {
   template: `
     <form (ngSubmit)="onSubmit()" #userForm="ngForm" class="user-form">
       <h2>{{ title }}</h2>
-      
+
       <div class="form-group">
         <label for="name">Name:</label>
         <input
@@ -28,8 +28,8 @@ export interface UserFormData {
           class="form-control"
           data-testid="name-input"
         />
-        <div 
-          *ngIf="userForm.submitted && userForm.controls['name']?.invalid" 
+        <div
+          *ngIf="userForm.submitted && userForm.controls['name']?.invalid"
           class="error-message"
           data-testid="name-error"
         >
@@ -49,8 +49,8 @@ export interface UserFormData {
           class="form-control"
           data-testid="email-input"
         />
-        <div 
-          *ngIf="userForm.submitted && userForm.controls['email']?.invalid" 
+        <div
+          *ngIf="userForm.submitted && userForm.controls['email']?.invalid"
           class="error-message"
           data-testid="email-error"
         >
@@ -71,18 +71,18 @@ export interface UserFormData {
       </div>
 
       <div class="form-actions">
-        <button 
-          type="submit" 
-          [disabled]="isSubmitting" 
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
           class="btn btn-primary"
           data-testid="submit-button"
         >
           {{ isSubmitting ? 'Saving...' : 'Save User' }}
         </button>
-        
-        <button 
-          type="button" 
-          (click)="onCancel()" 
+
+        <button
+          type="button"
+          (click)="onCancel()"
           class="btn btn-secondary"
           data-testid="cancel-button"
         >
@@ -90,16 +90,16 @@ export interface UserFormData {
         </button>
       </div>
 
-      <div 
-        *ngIf="successMessage" 
+      <div
+        *ngIf="successMessage"
         class="success-message"
         data-testid="success-message"
       >
         {{ successMessage }}
       </div>
 
-      <div 
-        *ngIf="errorMessage" 
+      <div
+        *ngIf="errorMessage"
         class="error-message"
         data-testid="error-message"
       >
@@ -107,66 +107,68 @@ export interface UserFormData {
       </div>
     </form>
   `,
-  styles: [`
-    .user-form {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+  styles: [
+    `
+      .user-form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+      .form-group {
+        margin-bottom: 16px;
+      }
 
-    .form-control {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+      .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
 
-    .error-message {
-      color: #dc3545;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+      .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 4px;
+      }
 
-    .success-message {
-      color: #28a745;
-      font-size: 14px;
-      margin-top: 16px;
-    }
+      .success-message {
+        color: #28a745;
+        font-size: 14px;
+        margin-top: 16px;
+      }
 
-    .form-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 20px;
-    }
+      .form-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 20px;
+      }
 
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-    .btn-primary {
-      background-color: #007bff;
-      color: white;
-    }
+      .btn-primary {
+        background-color: #007bff;
+        color: white;
+      }
 
-    .btn-primary:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-    }
+      .btn-primary:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+      }
 
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-  `]
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+    `,
+  ],
 })
-export class UserFormComponent {
+export class UserFormComponent implements OnInit {
   @Input() title = 'User Form';
   @Input() initialData: Partial<UserFormData> = {};
   @Input() isSubmitting = false;
@@ -177,7 +179,7 @@ export class UserFormComponent {
   formData: UserFormData = {
     name: '',
     email: '',
-    active: true
+    active: true,
   };
 
   successMessage = '';
@@ -190,7 +192,7 @@ export class UserFormComponent {
 
   onSubmit() {
     this.clearMessages();
-    
+
     if (this.isFormValid()) {
       this.userSubmit.emit({ ...this.formData });
     }
@@ -217,8 +219,10 @@ export class UserFormComponent {
   }
 
   private isFormValid(): boolean {
-    return this.formData.name.length >= 2 && 
-           this.formData.email.includes('@') && 
-           this.formData.email.includes('.');
+    return (
+      this.formData.name.length >= 2 &&
+      this.formData.email.includes('@') &&
+      this.formData.email.includes('.')
+    );
   }
 }

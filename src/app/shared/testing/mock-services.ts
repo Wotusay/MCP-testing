@@ -47,11 +47,14 @@ export class MockHttpService {
   /**
    * Mock HTTP error response
    */
-  error(errorMessage: string = 'Server Error', status: number = 500): Observable<never> {
+  error(
+    errorMessage: string = 'Server Error',
+    status: number = 500,
+  ): Observable<never> {
     const error = {
       error: { message: errorMessage },
       status,
-      statusText: this.getStatusText(status)
+      statusText: this.getStatusText(status),
     };
     return throwError(() => error).pipe(delay(this.delay));
   }
@@ -59,12 +62,12 @@ export class MockHttpService {
   private getStatusText(status: number): string {
     const statusTexts: { [key: number]: string } = {
       400: 'Bad Request',
-      401: 'Unauthorized', 
+      401: 'Unauthorized',
       403: 'Forbidden',
       404: 'Not Found',
       500: 'Internal Server Error',
       502: 'Bad Gateway',
-      503: 'Service Unavailable'
+      503: 'Service Unavailable',
     };
     return statusTexts[status] || 'Unknown Error';
   }
@@ -120,8 +123,10 @@ export class TestEnvironment {
   static setupMockStorage(): void {
     this.originalLocalStorage = window.localStorage;
     this.originalSessionStorage = window.sessionStorage;
-    
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).localStorage = new MockLocalStorage();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).sessionStorage = new MockSessionStorage();
   }
 
@@ -130,9 +135,11 @@ export class TestEnvironment {
    */
   static restoreStorage(): void {
     if (this.originalLocalStorage) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).localStorage = this.originalLocalStorage;
     }
     if (this.originalSessionStorage) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).sessionStorage = this.originalSessionStorage;
     }
   }
@@ -146,7 +153,7 @@ export class TestEnvironment {
       'warn',
       'error',
       'info',
-      'debug'
+      'debug',
     ]);
   }
 }

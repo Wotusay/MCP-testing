@@ -9,9 +9,9 @@ export class TestUtils {
   /**
    * Get element by CSS selector
    */
-  static querySelector<T extends HTMLElement>(
-    fixture: ComponentFixture<any>,
-    selector: string
+  static querySelector<T extends HTMLElement, C = unknown>(
+    fixture: ComponentFixture<C>,
+    selector: string,
   ): T | null {
     return fixture.nativeElement.querySelector(selector);
   }
@@ -19,9 +19,9 @@ export class TestUtils {
   /**
    * Get all elements by CSS selector
    */
-  static querySelectorAll<T extends HTMLElement>(
-    fixture: ComponentFixture<any>,
-    selector: string
+  static querySelectorAll<T extends HTMLElement, C = unknown>(
+    fixture: ComponentFixture<C>,
+    selector: string,
   ): NodeListOf<T> {
     return fixture.nativeElement.querySelectorAll(selector);
   }
@@ -30,8 +30,8 @@ export class TestUtils {
    * Get DebugElement by CSS selector
    */
   static debugElement(
-    fixture: ComponentFixture<any>,
-    selector: string
+    fixture: ComponentFixture<unknown>,
+    selector: string,
   ): DebugElement | null {
     return fixture.debugElement.query(By.css(selector));
   }
@@ -40,8 +40,8 @@ export class TestUtils {
    * Get all DebugElements by CSS selector
    */
   static debugElements(
-    fixture: ComponentFixture<any>,
-    selector: string
+    fixture: ComponentFixture<unknown>,
+    selector: string,
   ): DebugElement[] {
     return fixture.debugElement.queryAll(By.css(selector));
   }
@@ -61,9 +61,9 @@ export class TestUtils {
    * Set input value and trigger events
    */
   static setInputValue(
-    fixture: ComponentFixture<any>,
+    fixture: ComponentFixture<unknown>,
     selector: string,
-    value: string
+    value: string,
   ): void {
     const input = TestUtils.querySelector<HTMLInputElement>(fixture, selector);
     if (input) {
@@ -77,7 +77,7 @@ export class TestUtils {
   /**
    * Wait for async operations to complete
    */
-  static async waitForAsync(fixture: ComponentFixture<any>): Promise<void> {
+  static async waitForAsync(fixture: ComponentFixture<unknown>): Promise<void> {
     await fixture.whenStable();
     fixture.detectChanges();
   }
@@ -87,7 +87,7 @@ export class TestUtils {
    */
   static createSpyObj<T>(
     baseName: string,
-    methodNames: (keyof T)[]
+    methodNames: (keyof T)[],
   ): jasmine.SpyObj<T> {
     return jasmine.createSpyObj(baseName, methodNames as string[]);
   }
@@ -96,8 +96,8 @@ export class TestUtils {
    * Assert element exists
    */
   static expectElementToExist(
-    fixture: ComponentFixture<any>,
-    selector: string
+    fixture: ComponentFixture<unknown>,
+    selector: string,
   ): void {
     const element = TestUtils.querySelector(fixture, selector);
     expect(element).toBeTruthy();
@@ -107,8 +107,8 @@ export class TestUtils {
    * Assert element does not exist
    */
   static expectElementNotToExist(
-    fixture: ComponentFixture<any>,
-    selector: string
+    fixture: ComponentFixture<unknown>,
+    selector: string,
   ): void {
     const element = TestUtils.querySelector(fixture, selector);
     expect(element).toBeFalsy();
@@ -118,9 +118,9 @@ export class TestUtils {
    * Assert element has text content
    */
   static expectElementToHaveText(
-    fixture: ComponentFixture<any>,
+    fixture: ComponentFixture<unknown>,
     selector: string,
-    expectedText: string
+    expectedText: string,
   ): void {
     const element = TestUtils.querySelector(fixture, selector);
     expect(element?.textContent?.trim()).toBe(expectedText);
@@ -130,9 +130,9 @@ export class TestUtils {
    * Assert element contains text
    */
   static expectElementToContainText(
-    fixture: ComponentFixture<any>,
+    fixture: ComponentFixture<unknown>,
     selector: string,
-    expectedText: string
+    expectedText: string,
   ): void {
     const element = TestUtils.querySelector(fixture, selector);
     expect(element?.textContent).toContain(expectedText);

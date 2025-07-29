@@ -37,7 +37,7 @@ export const mockUsers: MockUser[] = [
     email: 'john.doe@example.com',
     role: 'admin',
     active: true,
-    createdAt: new Date('2023-01-15')
+    createdAt: new Date('2023-01-15'),
   },
   {
     id: 2,
@@ -45,7 +45,7 @@ export const mockUsers: MockUser[] = [
     email: 'jane.smith@example.com',
     role: 'user',
     active: true,
-    createdAt: new Date('2023-02-20')
+    createdAt: new Date('2023-02-20'),
   },
   {
     id: 3,
@@ -53,8 +53,8 @@ export const mockUsers: MockUser[] = [
     email: 'bob.wilson@example.com',
     role: 'moderator',
     active: false,
-    createdAt: new Date('2023-03-10')
-  }
+    createdAt: new Date('2023-03-10'),
+  },
 ];
 
 /**
@@ -67,7 +67,7 @@ export const mockProducts: MockProduct[] = [
     description: 'High-performance laptop for work and gaming',
     price: 1299.99,
     category: 'Electronics',
-    inStock: true
+    inStock: true,
   },
   {
     id: 2,
@@ -75,7 +75,7 @@ export const mockProducts: MockProduct[] = [
     description: 'Latest smartphone with advanced features',
     price: 699.99,
     category: 'Electronics',
-    inStock: true
+    inStock: true,
   },
   {
     id: 3,
@@ -83,8 +83,8 @@ export const mockProducts: MockProduct[] = [
     description: 'Ergonomic office chair for comfortable work',
     price: 299.99,
     category: 'Furniture',
-    inStock: false
-  }
+    inStock: false,
+  },
 ];
 
 /**
@@ -102,21 +102,24 @@ export class MockDataFactory {
       role: 'user',
       active: true,
       createdAt: new Date(),
-      ...overrides
+      ...overrides,
     };
   }
 
   /**
    * Create multiple mock users
    */
-  static createUsers(count: number, overrides: Partial<MockUser> = {}): MockUser[] {
+  static createUsers(
+    count: number,
+    overrides: Partial<MockUser> = {},
+  ): MockUser[] {
     return Array.from({ length: count }, (_, index) =>
       MockDataFactory.createUser({
         id: index + 1,
         name: `Test User ${index + 1}`,
         email: `test${index + 1}@example.com`,
-        ...overrides
-      })
+        ...overrides,
+      }),
     );
   }
 
@@ -131,20 +134,23 @@ export class MockDataFactory {
       price: 99.99,
       category: 'Test Category',
       inStock: true,
-      ...overrides
+      ...overrides,
     };
   }
 
   /**
    * Create multiple mock products
    */
-  static createProducts(count: number, overrides: Partial<MockProduct> = {}): MockProduct[] {
+  static createProducts(
+    count: number,
+    overrides: Partial<MockProduct> = {},
+  ): MockProduct[] {
     return Array.from({ length: count }, (_, index) =>
       MockDataFactory.createProduct({
         id: index + 1,
         name: `Test Product ${index + 1}`,
-        ...overrides
-      })
+        ...overrides,
+      }),
     );
   }
 
@@ -153,13 +159,13 @@ export class MockDataFactory {
    */
   static createApiResponse<T>(
     data: T,
-    overrides: Partial<MockApiResponse<T>> = {}
+    overrides: Partial<MockApiResponse<T>> = {},
   ): MockApiResponse<T> {
     return {
       data,
       success: true,
       timestamp: new Date(),
-      ...overrides
+      ...overrides,
     };
   }
 
@@ -168,13 +174,13 @@ export class MockDataFactory {
    */
   static createErrorResponse<T>(
     message: string = 'An error occurred',
-    data: T | null = null
+    data: T | null = null,
   ): MockApiResponse<T | null> {
     return {
       data,
       success: false,
       message,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }
