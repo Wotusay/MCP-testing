@@ -4,7 +4,8 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { UserService, User } from './user.service';
+import { UserService } from './user.service';
+import { User } from '../models';
 import { MockDataFactory } from '../testing';
 
 describe('UserService', () => {

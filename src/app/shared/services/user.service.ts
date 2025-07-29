@@ -1,15 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  active: boolean;
-}
+import { LoggingService } from './logging.service';
+import { User } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -19,19 +14,23 @@ export class UserService {
   private usersSubject = new BehaviorSubject<User[]>([]);
   public users$ = this.usersSubject.asObservable();
   private http = inject(HttpClient);
+  private logger = inject(LoggingService);
 
   /**
    * Get all users
    */
   getUsers(): Observable<User[]> {
+    this.logger.logHttpRequest('GET', this.apiUrl);
+
     return this.http.get<User[]>(this.apiUrl).pipe(
-      map((users) => {
+      tap((users) => {
+        this.logger.logHttpResponse('GET', this.apiUrl, 200, {
+          count: users.length,
+        });
         this.usersSubject.next(users);
-        return users;
       }),
       catchError((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching users:', error);
+        this.logger.error('Error fetching users', error, 'USER_SERVICE');
         return of([]);
       }),
     );
@@ -41,10 +40,15 @@ export class UserService {
    * Get user by ID
    */
   getUserById(id: number): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
+    const url = `${this.apiUrl}/${id}`;
+    this.logger.logHttpRequest('GET', url);
+
+    return this.http.get<User>(url).pipe(
+      tap((user) => {
+        this.logger.logHttpResponse('GET', url, 200, { userId: user.id });
+      }),
       catchError((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching user:', error);
+        this.logger.error(`Error fetching user ${id}`, error, 'USER_SERVICE');
         return of(null);
       }),
     );
@@ -54,11 +58,20 @@ export class UserService {
    * Create new user
    */
   createUser(user: Omit<User, 'id'>): Observable<User> {
+    this.logger.logHttpRequest('POST', this.apiUrl, user);
+
     return this.http.post<User>(this.apiUrl, user).pipe(
-      map((newUser) => {
+      tap((newUser) => {
+        this.logger.logHttpResponse('POST', this.apiUrl, 201, {
+          userId: newUser.id,
+        });
         const currentUsers = this.usersSubject.value;
         this.usersSubject.next([...currentUsers, newUser]);
-        return newUser;
+        this.logger.info(
+          `User created successfully`,
+          { userId: newUser.id },
+          'USER_SERVICE',
+        );
       }),
     );
   }
@@ -67,15 +80,25 @@ export class UserService {
    * Update existing user
    */
   updateUser(id: number, user: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}`, user).pipe(
-      map((updatedUser) => {
+    const url = `${this.apiUrl}/${id}`;
+    this.logger.logHttpRequest('PUT', url, user);
+
+    return this.http.put<User>(url, user).pipe(
+      tap((updatedUser) => {
+        this.logger.logHttpResponse('PUT', url, 200, {
+          userId: updatedUser.id,
+        });
         const currentUsers = this.usersSubject.value;
         const index = currentUsers.findIndex((u) => u.id === id);
         if (index !== -1) {
           currentUsers[index] = updatedUser;
           this.usersSubject.next([...currentUsers]);
         }
-        return updatedUser;
+        this.logger.info(
+          `User updated successfully`,
+          { userId: updatedUser.id },
+          'USER_SERVICE',
+        );
       }),
     );
   }
@@ -84,16 +107,24 @@ export class UserService {
    * Delete user
    */
   deleteUser(id: number): Observable<boolean> {
-    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-      map(() => {
+    const url = `${this.apiUrl}/${id}`;
+    this.logger.logHttpRequest('DELETE', url);
+
+    return this.http.delete(url).pipe(
+      tap(() => {
+        this.logger.logHttpResponse('DELETE', url, 200);
         const currentUsers = this.usersSubject.value;
         const filteredUsers = currentUsers.filter((u) => u.id !== id);
         this.usersSubject.next(filteredUsers);
-        return true;
+        this.logger.info(
+          `User deleted successfully`,
+          { userId: id },
+          'USER_SERVICE',
+        );
       }),
+      map(() => true),
       catchError((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error deleting user:', error);
+        this.logger.error(`Error deleting user ${id}`, error, 'USER_SERVICE');
         return of(false);
       }),
     );
