@@ -13,14 +13,12 @@ describe('ThemeToggleComponent', () => {
     mockThemeService = {
       theme: signal('light' as 'light' | 'dark' | 'auto'),
       isDark: signal(false),
-      toggleTheme: jasmine.createSpy('toggleTheme')
+      toggleTheme: jasmine.createSpy('toggleTheme'),
     };
 
     await TestBed.configureTestingModule({
       imports: [ThemeToggleComponent],
-      providers: [
-        { provide: ThemeService, useValue: mockThemeService }
-      ]
+      providers: [{ provide: ThemeService, useValue: mockThemeService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ThemeToggleComponent);
@@ -35,7 +33,7 @@ describe('ThemeToggleComponent', () => {
   it('should call toggleTheme when button is clicked', () => {
     const button = fixture.nativeElement.querySelector('button');
     button.click();
-    
+
     expect(mockThemeService.toggleTheme).toHaveBeenCalled();
   });
 

@@ -19,7 +19,7 @@ export class MetricsBoxComponent {
 
   get boxClass(): string {
     const variants = {
-      info: 'bg-theme-secondary border-theme',
+      info: 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700',
       success:
         'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-700',
       warning:
@@ -32,7 +32,7 @@ export class MetricsBoxComponent {
 
   get titleClass(): string {
     const variants = {
-      info: 'text-theme-primary',
+      info: 'text-gray-900 dark:text-gray-100',
       success: 'text-success-900 dark:text-success-200',
       warning: 'text-warning-900 dark:text-warning-200',
       error: 'text-danger-900 dark:text-danger-200',
@@ -42,7 +42,7 @@ export class MetricsBoxComponent {
 
   get contentClass(): string {
     const variants = {
-      info: 'text-theme-secondary',
+      info: 'text-gray-700 dark:text-gray-300',
       success: 'text-success-800 dark:text-success-300',
       warning: 'text-warning-800 dark:text-warning-300',
       error: 'text-danger-800 dark:text-danger-300',

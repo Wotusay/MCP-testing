@@ -55,7 +55,9 @@ import { ThemeService } from '../../services/theme.service';
         *ngIf="isTransitioning"
         class="absolute inset-0 flex items-center justify-center"
       >
-        <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div
+          class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"
+        ></div>
       </div>
     </button>
   `,
@@ -80,7 +82,7 @@ export class ThemeToggleComponent {
   protected readonly buttonTitle = computed(() => {
     const themeText = this.theme();
     const computedText = this.isDark() ? 'dark' : 'light';
-    
+
     if (themeText === 'auto') {
       return `Theme: Auto (${computedText})`;
     }

@@ -9,7 +9,7 @@ export type StatusType = 'success' | 'warning' | 'error' | 'info';
   template: `
     <div class="flex items-center">
       <div class="w-3 h-3 rounded-full mr-3" [class]="statusColor"></div>
-      <span class="text-sm text-theme-secondary">{{ text }}</span>
+      <span class="text-sm text-gray-700 dark:text-gray-300">{{ text }}</span>
     </div>
   `,
 })
@@ -19,10 +19,10 @@ export class StatusIndicatorComponent {
 
   get statusColor(): string {
     const colors = {
-      success: 'bg-green-400',
-      warning: 'bg-yellow-400',
-      error: 'bg-red-400',
-      info: 'bg-blue-400',
+      success: 'bg-green-400 dark:bg-green-500',
+      warning: 'bg-yellow-400 dark:bg-yellow-500',
+      error: 'bg-red-400 dark:bg-red-500',
+      info: 'bg-blue-400 dark:bg-blue-500',
     };
     return colors[this.status];
   }

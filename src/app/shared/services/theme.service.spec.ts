@@ -11,7 +11,7 @@ const mockLocalStorage = {
 const mockMatchMedia = jasmine.createSpy('matchMedia').and.returnValue({
   matches: false,
   addEventListener: jasmine.createSpy('addEventListener'),
-  addListener: jasmine.createSpy('addListener')
+  addListener: jasmine.createSpy('addListener'),
 });
 
 describe('ThemeService', () => {
@@ -21,12 +21,12 @@ describe('ThemeService', () => {
     // Mock browser APIs
     Object.defineProperty(window, 'localStorage', {
       value: mockLocalStorage,
-      writable: true
+      writable: true,
     });
-    
+
     Object.defineProperty(window, 'matchMedia', {
       value: mockMatchMedia,
-      writable: true
+      writable: true,
     });
 
     TestBed.configureTestingModule({});
@@ -50,7 +50,7 @@ describe('ThemeService', () => {
   it('should update theme when setTheme is called', () => {
     service.setTheme('dark');
     expect(service.theme()).toBe('dark');
-    
+
     service.setTheme('light');
     expect(service.theme()).toBe('light');
   });
@@ -59,7 +59,7 @@ describe('ThemeService', () => {
     service.setTheme('light');
     service.toggleTheme();
     expect(service.theme()).toBe('dark');
-    
+
     service.toggleTheme();
     expect(service.theme()).toBe('light');
   });
@@ -67,7 +67,7 @@ describe('ThemeService', () => {
   it('should return computed theme', () => {
     service.setTheme('light');
     expect(service.getComputedTheme()).toBe('light');
-    
+
     service.setTheme('dark');
     expect(service.getComputedTheme()).toBe('dark');
   });
