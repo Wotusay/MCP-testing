@@ -49,24 +49,11 @@ import { ThemeService } from '../../services/theme.service';
           d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
         />
       </svg>
-
-      <!-- Loading/Transition State -->
-      <div
-        *ngIf="isTransitioning"
-        class="absolute inset-0 flex items-center justify-center"
-      >
-        <div
-          class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"
-        ></div>
-      </div>
     </button>
   `,
 })
 export class ThemeToggleComponent {
   private readonly themeService = inject(ThemeService);
-
-  // Component state
-  protected isTransitioning = false;
 
   // Computed values from theme service
   protected readonly theme = this.themeService.theme;
@@ -90,14 +77,6 @@ export class ThemeToggleComponent {
   });
 
   protected toggleTheme(): void {
-    if (this.isTransitioning) return;
-
-    this.isTransitioning = true;
     this.themeService.toggleTheme();
-
-    // Reset transition state after animation
-    setTimeout(() => {
-      this.isTransitioning = false;
-    }, 200);
   }
 }
