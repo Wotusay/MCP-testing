@@ -45,13 +45,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: false,
-    restartOnFileChange: true,
+    browsers: ['ChromeHeadlessCI'],
+    singleRun: true,
+    restartOnFileChange: false,
     customLaunchers: {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
-        flags: ['--no-sandbox', '--disable-web-security']
+        flags: ['--no-sandbox', '--disable-web-security', '--disable-gpu', '--disable-dev-shm-usage']
       }
     }
   });

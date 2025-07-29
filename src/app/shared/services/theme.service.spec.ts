@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ThemeService } from './theme.service';
 
 // Mock localStorage for testing
@@ -29,7 +30,9 @@ describe('ThemeService', () => {
       writable: true,
     });
 
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
     service = TestBed.inject(ThemeService);
   });
 

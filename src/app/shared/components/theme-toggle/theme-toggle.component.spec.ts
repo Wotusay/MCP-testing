@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { ThemeToggleComponent } from './theme-toggle.component';
 import { ThemeService } from '../../services/theme.service';
 
@@ -18,7 +18,10 @@ describe('ThemeToggleComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [ThemeToggleComponent],
-      providers: [{ provide: ThemeService, useValue: mockThemeService }],
+      providers: [
+        { provide: ThemeService, useValue: mockThemeService },
+        provideZonelessChangeDetection(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ThemeToggleComponent);
