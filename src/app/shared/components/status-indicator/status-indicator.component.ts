@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-
-export type StatusType = 'success' | 'warning' | 'error' | 'info';
+import { StatusType } from '../../base/component.interfaces';
 
 @Component({
   selector: 'app-status-indicator',
@@ -23,6 +22,7 @@ export class StatusIndicatorComponent {
       warning: 'bg-yellow-400 dark:bg-yellow-500',
       error: 'bg-red-400 dark:bg-red-500',
       info: 'bg-blue-400 dark:bg-blue-500',
+      pending: 'bg-gray-400 dark:bg-gray-500',
     };
     return colors[this.status];
   }

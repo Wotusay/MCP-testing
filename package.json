@@ -27,7 +27,8 @@
     "release:prepare": "npm run build && npm run test:ci",
     "release:patch": "npm run release:prepare && npm run version:patch",
     "release:minor": "npm run release:prepare && npm run version:minor",
-    "release:major": "npm run release:prepare && npm run version:major"
+    "release:major": "npm run release:prepare && npm run version:major",
+    "generate:component": "node src/app/shared/templates/generate-component.js"
   },
   "prettier": {
     "overrides": [

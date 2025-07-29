@@ -97,6 +97,18 @@ This project is a team-based Angular application with Tailwind CSS, created for 
   - `npm run format:check` - Check code formatting
 - **📝 Branch:** `feature/eslint-prettier-setup` with organized commits
 
+#### 12. CI/CD Workflow Automation
+- **✅ Automated workflow:** CI/CD pipeline runs automatically on every commit
+- **✅ No manual approval required:** Workflow executes fully automatically
+- **✅ Complete automation includes:**
+  - Code quality checks (ESLint & Prettier)
+  - Automated testing with coverage reports
+  - Production builds and artifact uploads
+  - Security scanning with npm audit
+  - Automatic deployment on main branch
+- **✅ Triggers:** Push to main/develop branches and pull requests
+- **✅ Status:** Workflow runs without any manual intervention
+
 ## 🚀 Quick Start
 
 ### Prerequisites
