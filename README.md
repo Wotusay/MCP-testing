@@ -342,6 +342,24 @@ This project uses Tailwind CSS for styling. Key features:
 - **Pull requests** required for all changes
 - **Code reviews** mandatory before merging
 
+## 📚 Documentation
+
+Comprehensive documentation is available to help team members understand, contribute to, and maintain this project:
+
+- **[Contributing Guide](CONTRIBUTING.md)** - Complete development workflow, branching strategy, commit guidelines, PR process, and team collaboration practices
+- **[Coding Standards](docs/CODING_STANDARDS.md)** - TypeScript, Angular, HTML/CSS standards, testing patterns, and code review guidelines  
+- **[Architecture Documentation](docs/ARCHITECTURE.md)** - System design, component structure, data flow, and performance considerations
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Environment setup, CI/CD pipeline, blue-green deployment, and rollback procedures
+- **[API Documentation](docs/API.md)** - Authentication, endpoints, data models, error handling, and SDK usage
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common development, testing, and deployment issues with solutions
+- **[Component Library](src/app/shared/README.md)** - Detailed reusable UI components documentation
+
+### Architectural Decision Records (ADRs)
+- **[ADR-001: Frontend Framework](docs/adr/001-frontend-framework.md)** - Angular 20 selection rationale
+- **[ADR-002: State Management](docs/adr/002-state-management.md)** - Service-based state management with RxJS
+- **[ADR-003: Styling Approach](docs/adr/003-styling-approach.md)** - Tailwind CSS utility-first approach
+- **[ADR-004: Testing Strategy](docs/adr/004-testing-strategy.md)** - Karma + Jasmine testing framework
+
 ## 📝 Next Steps
 
 ### Remaining Tickets:
@@ -350,29 +368,32 @@ This project uses Tailwind CSS for styling. Key features:
 - **Ticket #4:** UI Foundation & Design System
 - **Ticket #5:** Core Services & State Management
 - **Ticket #6:** Testing Framework Setup
-- **Ticket #7:** Project Documentation
+- **~~Ticket #7: Project Documentation~~** ✅ **COMPLETED**
 - **Ticket #8:** Security Implementation
 - **Ticket #9:** Performance Optimization
 - **Ticket #10:** Team Workflow & Code Review Process
 
 ## 🤝 Contributing
 
-1. Create a feature branch from `main`
-2. Make your changes
-3. Test your changes locally
-4. Submit a pull request
-5. Wait for code review approval
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on:
+- Development workflow and branching strategy
+- Code standards and quality requirements
+- Testing requirements and best practices
+- Pull request process and code review guidelines
 
-## 📞 Support
+## 🆘 Support
 
-For questions or issues, please:
-1. Check existing GitHub issues
-2. Create a new issue with detailed description
-3. Contact the development team
+- **Issues**: [GitHub Issues](https://github.com/Wotusay/MCP-testing/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Wotusay/MCP-testing/discussions)
+- **Documentation**: [Project Documentation](docs/)
 
 ## 🚀 Deployment
 
-Deployment instructions will be added in future tickets as the CI/CD pipeline is implemented.
+For detailed deployment procedures, monitoring, and rollback strategies, see our [Deployment Guide](docs/DEPLOYMENT.md).
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
