@@ -321,6 +321,8 @@ This project includes a comprehensive CI/CD pipeline using GitHub Actions that e
 - ✅ **Build Validation**: Production Angular build verification
 - ✅ **Security Scanning**: npm audit for vulnerabilities
 - ✅ **Artifact Management**: Coverage reports and build files
+- ✅ **Auto Branch Deletion**: Branches are automatically deleted when PRs are merged
+- ✅ **Version Management**: Automatic semantic versioning based on PR labels
 
 ### Quality Gates
 All PRs must pass:
@@ -330,6 +332,40 @@ All PRs must pass:
 - Successful production build
 
 For detailed CI/CD documentation, see [docs/CI-CD.md](./docs/CI-CD.md).
+
+## 🏷️ Version Management
+
+This project uses semantic versioning with automated version bumping. See our [Version Management Guide](docs/VERSION_MANAGEMENT.md) for complete details.
+
+### Version Bump Rules
+- **Patch** (`0.0.0 → 0.0.1`): Bug fixes, minor fixes
+- **Minor** (`0.0.0 → 0.1.0`): New features, enhancements  
+- **Major** (`0.0.0 → 1.0.0`): Breaking changes, new platform, huge changes
+
+### Quick Version Commands
+```bash
+# Manual version bumping
+npm run release:patch   # Bug fixes
+npm run release:minor   # New features
+npm run release:major   # Breaking changes
+
+# Using the version script
+./scripts/version.sh patch    # Bug fixes
+./scripts/version.sh minor    # New features  
+./scripts/version.sh major    # Breaking changes
+```
+
+### Automatic Version Bumping
+When you merge a PR, the system automatically:
+1. Determines version bump type from PR labels or commit messages
+2. Bumps the version in `package.json`
+3. Creates a git tag and GitHub release
+4. Deletes the merged branch
+
+Add these labels to your PRs for proper version bumping:
+- `fix`, `bugfix`, `patch` → Patch version
+- `feature`, `enhancement`, `minor` → Minor version
+- `breaking`, `major`, `platform` → Major version
 
 ## 🎨 Styling with Tailwind CSS
 
