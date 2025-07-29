@@ -20,7 +20,8 @@
     "format:check": "prettier --check src/**/*.{ts,html,css,scss,json}",
     "lint:staged": "lint-staged",
     "pre-commit": "npm run lint:fix && npm run format",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate:component": "node src/app/shared/templates/generate-component.js"
   },
   "prettier": {
     "overrides": [
