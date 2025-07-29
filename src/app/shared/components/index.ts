@@ -3,3 +3,6 @@ export * from './button';
 export * from './feature-card';
 export * from './status-badge';
 export * from './status-indicator';
+export * from './info-section';
+export * from './info-card';
+export * from './metrics-box';

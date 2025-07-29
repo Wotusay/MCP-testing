@@ -1,11 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ButtonComponent } from '../../shared';
+import { ButtonComponent, InfoSectionComponent, InfoItem } from '../../shared';
 
 @Component({
   selector: 'app-about',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, InfoSectionComponent],
   template: `
     <div class="bg-white rounded-lg shadow-md p-8">
       <div class="max-w-4xl mx-auto">
@@ -18,26 +18,15 @@ import { ButtonComponent } from '../../shared';
             applications.
           </p>
 
-          <h3 class="text-xl font-semibold text-gray-900 mb-3">Key Features</h3>
-          <ul class="list-disc list-inside space-y-2 mb-6">
-            <li>Angular 20 with zoneless change detection</li>
-            <li>Lazy loading for optimal performance</li>
-            <li>OnPush change detection strategy</li>
-            <li>Performance monitoring and budgets</li>
-            <li>Service worker caching</li>
-            <li>Bundle optimization and code splitting</li>
-          </ul>
+          <app-info-section
+            title="Key Features"
+            [items]="keyFeatures"
+          ></app-info-section>
 
-          <h3 class="text-xl font-semibold text-gray-900 mb-3">
-            Technology Stack
-          </h3>
-          <ul class="list-disc list-inside space-y-2 mb-6">
-            <li>Angular 20 - Modern frontend framework</li>
-            <li>TypeScript - Type-safe development</li>
-            <li>Tailwind CSS - Utility-first styling</li>
-            <li>ESLint & Prettier - Code quality tools</li>
-            <li>Husky - Git hooks for quality control</li>
-          </ul>
+          <app-info-section
+            title="Technology Stack"
+            [items]="techStack"
+          ></app-info-section>
         </div>
 
         <div class="flex justify-center">
@@ -53,6 +42,23 @@ import { ButtonComponent } from '../../shared';
   `,
 })
 export class AboutComponent {
+  keyFeatures: InfoItem[] = [
+    { text: 'Angular 20 with zoneless change detection' },
+    { text: 'Lazy loading for optimal performance' },
+    { text: 'OnPush change detection strategy' },
+    { text: 'Performance monitoring and budgets' },
+    { text: 'Service worker caching' },
+    { text: 'Bundle optimization and code splitting' },
+  ];
+
+  techStack: InfoItem[] = [
+    { text: 'Angular 20', description: 'Modern frontend framework' },
+    { text: 'TypeScript', description: 'Type-safe development' },
+    { text: 'Tailwind CSS', description: 'Utility-first styling' },
+    { text: 'ESLint & Prettier', description: 'Code quality tools' },
+    { text: 'Husky', description: 'Git hooks for quality control' },
+  ];
+
   goBack(): void {
     window.history.back();
   }
