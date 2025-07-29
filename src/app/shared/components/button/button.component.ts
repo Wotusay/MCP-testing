@@ -11,7 +11,6 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       class="font-bold rounded-lg transition duration-200"
       [class]="buttonClasses"
       (click)="buttonClick.emit()"
-      
       [disabled]="disabled"
     >
       {{ text }}

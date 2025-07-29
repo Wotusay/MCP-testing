@@ -75,7 +75,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": ["src/styles.css"],
+            "codeCoverage": false
           }
         }
       }
