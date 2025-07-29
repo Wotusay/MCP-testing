@@ -13,17 +13,21 @@ import {
   template: `
     <!-- Welcome Section -->
     <div
-      class="bg-white dark:bg-gray-900 rounded-lg shadow-md p-8 mb-8 border border-gray-200 dark:border-gray-700"
+      class="bg-white dark:bg-gray-900 rounded-lg shadow-md p-responsive mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700"
     >
       <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h2
+          class="text-responsive-2xl font-bold text-gray-900 dark:text-gray-100 mb-4"
+        >
           Welcome to Angular Team Project
         </h2>
-        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+        <p class="text-responsive-base text-gray-700 dark:text-gray-300 mb-6">
           A modern Angular application with Tailwind CSS, ESLint, and Prettier
           configured for team development.
         </p>
-        <div class="flex justify-center space-x-4">
+        <div
+          class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
+        >
           <app-button
             text="Get Started"
             variant="primary"
@@ -41,7 +45,9 @@ import {
     </div>
 
     <!-- Feature Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 mb-8"
+    >
       <app-feature-card
         title="Angular 20"
         description="Latest Angular version with zoneless architecture and modern development features."
@@ -65,16 +71,28 @@ import {
         iconColor="green"
       >
       </app-feature-card>
+
+      <app-feature-card
+        title="Responsive Design"
+        description="Comprehensive responsive breakpoints system from mobile to ultra-wide displays."
+        iconPath="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+        iconColor="purple"
+      >
+      </app-feature-card>
     </div>
 
     <!-- Status Section -->
     <div
-      class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700"
+      class="bg-gray-50 dark:bg-gray-800 rounded-lg p-responsive border border-gray-200 dark:border-gray-700"
     >
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+      <h3
+        class="text-responsive-lg font-semibold text-gray-900 dark:text-gray-100 mb-4"
+      >
         Project Status
       </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+      >
         <app-status-indicator
           text="Development server running"
           status="success"

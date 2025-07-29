@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 @Component({
   selector: 'app-button',
@@ -61,9 +61,11 @@ export class ButtonComponent {
 
   private getSizeClasses(): string {
     const sizes = {
+      xs: 'py-1 px-2 text-xs',
       sm: 'py-1 px-3 text-sm',
       md: 'py-2 px-4',
       lg: 'py-3 px-6 text-lg',
+      xl: 'py-4 px-8 text-xl',
     };
     return sizes[this.size];
   }

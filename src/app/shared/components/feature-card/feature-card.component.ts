@@ -6,15 +6,15 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700"
+      class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 border border-gray-200 dark:border-gray-700"
     >
-      <div class="flex items-center mb-4">
+      <div class="flex items-center mb-3 sm:mb-4">
         <div
-          class="w-12 h-12 rounded-lg flex items-center justify-center"
+          class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center"
           [class]="iconBackgroundClass"
         >
           <svg
-            class="w-6 h-6"
+            class="w-5 h-5 sm:w-6 sm:h-6"
             [class]="iconColorClass"
             fill="currentColor"
             viewBox="0 0 24 24"
@@ -24,11 +24,15 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
             <path [attr.d]="iconPath" />
           </svg>
         </div>
-        <h3 class="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3
+          class="ml-2 sm:ml-3 text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100"
+        >
           {{ title }}
         </h3>
       </div>
-      <p class="text-gray-700 dark:text-gray-300">{{ description }}</p>
+      <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+        {{ description }}
+      </p>
     </div>
   `,
 })

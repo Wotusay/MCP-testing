@@ -34,6 +34,9 @@ html {
 // Utility classes
 // ===============
 
+// Utility classes
+// ===============
+
 @layer utilities {
   // Screen reader only
   .sr-only {
@@ -53,5 +56,57 @@ html {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  // Responsive text sizes
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl xl:text-5xl;
+  }
+
+  // Responsive spacing utilities
+  .space-responsive-x {
+    @apply space-x-2 sm:space-x-4 lg:space-x-6;
+  }
+
+  .space-responsive-y {
+    @apply space-y-2 sm:space-y-4 lg:space-y-6;
+  }
+
+  // Responsive padding utilities
+  .p-responsive {
+    @apply p-4 sm:p-6 lg:p-8 xl:p-10 2xl:p-12;
+  }
+
+  .px-responsive {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16;
+  }
+
+  .py-responsive {
+    @apply py-4 sm:py-6 lg:py-8 xl:py-10 2xl:py-12;
+  }
+
+  // Responsive container
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16;
   }
 }

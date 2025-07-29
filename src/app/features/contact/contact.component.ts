@@ -19,20 +19,24 @@ import {
   imports: [ButtonComponent, InfoCardComponent, MetricsBoxComponent],
   template: `
     <div
-      class="bg-white dark:bg-gray-900 rounded-lg shadow-md p-8 border border-gray-200 dark:border-gray-700"
+      class="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 sm:p-6 lg:p-8 border border-gray-200 dark:border-gray-700"
     >
       <div class="max-w-2xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        <h2
+          class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6"
+        >
           Contact Us
         </h2>
 
-        <div class="mb-8">
-          <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+        <div class="mb-6 sm:mb-8">
+          <p
+            class="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-4 sm:mb-6"
+          >
             Get in touch with our development team for questions, suggestions,
             or collaboration opportunities.
           </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <app-info-card
               title="Development Team"
               content="team@example.com"
@@ -50,7 +54,9 @@ import {
           optimal performance. Load time: {{ loadTime() }}ms
         </app-metrics-box>
 
-        <div class="flex justify-center space-x-4">
+        <div
+          class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
+        >
           <app-button
             text="Send Message"
             variant="primary"
