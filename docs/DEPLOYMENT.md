@@ -223,7 +223,7 @@ ng build --configuration=staging
 - **URL**: https://app.example.com
 - **Database**: Production database
 - **Auth**: Production authentication service
-- **Deployment**: Automated via CI/CD on `main` branch with manual approval
+- **Deployment**: Automated via CI/CD on `main` branch (fully automatic, no manual approval required)
 
 #### Production Deployment Process
 ```bash
