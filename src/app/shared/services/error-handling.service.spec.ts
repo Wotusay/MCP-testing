@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ErrorHandlingService } from './error-handling.service';
 import { AppError } from '../models/error.models';
 
@@ -6,7 +7,9 @@ describe('ErrorHandlingService', () => {
   let service: ErrorHandlingService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
     service = TestBed.inject(ErrorHandlingService);
   });
 

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import {
   HttpClientTestingModule,
   HttpTestingController,
@@ -52,6 +53,7 @@ describe('AuthenticationService', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
+        provideZonelessChangeDetection(),
         AuthenticationService,
         { provide: Router, useValue: routerSpyObj },
         { provide: LoggingService, useValue: loggerSpyObj },

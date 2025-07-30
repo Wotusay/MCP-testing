@@ -159,7 +159,7 @@ export class LoggingService {
    * Get all logs
    */
   getLogs(): LogEntry[] {
-    return [...this.logs];
+    return [...this.logs].reverse();
   }
 
   /**

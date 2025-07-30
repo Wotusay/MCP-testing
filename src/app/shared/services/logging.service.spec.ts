@@ -1,11 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { LoggingService, LogLevel } from './logging.service';
 
 describe('LoggingService', () => {
   let service: LoggingService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
     service = TestBed.inject(LoggingService);
 
     // Configure to prevent console output during tests
@@ -111,7 +114,7 @@ describe('LoggingService', () => {
     expect(systemLogs.length).toBe(1);
   });
 
-  it('should get logs by time range', () => {
+  it('should get logs by time range', (done) => {
     const startTime = Date.now();
 
     service.info('Message 1');
@@ -124,6 +127,7 @@ describe('LoggingService', () => {
       const logsInRange = service.getLogsByTimeRange(startTime, endTime);
 
       expect(logsInRange.length).toBe(2);
+      done();
     }, 10);
   });
 
