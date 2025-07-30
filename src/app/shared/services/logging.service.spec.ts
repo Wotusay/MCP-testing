@@ -2,10 +2,24 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { LoggingService, LogLevel } from './logging.service';
 
+// Mock localStorage for testing
+const mockLocalStorage = {
+  getItem: jasmine.createSpy('getItem').and.returnValue(null),
+  setItem: jasmine.createSpy('setItem'),
+  removeItem: jasmine.createSpy('removeItem'),
+  clear: jasmine.createSpy('clear'),
+};
+
 describe('LoggingService', () => {
   let service: LoggingService;
 
   beforeEach(() => {
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: mockLocalStorage,
+      writable: true,
+    });
+
     TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
     });
@@ -17,6 +31,14 @@ describe('LoggingService', () => {
       enableStorage: false,
       enableRemote: false,
     });
+  });
+
+  afterEach(() => {
+    // Reset mock localStorage spies
+    mockLocalStorage.getItem.calls.reset();
+    mockLocalStorage.setItem.calls.reset();
+    mockLocalStorage.removeItem.calls.reset();
+    mockLocalStorage.clear.calls.reset();
   });
 
   it('should be created', () => {

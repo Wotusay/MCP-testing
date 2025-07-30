@@ -11,6 +11,14 @@ import { ErrorHandlingService } from './error-handling.service';
 import { AuthUser, AuthTokens, LoginCredentials } from '../models/auth.models';
 import { AppError } from '../models/error.models';
 
+// Mock localStorage for testing
+const mockLocalStorage = {
+  getItem: jasmine.createSpy('getItem').and.returnValue(null),
+  setItem: jasmine.createSpy('setItem'),
+  removeItem: jasmine.createSpy('removeItem'),
+  clear: jasmine.createSpy('clear'),
+};
+
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
   let httpMock: HttpTestingController;
@@ -35,6 +43,12 @@ describe('AuthenticationService', () => {
   };
 
   beforeEach(() => {
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: mockLocalStorage,
+      writable: true,
+    });
+
     const routerSpyObj = jasmine.createSpyObj('Router', [
       'navigate',
       'createUrlTree',
@@ -78,6 +92,11 @@ describe('AuthenticationService', () => {
   afterEach(() => {
     httpMock.verify();
     localStorage.clear();
+    // Reset mock localStorage spies
+    mockLocalStorage.getItem.calls.reset();
+    mockLocalStorage.setItem.calls.reset();
+    mockLocalStorage.removeItem.calls.reset();
+    mockLocalStorage.clear.calls.reset();
   });
 
   it('should be created', () => {
