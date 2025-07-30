@@ -5,13 +5,13 @@
 // Include the common styles
 @include mat.core();
 
-// Define light and dark themes
+// Define light theme with blue colors to match Tailwind primary
 $light-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
-      primary: mat.$violet-palette,
-      tertiary: mat.$cyan-palette,
+      primary: mat.$blue-palette,
+      tertiary: mat.$green-palette,
     ),
     typography: (
       brand-family: "Inter, ui-sans-serif, system-ui, sans-serif",
@@ -23,12 +23,13 @@ $light-theme: mat.define-theme(
   )
 );
 
+// Define dark theme with blue colors to match Tailwind primary
 $dark-theme: mat.define-theme(
   (
     color: (
       theme-type: dark,
-      primary: mat.$violet-palette,
-      tertiary: mat.$cyan-palette,
+      primary: mat.$blue-palette,
+      tertiary: mat.$green-palette,
     ),
     typography: (
       brand-family: "Inter, ui-sans-serif, system-ui, sans-serif",
@@ -46,6 +47,48 @@ $dark-theme: mat.define-theme(
 // Apply the dark theme when the .dark class is present
 html.dark {
   @include mat.all-component-colors($dark-theme);
+
+  // Override Material component colors to match Tailwind dark mode exactly
+  .mat-mdc-card {
+    --mdc-elevated-card-container-color: rgb(31 41 55) !important; // gray-800
+    --mdc-elevated-card-container-elevation: 0 !important;
+    --mat-card-subtitle-text-color: rgb(156 163 175) !important; // gray-400
+    border: 1px solid rgb(75 85 99); // gray-600
+  }
+
+  .mat-mdc-card-header .mat-mdc-card-title {
+    color: rgb(243 244 246) !important; // gray-100
+  }
+
+  .mat-mdc-card-content {
+    color: rgb(209 213 219) !important; // gray-300
+  }
+
+  .mat-mdc-button.mat-unthemed {
+    --mdc-text-button-label-text-color: rgb(229 231 235) !important; // gray-200
+  }
+
+  .mat-mdc-outlined-button.mat-unthemed {
+    --mdc-outlined-button-outline-color: rgb(75 85 99) !important; // gray-600
+    --mdc-outlined-button-label-text-color: rgb(
+      229 231 235
+    ) !important; // gray-200
+  }
+
+  .mat-mdc-chip {
+    --mdc-chip-elevated-container-color: rgb(75 85 99) !important; // gray-600
+    --mdc-chip-label-text-color: rgb(229 231 235) !important; // gray-200
+    border: 1px solid rgb(107 114 128) !important; // gray-500
+  }
+
+  // Make sure button text is visible
+  .mat-mdc-card-actions .mat-mdc-button {
+    --mdc-text-button-label-text-color: rgb(96 165 250) !important; // blue-400
+  }
+
+  .mat-mdc-card-actions .mat-mdc-raised-button {
+    --mdc-filled-button-label-text-color: white !important;
+  }
 }
 
 @tailwind base;
