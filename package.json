@@ -1,6 +1,6 @@
 {
   "name": "angular-team-project",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -21,6 +21,13 @@
     "lint:staged": "lint-staged",
     "pre-commit": "npm run lint:fix && npm run format",
     "prepare": "husky",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "version:minor": "npm version minor --no-git-tag-version",
+    "version:major": "npm version major --no-git-tag-version",
+    "release:prepare": "npm run build && npm run test:ci",
+    "release:patch": "npm run release:prepare && npm run version:patch",
+    "release:minor": "npm run release:prepare && npm run version:minor",
+    "release:major": "npm run release:prepare && npm run version:major",
     "generate:component": "node src/app/shared/templates/generate-component.js"
   },
   "prettier": {

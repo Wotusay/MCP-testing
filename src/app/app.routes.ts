@@ -31,6 +31,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'design-system',
+    loadComponent: () =>
+      import('./features/design-system/design-system.component').then(
+        (m) => m.DesignSystemComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/home',
   },

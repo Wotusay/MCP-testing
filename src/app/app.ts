@@ -6,6 +6,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 import {
   StatusBadgeComponent,
@@ -22,12 +23,14 @@ import {
     RouterLinkActive,
     StatusBadgeComponent,
     ThemeToggleComponent,
+    NgIf,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class AppComponent implements AfterViewInit {
   protected readonly title = signal('angular-team-project');
+  protected readonly isMobileMenuOpen = signal(false);
   private readonly performanceService = inject(PerformanceMonitoringService);
 
   ngAfterViewInit(): void {
@@ -35,5 +38,13 @@ export class AppComponent implements AfterViewInit {
     setTimeout(() => {
       this.performanceService.logPerformance();
     }, 1000);
+  }
+
+  protected toggleMobileMenu(): void {
+    this.isMobileMenuOpen.update((isOpen) => !isOpen);
+  }
+
+  protected closeMobileMenu(): void {
+    this.isMobileMenuOpen.set(false);
   }
 }
