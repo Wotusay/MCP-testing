@@ -7,3 +7,4 @@ export * from './info-section';
 export * from './info-card';
 export * from './metrics-box';
 export * from './theme-toggle';
+export * from './user-form';
