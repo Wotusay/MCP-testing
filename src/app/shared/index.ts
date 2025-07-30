@@ -4,6 +4,9 @@ export * from './components';
 // Core services
 export * from './services';
 
+// HTTP interceptors
+export * from './interceptors';
+
 // Guards
 export * from './guards';
 

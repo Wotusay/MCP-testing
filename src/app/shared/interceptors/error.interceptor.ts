@@ -10,9 +10,9 @@ import {
 import { Observable, throwError, timer } from 'rxjs';
 import { catchError, tap, retryWhen, mergeMap, finalize } from 'rxjs/operators';
 
-import { ErrorHandlingService } from './error-handling.service';
-import { LoggingService } from './logging.service';
-import { AuthenticationService } from './auth.service';
+import { ErrorHandlingService } from '../services/error-handling.service';
+import { LoggingService } from '../services/logging.service';
+import { AuthenticationService } from '../services/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {

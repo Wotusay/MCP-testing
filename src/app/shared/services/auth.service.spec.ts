@@ -8,6 +8,7 @@ import { AuthenticationService } from './auth.service';
 import { LoggingService } from './logging.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { AuthUser, AuthTokens, LoginCredentials } from '../models/auth.models';
+import { AppError } from '../models/error.models';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;

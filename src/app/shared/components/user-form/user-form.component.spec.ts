@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserFormComponent } from './user-form.component';
-import { TestUtils } from '../testing';
+import { TestUtils } from '../../testing';
 
 describe('UserFormComponent', () => {
   let component: UserFormComponent;

@@ -17,7 +17,7 @@ import {
   AuthInterceptor,
   CacheInterceptor,
   ErrorInterceptor,
-} from './shared/services';
+} from './shared/interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [

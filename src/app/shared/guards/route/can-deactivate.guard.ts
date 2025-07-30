@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { type CanDeactivateFn } from '@angular/router';
 import { Observable } from 'rxjs';
-import { LoggingService } from '../services/logging.service';
+import { LoggingService } from '../../services/logging.service';
 
 /**
  * Interface for components that can be deactivated
