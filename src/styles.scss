@@ -5,11 +5,48 @@
 // Include the common styles
 @include mat.core();
 
-// Define a theme - this is a minimal setup that should work
-$theme: mat.define-theme();
+// Define light and dark themes
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$violet-palette,
+      tertiary: mat.$cyan-palette,
+    ),
+    typography: (
+      brand-family: "Inter, ui-sans-serif, system-ui, sans-serif",
+      plain-family: "Inter, ui-sans-serif, system-ui, sans-serif",
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
 
-// Apply the theme to all components
-@include mat.all-component-themes($theme);
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$violet-palette,
+      tertiary: mat.$cyan-palette,
+    ),
+    typography: (
+      brand-family: "Inter, ui-sans-serif, system-ui, sans-serif",
+      plain-family: "Inter, ui-sans-serif, system-ui, sans-serif",
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+// Apply the light theme by default
+@include mat.all-component-themes($light-theme);
+
+// Apply the dark theme when the .dark class is present
+html.dark {
+  @include mat.all-component-colors($dark-theme);
+}
 
 @tailwind base;
 @tailwind components;
