@@ -18,6 +18,8 @@ import {
   AuthInterceptor,
   CacheInterceptor,
   ErrorInterceptor,
+  SecurityInterceptor,
+  RateLimitingInterceptor,
 } from './shared/interceptors';
 
 export const appConfig: ApplicationConfig = {
@@ -28,6 +30,16 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SecurityInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RateLimitingInterceptor,
+      multi: true,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
