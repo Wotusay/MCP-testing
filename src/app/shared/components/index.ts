@@ -8,6 +8,7 @@ export * from './info-card';
 export * from './metrics-box';
 export * from './theme-toggle';
 export * from './user-form';
+export * from './client-form-dialog';
 
 // Dashboard components
 export * from './summary-card';

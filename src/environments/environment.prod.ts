@@ -4,7 +4,8 @@ export const environment = {
   appName: 'Angular Team Project',
   version: '1.0.0',
   supabase: {
-    url: 'https://nzzwepstnuveuhajsqcb.supabase.co',
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56endlcHN0bnV2ZXVoYWpzcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NTU0MTksImV4cCI6MjA2OTUzMTQxOX0.8V9VS5NH-Ak3j2F4mO3AzncrucBe39XMTvD3JJUjHlc'
+    // In production, these come from GitHub environment variables
+    url: process.env['SUPABASE_URL'] || 'YOUR_SUPABASE_URL_HERE',
+    key: process.env['SUPABASE_ANON_KEY'] || 'YOUR_SUPABASE_ANON_KEY_HERE'
   }
 };

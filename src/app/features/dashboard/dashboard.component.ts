@@ -7,6 +7,8 @@ import {
   FunnelChartComponent,
   QuickOverviewComponent,
   ClientTableComponent,
+  ClientFormDialogComponent,
+  ClientFormData,
 } from '../../shared/components';
 import { DashboardService } from '../../shared/services';
 import {
@@ -28,6 +30,7 @@ import {
     FunnelChartComponent,
     QuickOverviewComponent,
     ClientTableComponent,
+    ClientFormDialogComponent,
   ],
   template: `
     <div class="space-y-6">
@@ -43,6 +46,7 @@ import {
             </p>
           </div>
           <button
+            (click)="openNewClientDialog()"
             class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
           >
             + New Client
@@ -122,6 +126,15 @@ import {
           subtitle="Manage and track all your client interactions"
         ></app-client-table>
       </div>
+
+      <!-- Client Form Dialog -->
+      <app-client-form-dialog
+        [isOpen]="isClientDialogOpen"
+        [isSubmitting]="isAddingClient"
+        (clientSubmit)="onAddClient($event)"
+        (dialogCancel)="closeClientDialog()"
+        (dialogClose)="closeClientDialog()"
+      ></app-client-form-dialog>
     </div>
   `,
 })
@@ -141,6 +154,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Component state
   isLoading = true;
   errorMessage = '';
+  isClientDialogOpen = false;
+  isAddingClient = false;
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -175,6 +190,52 @@ export class DashboardComponent implements OnInit, OnDestroy {
           console.error('Failed to load dashboard data:', error);
           this.errorMessage = error.message || 'An unexpected error occurred while loading dashboard data.';
           this.isLoading = false;
+        }
+      });
+  }
+
+  openNewClientDialog(): void {
+    this.isClientDialogOpen = true;
+  }
+
+  closeClientDialog(): void {
+    this.isClientDialogOpen = false;
+    this.isAddingClient = false;
+  }
+
+  onAddClient(clientData: ClientFormData): void {
+    this.isAddingClient = true;
+
+    // Transform form data to match Client interface
+    const newClient = {
+      name: clientData.name,
+      company: clientData.company,
+      email: clientData.email,
+      phone: clientData.phone || '',
+      status: clientData.status,
+      contact_method: clientData.contact_method,
+      revenue: clientData.revenue,
+      last_contact: new Date().toISOString()
+    };
+
+    this.dashboardService.addClient(newClient)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (addedClient) => {
+          console.log('Client added successfully:', addedClient);
+          
+          // Show success message and refresh data
+          this.loadDashboardData();
+          
+          // The dialog will auto-close via the success message
+          this.isAddingClient = false;
+        },
+        error: (error) => {
+          console.error('Failed to add client:', error);
+          this.isAddingClient = false;
+          
+          // Show error message in dialog (if you have access to dialog component)
+          // For now, we'll just log the error
         }
       });
   }
