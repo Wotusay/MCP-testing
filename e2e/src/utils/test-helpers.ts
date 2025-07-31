@@ -6,14 +6,15 @@ export class E2ETestHelpers {
    * Wait for a specified amount of time
    */
   static async wait(milliseconds: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 
   /**
    * Generate random test data
    */
   static generateRandomString(length: number = 8): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -51,7 +52,7 @@ export class E2ETestData {
     return {
       name: `Test User ${E2ETestHelpers.generateRandomString(6)}`,
       email: E2ETestHelpers.generateRandomEmail(),
-      active: true
+      active: true,
     };
   }
 
@@ -60,7 +61,7 @@ export class E2ETestData {
       name: `Test Product ${E2ETestHelpers.generateRandomString(6)}`,
       description: 'Test product description',
       price: Math.floor(Math.random() * 1000) + 1,
-      category: 'Test Category'
+      category: 'Test Category',
     };
   }
 }
