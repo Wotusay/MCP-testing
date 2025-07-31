@@ -8,3 +8,10 @@ export * from './info-card';
 export * from './metrics-box';
 export * from './theme-toggle';
 export * from './user-form';
+
+// Dashboard components
+export * from './summary-card';
+export * from './performance-chart';
+export * from './funnel-chart';
+export * from './quick-overview';
+export * from './client-table';
