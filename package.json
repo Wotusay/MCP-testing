@@ -28,7 +28,11 @@
     "release:patch": "npm run release:prepare && npm run version:patch",
     "release:minor": "npm run release:prepare && npm run version:minor",
     "release:major": "npm run release:prepare && npm run version:major",
-    "generate:component": "node src/app/shared/templates/generate-component.js"
+    "generate:component": "node src/app/shared/templates/generate-component.js",
+    "security:audit": "npm audit --audit-level=high",
+    "security:audit-fix": "npm audit fix",
+    "security:check": "npm run security:audit && npm run test:ci && npm run lint",
+    "security:scan": "echo 'Running security scans...' && npm run security:audit && echo 'Security audit complete'"
   },
   "prettier": {
     "overrides": [
