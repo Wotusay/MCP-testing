@@ -8,7 +8,12 @@ export interface Client {
   company: string;
   email: string;
   phone?: string;
-  status: 'Interested' | 'Follow-up' | 'Converted' | 'Initial Contact' | 'Not Interested';
+  status:
+    | 'Interested'
+    | 'Follow-up'
+    | 'Converted'
+    | 'Initial Contact'
+    | 'Not Interested';
   last_contact: string;
   contact_method: 'Email' | 'Phone' | 'Meeting' | 'LinkedIn';
   revenue: number;
@@ -50,7 +55,11 @@ export interface FunnelData {
 
 export interface QuickMetric {
   id: string;
-  category: 'recent_outreach' | 'engagement_types' | 'today_schedule' | 'performance_metrics';
+  category:
+    | 'recent_outreach'
+    | 'engagement_types'
+    | 'today_schedule'
+    | 'performance_metrics';
   label: string;
   value: string;
   status?: 'success' | 'warning' | 'danger';
@@ -92,7 +101,12 @@ export interface ClientEntry {
   company: string;
   email: string;
   phone: string;
-  status: 'Interested' | 'Follow-up' | 'Converted' | 'Initial Contact' | 'Not Interested';
+  status:
+    | 'Interested'
+    | 'Follow-up'
+    | 'Converted'
+    | 'Initial Contact'
+    | 'Not Interested';
   lastContact: string;
   method: 'Email' | 'Phone' | 'Meeting' | 'LinkedIn';
   revenue: number;
@@ -102,7 +116,7 @@ export interface ClientEntry {
 export class DashboardDataTransformer {
   static summaryMetricToCard(metric: SummaryMetric): SummaryCard {
     const changeSign = metric.change_type === 'positive' ? '+' : '';
-    const changeText = metric.change_percentage 
+    const changeText = metric.change_percentage
       ? `${changeSign}${metric.change_percentage}% from last month`
       : 'No change data';
 
@@ -111,34 +125,36 @@ export class DashboardDataTransformer {
       value: metric.value,
       change: changeText,
       changeType: metric.change_type || 'positive',
-      icon: metric.icon_path || ''
+      icon: metric.icon_path || '',
     };
   }
 
-  static performanceDataToChart(data: PerformanceData[]): PerformanceChartData[] {
-    return data.map(item => ({
+  static performanceDataToChart(
+    data: PerformanceData[],
+  ): PerformanceChartData[] {
+    return data.map((item) => ({
       day: item.day_of_week,
       value: item.outreach_attempts,
-      secondaryValue: item.responses
+      secondaryValue: item.responses,
     }));
   }
 
   static funnelDataToChart(data: FunnelData[]): FunnelChartData[] {
     return data
       .sort((a, b) => a.stage_order - b.stage_order)
-      .map(item => ({
+      .map((item) => ({
         label: item.stage_label,
         value: item.stage_value,
         percentage: item.stage_percentage,
-        color: item.stage_color
+        color: item.stage_color,
       }));
   }
 
   static quickMetricsToOverview(metrics: QuickMetric[]): QuickOverviewMetric[] {
-    return metrics.map(metric => ({
+    return metrics.map((metric) => ({
       label: metric.label,
       value: metric.value,
-      status: metric.status
+      status: metric.status,
     }));
   }
 
@@ -152,7 +168,7 @@ export class DashboardDataTransformer {
       status: client.status,
       lastContact: this.formatLastContact(client.last_contact),
       method: client.contact_method,
-      revenue: client.revenue
+      revenue: client.revenue,
     };
   }
 

@@ -1,3 +1,7 @@
+// Example local environment file for development
+// Copy this file to environment.local.ts and add your actual Supabase credentials
+// This file is ignored by git for security
+
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',

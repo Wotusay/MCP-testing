@@ -1,14 +1,18 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Client } from '../../models/dashboard.models';
 
 export interface ClientFormData {
   name: string;
   company: string;
   email: string;
   phone?: string;
-  status: 'Interested' | 'Follow-up' | 'Converted' | 'Initial Contact' | 'Not Interested';
+  status:
+    | 'Interested'
+    | 'Follow-up'
+    | 'Converted'
+    | 'Initial Contact'
+    | 'Not Interested';
   contact_method: 'Email' | 'Phone' | 'Meeting' | 'LinkedIn';
   revenue: number;
 }
@@ -19,13 +23,15 @@ export interface ClientFormData {
   imports: [CommonModule, FormsModule],
   template: `
     <!-- Modal Backdrop -->
-    <div 
-      *ngIf="isOpen" 
+    <div
+      *ngIf="isOpen"
       class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
       (click)="onBackdropClick($event)"
     >
       <!-- Modal Container -->
-      <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3 shadow-lg rounded-md bg-white dark:bg-gray-800">
+      <div
+        class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3 shadow-lg rounded-md bg-white dark:bg-gray-800"
+      >
         <!-- Modal Header -->
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white">
@@ -37,8 +43,18 @@ export interface ClientFormData {
             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             aria-label="Close"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
             </svg>
           </button>
         </div>
@@ -47,7 +63,10 @@ export interface ClientFormData {
         <form (ngSubmit)="onSubmit()" #clientForm="ngForm" class="space-y-4">
           <!-- Name -->
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="name"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Name *
             </label>
             <input
@@ -61,7 +80,9 @@ export interface ClientFormData {
               placeholder="Client full name"
             />
             <div
-              *ngIf="clientForm.submitted && clientForm.controls['name']?.invalid"
+              *ngIf="
+                clientForm.submitted && clientForm.controls['name']?.invalid
+              "
               class="text-red-600 text-sm mt-1"
             >
               Name is required and must be at least 2 characters
@@ -70,7 +91,10 @@ export interface ClientFormData {
 
           <!-- Company -->
           <div>
-            <label for="company" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="company"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Company *
             </label>
             <input
@@ -83,7 +107,9 @@ export interface ClientFormData {
               placeholder="Company name"
             />
             <div
-              *ngIf="clientForm.submitted && clientForm.controls['company']?.invalid"
+              *ngIf="
+                clientForm.submitted && clientForm.controls['company']?.invalid
+              "
               class="text-red-600 text-sm mt-1"
             >
               Company is required
@@ -92,7 +118,10 @@ export interface ClientFormData {
 
           <!-- Email -->
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Email *
             </label>
             <input
@@ -106,7 +135,9 @@ export interface ClientFormData {
               placeholder="client@company.com"
             />
             <div
-              *ngIf="clientForm.submitted && clientForm.controls['email']?.invalid"
+              *ngIf="
+                clientForm.submitted && clientForm.controls['email']?.invalid
+              "
               class="text-red-600 text-sm mt-1"
             >
               Please enter a valid email address
@@ -115,7 +146,10 @@ export interface ClientFormData {
 
           <!-- Phone -->
           <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="phone"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Phone
             </label>
             <input
@@ -130,7 +164,10 @@ export interface ClientFormData {
 
           <!-- Status -->
           <div>
-            <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="status"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Status *
             </label>
             <select
@@ -150,7 +187,10 @@ export interface ClientFormData {
 
           <!-- Contact Method -->
           <div>
-            <label for="contact_method" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="contact_method"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Preferred Contact Method *
             </label>
             <select
@@ -169,7 +209,10 @@ export interface ClientFormData {
 
           <!-- Revenue -->
           <div>
-            <label for="revenue" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              for="revenue"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Expected Revenue ($)
             </label>
             <input
@@ -207,7 +250,9 @@ export interface ClientFormData {
             *ngIf="successMessage"
             class="mt-4 p-3 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 rounded-md"
           >
-            <p class="text-sm text-green-800 dark:text-green-200">{{ successMessage }}</p>
+            <p class="text-sm text-green-800 dark:text-green-200">
+              {{ successMessage }}
+            </p>
           </div>
 
           <!-- Error Message -->
@@ -215,7 +260,9 @@ export interface ClientFormData {
             *ngIf="errorMessage"
             class="mt-4 p-3 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-md"
           >
-            <p class="text-sm text-red-800 dark:text-red-200">{{ errorMessage }}</p>
+            <p class="text-sm text-red-800 dark:text-red-200">
+              {{ errorMessage }}
+            </p>
           </div>
         </form>
       </div>
@@ -274,7 +321,7 @@ export class ClientFormDialogComponent implements OnInit {
   showSuccess(message: string) {
     this.successMessage = message;
     this.errorMessage = '';
-    
+
     // Auto-close after success
     setTimeout(() => {
       this.resetForm();

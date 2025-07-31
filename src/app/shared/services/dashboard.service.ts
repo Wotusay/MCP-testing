@@ -13,11 +13,11 @@ import {
   FunnelChartData,
   QuickOverviewMetric,
   ClientEntry,
-  DashboardDataTransformer
+  DashboardDataTransformer,
 } from '../models/dashboard.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DashboardService {
   private supabase: SupabaseClient;
@@ -27,10 +27,7 @@ export class DashboardService {
   }
 
   private createSupabaseClient(): SupabaseClient {
-    return createClient(
-      environment.supabase.url,
-      environment.supabase.key
-    );
+    return createClient(environment.supabase.url, environment.supabase.key);
   }
 
   /**
@@ -38,23 +35,23 @@ export class DashboardService {
    */
   getSummaryCards(): Observable<SummaryCard[]> {
     return from(
-      this.supabase
-        .from('summary_metrics')
-        .select('*')
-        .order('metric_type')
+      this.supabase.from('summary_metrics').select('*').order('metric_type'),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
-          throw new Error(`Failed to fetch summary metrics: ${response.error.message}`);
+          throw new Error(
+            `Failed to fetch summary metrics: ${response.error.message}`,
+          );
         }
-        return (response.data as SummaryMetric[]).map(
-          metric => DashboardDataTransformer.summaryMetricToCard(metric)
+        return (response.data as SummaryMetric[]).map((metric) =>
+          DashboardDataTransformer.summaryMetricToCard(metric),
         );
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching summary cards:', error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -66,18 +63,23 @@ export class DashboardService {
       this.supabase
         .from('performance_data')
         .select('*')
-        .order('week_start_date', { ascending: true })
+        .order('week_start_date', { ascending: true }),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
-          throw new Error(`Failed to fetch performance data: ${response.error.message}`);
+          throw new Error(
+            `Failed to fetch performance data: ${response.error.message}`,
+          );
         }
-        return DashboardDataTransformer.performanceDataToChart(response.data as PerformanceData[]);
+        return DashboardDataTransformer.performanceDataToChart(
+          response.data as PerformanceData[],
+        );
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching performance data:', error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -89,42 +91,54 @@ export class DashboardService {
       this.supabase
         .from('funnel_data')
         .select('*')
-        .order('stage_order', { ascending: true })
+        .order('stage_order', { ascending: true }),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
-          throw new Error(`Failed to fetch funnel data: ${response.error.message}`);
+          throw new Error(
+            `Failed to fetch funnel data: ${response.error.message}`,
+          );
         }
-        return DashboardDataTransformer.funnelDataToChart(response.data as FunnelData[]);
+        return DashboardDataTransformer.funnelDataToChart(
+          response.data as FunnelData[],
+        );
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching funnel data:', error);
         throw error;
-      })
+      }),
     );
   }
 
   /**
    * Get quick metrics by category
    */
-  getQuickMetricsByCategory(category: string): Observable<QuickOverviewMetric[]> {
+  getQuickMetricsByCategory(
+    category: string,
+  ): Observable<QuickOverviewMetric[]> {
     return from(
       this.supabase
         .from('quick_metrics')
         .select('*')
         .eq('category', category)
-        .order('label')
+        .order('label'),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
-          throw new Error(`Failed to fetch quick metrics for ${category}: ${response.error.message}`);
+          throw new Error(
+            `Failed to fetch quick metrics for ${category}: ${response.error.message}`,
+          );
         }
-        return DashboardDataTransformer.quickMetricsToOverview(response.data as QuickMetric[]);
+        return DashboardDataTransformer.quickMetricsToOverview(
+          response.data as QuickMetric[],
+        );
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error(`Error fetching quick metrics for ${category}:`, error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -141,7 +155,7 @@ export class DashboardService {
       recentOutreach: this.getQuickMetricsByCategory('recent_outreach'),
       engagementTypes: this.getQuickMetricsByCategory('engagement_types'),
       todaySchedule: this.getQuickMetricsByCategory('today_schedule'),
-      performanceMetrics: this.getQuickMetricsByCategory('performance_metrics')
+      performanceMetrics: this.getQuickMetricsByCategory('performance_metrics'),
     });
   }
 
@@ -153,20 +167,21 @@ export class DashboardService {
       this.supabase
         .from('clients')
         .select('*')
-        .order('last_contact', { ascending: false })
+        .order('last_contact', { ascending: false }),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
           throw new Error(`Failed to fetch clients: ${response.error.message}`);
         }
-        return (response.data as Client[]).map(
-          client => DashboardDataTransformer.clientToEntry(client)
+        return (response.data as Client[]).map((client) =>
+          DashboardDataTransformer.clientToEntry(client),
         );
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error fetching clients:', error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -188,9 +203,9 @@ export class DashboardService {
       performanceData: this.getPerformanceData(),
       funnelData: this.getFunnelData(),
       quickOverview: this.getQuickOverviewData(),
-      clients: this.getClients()
+      clients: this.getClients(),
     }).pipe(
-      map(result => ({
+      map((result) => ({
         summaryCards: result.summaryCards,
         performanceData: result.performanceData,
         funnelData: result.funnelData,
@@ -198,32 +213,31 @@ export class DashboardService {
         engagementTypes: result.quickOverview.engagementTypes,
         todaySchedule: result.quickOverview.todaySchedule,
         performanceMetrics: result.quickOverview.performanceMetrics,
-        clients: result.clients
-      }))
+        clients: result.clients,
+      })),
     );
   }
 
   /**
    * Add a new client
    */
-  addClient(client: Omit<Client, 'id' | 'created_at' | 'updated_at'>): Observable<Client> {
+  addClient(
+    client: Omit<Client, 'id' | 'created_at' | 'updated_at'>,
+  ): Observable<Client> {
     return from(
-      this.supabase
-        .from('clients')
-        .insert(client)
-        .select()
-        .single()
+      this.supabase.from('clients').insert(client).select().single(),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
           throw new Error(`Failed to add client: ${response.error.message}`);
         }
         return response.data as Client;
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error adding client:', error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -237,18 +251,19 @@ export class DashboardService {
         .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
-        .single()
+        .single(),
     ).pipe(
-      map(response => {
+      map((response) => {
         if (response.error) {
           throw new Error(`Failed to update client: ${response.error.message}`);
         }
         return response.data as Client;
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error updating client:', error);
         throw error;
-      })
+      }),
     );
   }
 
@@ -256,21 +271,17 @@ export class DashboardService {
    * Delete a client
    */
   deleteClient(id: string): Observable<void> {
-    return from(
-      this.supabase
-        .from('clients')
-        .delete()
-        .eq('id', id)
-    ).pipe(
-      map(response => {
+    return from(this.supabase.from('clients').delete().eq('id', id)).pipe(
+      map((response) => {
         if (response.error) {
           throw new Error(`Failed to delete client: ${response.error.message}`);
         }
       }),
-      catchError(error => {
+      catchError((error) => {
+        // eslint-disable-next-line no-console
         console.error('Error deleting client:', error);
         throw error;
-      })
+      }),
     );
   }
 }

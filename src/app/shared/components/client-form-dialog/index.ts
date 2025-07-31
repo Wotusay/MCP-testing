@@ -1,1 +1,4 @@
-export { ClientFormDialogComponent, type ClientFormData } from './client-form-dialog.component';
+export {
+  ClientFormDialogComponent,
+  type ClientFormData,
+} from './client-form-dialog.component';

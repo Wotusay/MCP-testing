@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -16,7 +21,7 @@ import {
   PerformanceChartData,
   FunnelChartData,
   QuickOverviewMetric,
-  ClientEntry
+  ClientEntry,
 } from '../../shared/models';
 
 @Component({
@@ -56,12 +61,19 @@ import {
 
       <!-- Loading State -->
       <div *ngIf="isLoading" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-        <p class="mt-2 text-gray-600 dark:text-gray-400">Loading dashboard data...</p>
+        <div
+          class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"
+        ></div>
+        <p class="mt-2 text-gray-600 dark:text-gray-400">
+          Loading dashboard data...
+        </p>
       </div>
 
       <!-- Error State -->
-      <div *ngIf="errorMessage" class="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+      <div
+        *ngIf="errorMessage"
+        class="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+      >
         <div class="flex">
           <div class="ml-3">
             <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
@@ -157,6 +169,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isClientDialogOpen = false;
   isAddingClient = false;
 
+  // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
@@ -172,7 +185,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.dashboardService.getAllDashboardData()
+    this.dashboardService
+      .getAllDashboardData()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -187,10 +201,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
+          // eslint-disable-next-line no-console
           console.error('Failed to load dashboard data:', error);
-          this.errorMessage = error.message || 'An unexpected error occurred while loading dashboard data.';
+          this.errorMessage =
+            error.message ||
+            'An unexpected error occurred while loading dashboard data.';
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -215,28 +232,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       status: clientData.status,
       contact_method: clientData.contact_method,
       revenue: clientData.revenue,
-      last_contact: new Date().toISOString()
+      last_contact: new Date().toISOString(),
     };
 
-    this.dashboardService.addClient(newClient)
+    this.dashboardService
+      .addClient(newClient)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (addedClient) => {
-          console.log('Client added successfully:', addedClient);
-          
-          // Show success message and refresh data
+        next: () => {
+          // Client added successfully, refresh data
           this.loadDashboardData();
-          
+
           // The dialog will auto-close via the success message
           this.isAddingClient = false;
         },
         error: (error) => {
+          // eslint-disable-next-line no-console
           console.error('Failed to add client:', error);
           this.isAddingClient = false;
-          
+
           // Show error message in dialog (if you have access to dialog component)
           // For now, we'll just log the error
-        }
+        },
       });
   }
 }
