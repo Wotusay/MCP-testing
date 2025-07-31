@@ -10,3 +10,4 @@ export * from './state-management.service';
 export * from './user.service';
 export * from './theme.service';
 export * from './performance-monitoring.service';
+export * from './dashboard.service';
