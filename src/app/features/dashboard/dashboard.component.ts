@@ -118,32 +118,50 @@ interface ClientEntry {
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Weekly Outreach Performance
           </h3>
-          <div class="h-64 flex items-end justify-between space-x-2">
+          <div class="h-64 flex items-end justify-between space-x-2 px-4">
             <div
               *ngFor="let item of performanceData"
-              class="flex flex-col items-center space-y-2 flex-1"
+              class="flex flex-col items-center space-y-2 flex-1 min-w-0"
             >
               <div
-                class="flex flex-col items-center space-y-1 h-48 justify-end"
+                class="flex flex-col items-center space-y-1 h-48 justify-end w-full"
               >
-                <!-- Primary bar -->
+                <!-- Primary bar (Outreach Attempts) -->
                 <div
-                  class="w-full bg-primary-500 rounded-t"
-                  [style.height.%]="(item.value / maxPerformanceValue) * 80"
-                  [title]="'Primary: ' + item.value"
+                  class="w-8 bg-primary-500 rounded-t transition-all duration-300 hover:bg-primary-600"
+                  [style.height.px]="(item.value / maxPerformanceValue) * 160"
+                  [title]="'Outreach Attempts: ' + item.value"
                 ></div>
-                <!-- Secondary bar -->
+                <!-- Secondary bar (Responses) -->
                 <div
-                  class="w-full bg-success-400 rounded-t"
-                  [style.height.%]="
-                    (item.secondaryValue / maxPerformanceValue) * 80
+                  class="w-8 bg-success-500 rounded-t transition-all duration-300 hover:bg-success-600 -mt-1"
+                  [style.height.px]="
+                    (item.secondaryValue / maxPerformanceValue) * 160
                   "
-                  [title]="'Secondary: ' + item.secondaryValue"
+                  [title]="'Responses: ' + item.secondaryValue"
                 ></div>
               </div>
-              <span class="text-xs text-gray-600 dark:text-gray-400">{{
-                item.day
-              }}</span>
+              <span
+                class="text-xs text-gray-600 dark:text-gray-400 font-medium"
+                >{{ item.day }}</span
+              >
+            </div>
+          </div>
+          <!-- Chart Legend -->
+          <div
+            class="flex justify-center space-x-6 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-primary-500 rounded"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400"
+                >Outreach Attempts</span
+              >
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-success-500 rounded"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400"
+                >Responses</span
+              >
             </div>
           </div>
         </div>
@@ -505,13 +523,13 @@ export class DashboardComponent {
 
   // Performance chart data
   performanceData: PerformanceData[] = [
-    { day: 'Mon', value: 45, secondaryValue: 12 },
-    { day: 'Tue', value: 52, secondaryValue: 18 },
-    { day: 'Wed', value: 48, secondaryValue: 15 },
-    { day: 'Thu', value: 61, secondaryValue: 22 },
-    { day: 'Fri', value: 55, secondaryValue: 19 },
-    { day: 'Sat', value: 38, secondaryValue: 8 },
-    { day: 'Sun', value: 42, secondaryValue: 11 },
+    { day: 'Mon', value: 85, secondaryValue: 42 },
+    { day: 'Tue', value: 92, secondaryValue: 58 },
+    { day: 'Wed', value: 78, secondaryValue: 35 },
+    { day: 'Thu', value: 100, secondaryValue: 67 },
+    { day: 'Fri', value: 88, secondaryValue: 51 },
+    { day: 'Sat', value: 45, secondaryValue: 18 },
+    { day: 'Sun', value: 52, secondaryValue: 22 },
   ];
 
   get maxPerformanceValue(): number {
