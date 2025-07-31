@@ -10,3 +10,7 @@ export * from './state-management.service';
 export * from './user.service';
 export * from './theme.service';
 export * from './performance-monitoring.service';
+
+// Database services
+export * from './mcp.service';
+export * from './dashboard-data.service';
