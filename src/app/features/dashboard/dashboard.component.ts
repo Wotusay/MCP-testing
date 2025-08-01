@@ -139,6 +139,8 @@ import {
           [clients]="clientEntries"
           title="Client Entries"
           subtitle="Manage and track all your client interactions"
+          (editClient)="onEditClient($event)"
+          (deleteClient)="onDeleteClient($event)"
         ></app-client-table>
       </div>
 
@@ -146,10 +148,69 @@ import {
       <app-client-form-dialog
         [isOpen]="isClientDialogOpen"
         [isSubmitting]="isAddingClient"
-        (clientSubmit)="onAddClient($event)"
+        [title]="isEditingClient ? 'Edit Client' : 'Add New Client'"
+        [initialData]="editingClientData"
+        (clientSubmit)="onUpdateClient($event)"
         (dialogCancel)="closeClientDialog()"
         (dialogClose)="closeClientDialog()"
       ></app-client-form-dialog>
+
+      <!-- Delete Confirmation Dialog -->
+      <div
+        *ngIf="isDeleteConfirmOpen"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+        (click)="cancelDeleteClient()"
+      >
+        <div
+          class="relative top-20 mx-auto p-5 border w-11/12 md:w-96 shadow-lg rounded-md bg-white dark:bg-gray-800"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="mt-3 text-center">
+            <div
+              class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20"
+            >
+              <svg
+                class="h-6 w-6 text-red-600 dark:text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mt-4">
+              Delete Client
+            </h3>
+            <div class="mt-2 px-7 py-3">
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Are you sure you want to delete
+                <strong>{{ clientToDelete?.name }}</strong> from
+                <strong>{{ clientToDelete?.company }}</strong
+                >? This action cannot be undone.
+              </p>
+            </div>
+            <div class="items-center px-4 py-3">
+              <button
+                (click)="confirmDeleteClient()"
+                class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
+              >
+                Delete
+              </button>
+              <button
+                (click)="cancelDeleteClient()"
+                class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-400 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `,
 })
@@ -171,6 +232,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   errorMessage = '';
   isClientDialogOpen = false;
   isAddingClient = false;
+  isEditingClient = false;
+  editingClientData: Partial<ClientFormData> = {};
+  isDeleteConfirmOpen = false;
+  clientToDelete: ClientEntry | null = null;
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(
@@ -230,6 +295,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   closeClientDialog(): void {
     this.isClientDialogOpen = false;
     this.isAddingClient = false;
+    this.isEditingClient = false;
+    this.editingClientData = {};
   }
 
   onAddClient(clientData: ClientFormData): void {
@@ -267,5 +334,103 @@ export class DashboardComponent implements OnInit, OnDestroy {
           // For now, we'll just log the error
         },
       });
+  }
+
+  onEditClient(client: ClientEntry): void {
+    this.isEditingClient = true;
+    this.editingClientData = {
+      name: client.name,
+      company: client.company,
+      email: client.email,
+      phone: client.phone,
+      status: client.status,
+      contact_method: client.method,
+      revenue: client.revenue,
+    };
+    this.isClientDialogOpen = true;
+  }
+
+  onUpdateClient(clientData: ClientFormData): void {
+    if (!this.isEditingClient) {
+      this.onAddClient(clientData);
+      return;
+    }
+
+    this.isAddingClient = true; // Reuse the same loading state
+
+    // Find the client being edited
+    const clientToUpdate = this.clientEntries.find(
+      (c) =>
+        c.name === this.editingClientData.name &&
+        c.company === this.editingClientData.company,
+    );
+
+    if (!clientToUpdate) {
+      // eslint-disable-next-line no-console
+      console.error('Client to update not found');
+      this.isAddingClient = false;
+      return;
+    }
+
+    // Transform form data to match Client interface
+    const updates = {
+      name: clientData.name,
+      company: clientData.company,
+      email: clientData.email,
+      phone: clientData.phone || '',
+      status: clientData.status,
+      contact_method: clientData.contact_method,
+      revenue: clientData.revenue,
+      last_contact: new Date().toISOString(),
+    };
+
+    this.dashboardService
+      .updateClient(clientToUpdate.id, updates)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Client updated successfully, refresh data
+          this.loadDashboardData();
+          this.isAddingClient = false;
+          this.isEditingClient = false;
+          this.editingClientData = {};
+        },
+        error: (error) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to update client:', error);
+          this.isAddingClient = false;
+        },
+      });
+  }
+
+  onDeleteClient(client: ClientEntry): void {
+    this.clientToDelete = client;
+    this.isDeleteConfirmOpen = true;
+  }
+
+  confirmDeleteClient(): void {
+    if (!this.clientToDelete) return;
+
+    this.dashboardService
+      .deleteClient(this.clientToDelete.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Client deleted successfully, refresh data
+          this.loadDashboardData();
+          this.isDeleteConfirmOpen = false;
+          this.clientToDelete = null;
+        },
+        error: (error) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to delete client:', error);
+          // Show error message
+        },
+      });
+  }
+
+  cancelDeleteClient(): void {
+    this.isDeleteConfirmOpen = false;
+    this.clientToDelete = null;
   }
 }
