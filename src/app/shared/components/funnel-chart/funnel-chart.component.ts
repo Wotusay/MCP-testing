@@ -15,33 +15,58 @@ import { FunnelData } from '../../testing/mock-data';
         {{ title }}
       </h3>
       <div class="flex items-center justify-center h-64">
-        <div class="relative w-48 h-48">
+        <div class="w-48 h-48 relative">
           <svg class="w-full h-full" viewBox="0 0 200 200">
             <g *ngFor="let segment of data; let i = index">
               <path
                 [attr.d]="getArcPath(segment, i)"
                 [attr.fill]="segment.color"
-                class="hover:opacity-80 transition-opacity cursor-pointer"
+                class="hover:opacity-80 transition-all duration-200 cursor-pointer"
                 [attr.stroke]="'white'"
                 [attr.stroke-width]="2"
+                (mouseenter)="onSegmentHover(i)"
+                (mouseleave)="onSegmentLeave()"
               ></path>
+              <!-- White overlay with percentage for hovered segment -->
+              <g *ngIf="hoveredSegmentIndex === i">
+                <circle
+                  [attr.cx]="getSegmentCenter(segment, i).x"
+                  [attr.cy]="getSegmentCenter(segment, i).y"
+                  r="20"
+                  fill="white"
+                  fill-opacity="0.9"
+                  stroke="#e5e7eb"
+                  stroke-width="1"
+                ></circle>
+                <text
+                  [attr.x]="getSegmentCenter(segment, i).x"
+                  [attr.y]="getSegmentCenter(segment, i).y + 2"
+                  text-anchor="middle"
+                  class="text-xs font-semibold fill-gray-900"
+                  font-size="10"
+                >
+                  {{ segment.percentage }}%
+                </text>
+              </g>
             </g>
           </svg>
-          <!-- Legend -->
-          <div class="absolute -right-6 top-0 space-y-2">
-            <div
-              *ngFor="let segment of data"
-              class="flex items-center space-x-2"
-            >
-              <div
-                class="w-3 h-3 rounded-full"
-                [style.background-color]="segment.color"
-              ></div>
-              <span class="text-xs text-gray-600 dark:text-gray-400"
-                >{{ segment.label }} {{ segment.percentage }}%</span
-              >
-            </div>
-          </div>
+        </div>
+      </div>
+      <!-- Legend moved to bottom with improved responsiveness -->
+      <div
+        class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700"
+      >
+        <div
+          *ngFor="let segment of data"
+          class="flex items-center space-x-2 min-w-0"
+        >
+          <div
+            class="w-3 h-3 rounded-full flex-shrink-0"
+            [style.background-color]="segment.color"
+          ></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400 truncate">{{
+            segment.label
+          }}</span>
         </div>
       </div>
     </div>
@@ -51,10 +76,24 @@ export class FunnelChartComponent {
   @Input() title: string = 'Client Journey Funnel';
   @Input() data: FunnelData[] = [];
 
+  // Hover state tracking
+  hoveredSegmentIndex: number | null = null;
+
+  onSegmentHover(index: number): void {
+    this.hoveredSegmentIndex = index;
+  }
+
+  onSegmentLeave(): void {
+    this.hoveredSegmentIndex = null;
+  }
+
   getArcPath(segment: FunnelData, index: number): string {
     const centerX = 100;
     const centerY = 100;
-    const radius = 80;
+    // Make radius larger when hovered
+    const baseRadius = 80;
+    const radius =
+      this.hoveredSegmentIndex === index ? baseRadius + 8 : baseRadius;
     const total = this.data.reduce((sum, item) => sum + item.value, 0);
 
     if (total === 0) return '';
@@ -90,5 +129,30 @@ export class FunnelChartComponent {
       endY,
       'z',
     ].join(' ');
+  }
+
+  getSegmentCenter(
+    segment: FunnelData,
+    index: number,
+  ): { x: number; y: number } {
+    const centerX = 100;
+    const centerY = 100;
+    const radius = 50; // Position text at 50% of radius
+    const total = this.data.reduce((sum, item) => sum + item.value, 0);
+
+    if (total === 0) return { x: centerX, y: centerY };
+
+    let startAngle = 0;
+    for (let i = 0; i < index; i++) {
+      startAngle += (this.data[i].value / total) * 2 * Math.PI;
+    }
+
+    const segmentAngle = (segment.value / total) * 2 * Math.PI;
+    const midAngle = startAngle + segmentAngle / 2 - Math.PI / 2;
+
+    const x = centerX + radius * Math.cos(midAngle);
+    const y = centerY + radius * Math.sin(midAngle);
+
+    return { x, y };
   }
 }
