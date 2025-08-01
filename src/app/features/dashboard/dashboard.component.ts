@@ -39,9 +39,9 @@ import {
     ClientFormDialogComponent,
   ],
   template: `
-    <div class="space-y-6">
+    <div class="space-y-8">
       <!-- Header -->
-      <div class="mb-6">
+      <div class="mb-8">
         <div class="flex justify-between items-center">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
@@ -73,7 +73,7 @@ import {
       <!-- Error State -->
       <div
         *ngIf="errorMessage"
-        class="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+        class="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-8"
       >
         <div class="flex">
           <div class="ml-3">
@@ -98,7 +98,7 @@ import {
       <!-- Dashboard Content -->
       <div *ngIf="!isLoading && !errorMessage">
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <app-summary-card
             *ngFor="let card of summaryCards"
             [card]="card"
@@ -106,7 +106,7 @@ import {
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <!-- Weekly Outreach Performance -->
           <app-performance-chart
             [data]="performanceData"
@@ -123,14 +123,16 @@ import {
         </div>
 
         <!-- Quick Overview -->
-        <app-quick-overview
-          [recentOutreach]="recentOutreach"
-          [engagementTypes]="engagementTypes"
-          [todaySchedule]="todaySchedule"
-          [performanceMetrics]="performanceMetrics"
-          title="Quick Overview"
-          subtitle="Key metrics and recent activity summary"
-        ></app-quick-overview>
+        <div class="mb-8">
+          <app-quick-overview
+            [recentOutreach]="recentOutreach"
+            [engagementTypes]="engagementTypes"
+            [todaySchedule]="todaySchedule"
+            [performanceMetrics]="performanceMetrics"
+            title="Quick Overview"
+            subtitle="Key metrics and recent activity summary"
+          ></app-quick-overview>
+        </div>
 
         <!-- Client Entries Table -->
         <app-client-table
