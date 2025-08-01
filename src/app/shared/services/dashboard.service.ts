@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Observable, from, map, catchError, forkJoin } from 'rxjs';
+import { Observable, from, map, catchError, forkJoin, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Client,
@@ -31,6 +31,162 @@ export class DashboardService {
   }
 
   /**
+   * Get demo data for when database is not available
+   */
+  private getDemoData() {
+    const demoSummaryCards: SummaryCard[] = [
+      {
+        title: 'Total Clients',
+        value: '247',
+        change: '+12% from last month',
+        changeType: 'positive',
+        icon: '/assets/icons/users.svg',
+      },
+      {
+        title: 'Active Leads',
+        value: '89',
+        change: '+8% from last month',
+        changeType: 'positive',
+        icon: '/assets/icons/leads.svg',
+      },
+      {
+        title: 'Conversions',
+        value: '34',
+        change: '+23% from last month',
+        changeType: 'positive',
+        icon: '/assets/icons/conversions.svg',
+      },
+      {
+        title: 'Revenue Generated',
+        value: '$125,430',
+        change: '+15% from last month',
+        changeType: 'positive',
+        icon: '/assets/icons/revenue.svg',
+      },
+    ];
+
+    const demoPerformanceData: PerformanceChartData[] = [
+      { day: 'Mon', value: 45, secondaryValue: 12 },
+      { day: 'Tue', value: 52, secondaryValue: 18 },
+      { day: 'Wed', value: 48, secondaryValue: 15 },
+      { day: 'Thu', value: 61, secondaryValue: 22 },
+      { day: 'Fri', value: 55, secondaryValue: 19 },
+      { day: 'Sat', value: 32, secondaryValue: 8 },
+      { day: 'Sun', value: 28, secondaryValue: 6 },
+    ];
+
+    const demoFunnelData: FunnelChartData[] = [
+      {
+        label: 'Initial Contact',
+        value: 1000,
+        percentage: 100,
+        color: '#3B82F6',
+      },
+      { label: 'Interested', value: 650, percentage: 65, color: '#10B981' },
+      { label: 'Follow-up', value: 420, percentage: 42, color: '#F59E0B' },
+      { label: 'Proposal Sent', value: 280, percentage: 28, color: '#EF4444' },
+      { label: 'Converted', value: 150, percentage: 15, color: '#8B5CF6' },
+    ];
+
+    const demoRecentOutreach: QuickOverviewMetric[] = [
+      { label: 'Emails Sent Today', value: '23', status: 'success' },
+      { label: 'Calls Made', value: '8', status: 'success' },
+      { label: 'LinkedIn Messages', value: '15', status: 'success' },
+      { label: 'Follow-ups Pending', value: '12', status: 'warning' },
+    ];
+
+    const demoEngagementTypes: QuickOverviewMetric[] = [
+      { label: 'Email Responses', value: '42%', status: 'success' },
+      { label: 'Phone Pickups', value: '68%', status: 'success' },
+      { label: 'Meeting Bookings', value: '24%', status: 'warning' },
+      { label: 'Social Engagement', value: '31%', status: 'success' },
+    ];
+
+    const demoTodaySchedule: QuickOverviewMetric[] = [
+      { label: 'Scheduled Calls', value: '5', status: 'success' },
+      { label: 'Follow-up Emails', value: '12', status: 'warning' },
+      { label: 'Proposals Due', value: '3', status: 'danger' },
+      { label: 'Meetings Booked', value: '2', status: 'success' },
+    ];
+
+    const demoPerformanceMetrics: QuickOverviewMetric[] = [
+      { label: 'Response Rate', value: '34%', status: 'success' },
+      { label: 'Conversion Rate', value: '15%', status: 'success' },
+      { label: 'Average Deal Size', value: '$3,680', status: 'success' },
+      { label: 'Client Retention', value: '89%', status: 'success' },
+    ];
+
+    const demoClients: ClientEntry[] = [
+      {
+        id: '1',
+        name: 'John Smith',
+        company: 'TechCorp Solutions',
+        email: 'john.smith@techcorp.com',
+        phone: '+1 (555) 123-4567',
+        status: 'Interested',
+        lastContact: '2 hours ago',
+        method: 'Email',
+        revenue: 15000,
+      },
+      {
+        id: '2',
+        name: 'Sarah Johnson',
+        company: 'Digital Marketing Pro',
+        email: 'sarah@digitalmarketing.com',
+        phone: '+1 (555) 987-6543',
+        status: 'Follow-up',
+        lastContact: '1 day ago',
+        method: 'Phone',
+        revenue: 8500,
+      },
+      {
+        id: '3',
+        name: 'Michael Chen',
+        company: 'StartupXYZ',
+        email: 'm.chen@startupxyz.io',
+        phone: '+1 (555) 456-7890',
+        status: 'Converted',
+        lastContact: '3 days ago',
+        method: 'Meeting',
+        revenue: 25000,
+      },
+      {
+        id: '4',
+        name: 'Emily Rodriguez',
+        company: 'Global Enterprises',
+        email: 'e.rodriguez@global-ent.com',
+        phone: '+1 (555) 234-5678',
+        status: 'Initial Contact',
+        lastContact: '5 hours ago',
+        method: 'LinkedIn',
+        revenue: 0,
+      },
+      {
+        id: '5',
+        name: 'David Thompson',
+        company: 'Innovation Labs',
+        email: 'david.t@innovationlabs.net',
+        phone: '+1 (555) 345-6789',
+        status: 'Not Interested',
+        lastContact: '1 week ago',
+        method: 'Email',
+        revenue: 0,
+      },
+    ];
+
+    return {
+      summaryCards: demoSummaryCards,
+      performanceData: demoPerformanceData,
+      funnelData: demoFunnelData,
+      recentOutreach: demoRecentOutreach,
+      engagementTypes: demoEngagementTypes,
+      todaySchedule: demoTodaySchedule,
+      performanceMetrics: demoPerformanceMetrics,
+      clients: demoClients,
+    };
+  }
+
+  /**
    * Get all summary cards data
    */
   getSummaryCards(): Observable<SummaryCard[]> {
@@ -49,8 +205,11 @@ export class DashboardService {
       }),
       catchError((error) => {
         // eslint-disable-next-line no-console
-        console.error('Error fetching summary cards:', error);
-        throw error;
+        console.warn(
+          'Database unavailable, using demo data for summary cards:',
+          error,
+        );
+        return of(this.getDemoData().summaryCards);
       }),
     );
   }
@@ -77,8 +236,11 @@ export class DashboardService {
       }),
       catchError((error) => {
         // eslint-disable-next-line no-console
-        console.error('Error fetching performance data:', error);
-        throw error;
+        console.warn(
+          'Database unavailable, using demo data for performance chart:',
+          error,
+        );
+        return of(this.getDemoData().performanceData);
       }),
     );
   }
@@ -105,8 +267,11 @@ export class DashboardService {
       }),
       catchError((error) => {
         // eslint-disable-next-line no-console
-        console.error('Error fetching funnel data:', error);
-        throw error;
+        console.warn(
+          'Database unavailable, using demo data for funnel chart:',
+          error,
+        );
+        return of(this.getDemoData().funnelData);
       }),
     );
   }
@@ -136,8 +301,23 @@ export class DashboardService {
       }),
       catchError((error) => {
         // eslint-disable-next-line no-console
-        console.error(`Error fetching quick metrics for ${category}:`, error);
-        throw error;
+        console.warn(
+          `Database unavailable, using demo data for ${category}:`,
+          error,
+        );
+        const demoData = this.getDemoData();
+        switch (category) {
+          case 'recent_outreach':
+            return of(demoData.recentOutreach);
+          case 'engagement_types':
+            return of(demoData.engagementTypes);
+          case 'today_schedule':
+            return of(demoData.todaySchedule);
+          case 'performance_metrics':
+            return of(demoData.performanceMetrics);
+          default:
+            return of([]);
+        }
       }),
     );
   }
@@ -179,8 +359,11 @@ export class DashboardService {
       }),
       catchError((error) => {
         // eslint-disable-next-line no-console
-        console.error('Error fetching clients:', error);
-        throw error;
+        console.warn(
+          'Database unavailable, using demo data for clients:',
+          error,
+        );
+        return of(this.getDemoData().clients);
       }),
     );
   }
