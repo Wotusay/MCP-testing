@@ -123,14 +123,16 @@ import {
         </div>
 
         <!-- Quick Overview -->
-        <app-quick-overview
-          [recentOutreach]="recentOutreach"
-          [engagementTypes]="engagementTypes"
-          [todaySchedule]="todaySchedule"
-          [performanceMetrics]="performanceMetrics"
-          title="Quick Overview"
-          subtitle="Key metrics and recent activity summary"
-        ></app-quick-overview>
+        <div class="mb-8">
+          <app-quick-overview
+            [recentOutreach]="recentOutreach"
+            [engagementTypes]="engagementTypes"
+            [todaySchedule]="todaySchedule"
+            [performanceMetrics]="performanceMetrics"
+            title="Quick Overview"
+            subtitle="Key metrics and recent activity summary"
+          ></app-quick-overview>
+        </div>
 
         <!-- Client Entries Table -->
         <app-client-table
