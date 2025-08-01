@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -170,7 +171,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isAddingClient = false;
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    private dashboardService: DashboardService,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -199,6 +205,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.performanceMetrics = data.performanceMetrics;
           this.clientEntries = data.clients;
           this.isLoading = false;
+          // Trigger change detection for OnPush strategy
+          this.cdr.markForCheck();
         },
         error: (error) => {
           // eslint-disable-next-line no-console
@@ -207,6 +215,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             error.message ||
             'An unexpected error occurred while loading dashboard data.';
           this.isLoading = false;
+          // Trigger change detection for OnPush strategy
+          this.cdr.markForCheck();
         },
       });
   }
