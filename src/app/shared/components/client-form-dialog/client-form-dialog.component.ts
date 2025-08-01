@@ -241,7 +241,15 @@ export interface ClientFormData {
               [disabled]="isSubmitting"
               class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {{ isSubmitting ? 'Adding...' : 'Add Client' }}
+              {{
+                isSubmitting
+                  ? title.includes('Edit')
+                    ? 'Updating...'
+                    : 'Adding...'
+                  : title.includes('Edit')
+                    ? 'Update Client'
+                    : 'Add Client'
+              }}
             </button>
           </div>
 
@@ -294,7 +302,9 @@ export class ClientFormDialogComponent implements OnInit {
 
   ngOnInit() {
     // Initialize form with any provided data
-    this.formData = { ...this.formData, ...this.initialData };
+    if (this.initialData && Object.keys(this.initialData).length > 0) {
+      this.formData = { ...this.formData, ...this.initialData };
+    }
   }
 
   onSubmit() {
@@ -341,15 +351,22 @@ export class ClientFormDialogComponent implements OnInit {
   }
 
   private resetForm() {
-    this.formData = {
+    const defaultFormData = {
       name: '',
       company: '',
       email: '',
       phone: '',
-      status: 'Initial Contact',
-      contact_method: 'Email',
+      status: 'Initial Contact' as const,
+      contact_method: 'Email' as const,
       revenue: 0,
     };
+
+    // If we have initial data, keep it for edit mode, otherwise use defaults
+    if (this.initialData && Object.keys(this.initialData).length > 0) {
+      this.formData = { ...defaultFormData, ...this.initialData };
+    } else {
+      this.formData = defaultFormData;
+    }
   }
 
   private isFormValid(): boolean {

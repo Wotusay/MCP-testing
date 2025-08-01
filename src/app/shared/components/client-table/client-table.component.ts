@@ -1,4 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClientEntry } from '../../testing/mock-data';
 
@@ -129,15 +136,82 @@ import { ClientEntry } from '../../testing/mock-data';
                 {{ formatCurrency(client.revenue) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <button
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M12 6a1 1 0 110-2 1 1 0 010 2zM12 13a1 1 0 110-2 1 1 0 010 2zM12 20a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
+                <div class="relative inline-block text-left">
+                  <button
+                    (click)="toggleDropdown(client.id)"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
+                    [attr.aria-expanded]="activeDropdown === client.id"
+                    aria-haspopup="true"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 6a1 1 0 110-2 1 1 0 010 2zM12 13a1 1 0 110-2 1 1 0 010 2zM12 20a1 1 0 110-2 1 1 0 010 2z"
+                      />
+                    </svg>
+                  </button>
+
+                  <!-- Dropdown Menu -->
+                  <div
+                    *ngIf="activeDropdown === client.id"
+                    class="absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    [attr.aria-labelledby]="'dropdown-button-' + client.id"
+                  >
+                    <div class="py-1" role="none">
+                      <button
+                        (click)="onEditClient(client)"
+                        class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                      >
+                        <div class="flex items-center">
+                          <svg
+                            class="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
+                          Edit
+                        </div>
+                      </button>
+                      <button
+                        (click)="onDeleteClient(client)"
+                        class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:bg-red-50 dark:focus:bg-red-900/20"
+                        role="menuitem"
+                        tabindex="-1"
+                      >
+                        <div class="flex items-center">
+                          <svg
+                            class="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                          Delete
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -151,6 +225,11 @@ export class ClientTableComponent {
   @Input() subtitle: string = 'Manage and track all your client interactions';
   @Input() exportButtonText: string = 'Export Data';
   @Input() clients: ClientEntry[] = [];
+
+  @Output() editClient = new EventEmitter<ClientEntry>();
+  @Output() deleteClient = new EventEmitter<ClientEntry>();
+
+  activeDropdown: string | null = null;
 
   getInitials(name: string): string {
     return name
@@ -182,5 +261,34 @@ export class ClientTableComponent {
   formatCurrency(amount: number): string {
     if (amount === 0) return '$0';
     return `$${amount.toLocaleString()}`;
+  }
+
+  toggleDropdown(clientId: string): void {
+    this.activeDropdown = this.activeDropdown === clientId ? null : clientId;
+  }
+
+  onEditClient(client: ClientEntry): void {
+    this.activeDropdown = null;
+    this.editClient.emit(client);
+  }
+
+  onDeleteClient(client: ClientEntry): void {
+    this.activeDropdown = null;
+    this.deleteClient.emit(client);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative.inline-block.text-left')) {
+      this.activeDropdown = null;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    // Close dropdown when pressing Escape
+    this.activeDropdown = null;
   }
 }
