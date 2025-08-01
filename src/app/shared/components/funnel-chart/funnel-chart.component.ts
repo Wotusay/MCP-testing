@@ -28,7 +28,10 @@ import { FunnelData } from '../../testing/mock-data';
                 (mouseleave)="onSegmentLeave()"
               ></path>
               <!-- White overlay with percentage for hovered segment -->
-              <g *ngIf="hoveredSegmentIndex === i">
+              <g
+                *ngIf="hoveredSegmentIndex === i"
+                style="pointer-events: none;"
+              >
                 <circle
                   [attr.cx]="getSegmentCenter(segment, i).x"
                   [attr.cy]="getSegmentCenter(segment, i).y"
