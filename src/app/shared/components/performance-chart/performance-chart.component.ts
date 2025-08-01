@@ -151,10 +151,22 @@ export class PerformanceChartComponent {
       .closest('.bg-white, .dark\\:bg-gray-800')
       ?.getBoundingClientRect();
 
-    if (containerRect) {
+    if (containerRect && this.tooltip.data) {
+      // Calculate the height of the blue bar based on the data
+      const primaryValue = this.tooltip.data.primaryValue;
+      const blueBarHeight = (primaryValue / this.maxValue) * 160;
+
+      // The bar container has h-48 (192px) with justify-end, so bars start from bottom
+      // The blue bar's top position within the bar container is:
+      const blueBarTopOffset = 192 - blueBarHeight;
+
+      // Get the bar container's position within the chart component
+      const barContainerTop = rect.top - containerRect.top;
+
+      // Position tooltip at the top of the blue bar
       this.tooltip.position = {
         x: rect.left + rect.width / 2 - containerRect.left,
-        y: rect.top - containerRect.top,
+        y: barContainerTop + blueBarTopOffset,
       };
     }
   }
