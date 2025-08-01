@@ -26,50 +26,115 @@ export interface TooltipData {
   template: `
     <div
       *ngIf="isVisible && data"
-      class="chart-tooltip absolute z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg p-3 pointer-events-none"
+      class="chart-tooltip absolute z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg pointer-events-none"
+      [class.compact]="compact"
+      [class.p-2]="compact"
+      [class.p-3]="!compact"
       [style.left.px]="position.x"
       [style.top.px]="position.y"
     >
       <!-- Day header -->
-      <div class="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+      <div
+        class="text-sm font-semibold text-gray-900 dark:text-white"
+        [class.mb-2]="!compact"
+        [class.mb-1]="compact"
+      >
         {{ data.day }}
       </div>
 
       <!-- Primary value -->
-      <div class="flex items-center space-x-2 mb-1">
-        <div class="w-3 h-3 bg-primary-500 rounded"></div>
-        <span class="text-sm text-gray-700 dark:text-gray-300">
+      <div
+        class="flex items-center mb-1"
+        [class.space-x-2]="!compact"
+        [class.space-x-1]="compact"
+      >
+        <div
+          class="bg-primary-500 rounded"
+          [class.w-3]="!compact"
+          [class.h-3]="!compact"
+          [class.w-2]="compact"
+          [class.h-2]="compact"
+        ></div>
+        <span
+          class="text-gray-700 dark:text-gray-300"
+          [class.text-sm]="!compact"
+          [class.text-xs]="compact"
+        >
           {{ data.primaryLabel }}:
         </span>
-        <span class="text-sm font-medium text-gray-900 dark:text-white">
+        <span
+          class="font-medium text-gray-900 dark:text-white"
+          [class.text-sm]="!compact"
+          [class.text-xs]="compact"
+        >
           {{ data.primaryValue }}
         </span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">
+        <span
+          class="text-gray-500 dark:text-gray-400"
+          [class.text-xs]="!compact"
+          [class.text-2xs]="compact"
+        >
           ({{ data.primaryPercentage }}%)
         </span>
       </div>
 
       <!-- Secondary value -->
-      <div class="flex items-center space-x-2 mb-2">
-        <div class="w-3 h-3 bg-success-500 rounded"></div>
-        <span class="text-sm text-gray-700 dark:text-gray-300">
+      <div
+        class="flex items-center"
+        [class.space-x-2]="!compact"
+        [class.space-x-1]="compact"
+        [class.mb-2]="!compact"
+        [class.mb-1]="compact"
+      >
+        <div
+          class="bg-success-500 rounded"
+          [class.w-3]="!compact"
+          [class.h-3]="!compact"
+          [class.w-2]="compact"
+          [class.h-2]="compact"
+        ></div>
+        <span
+          class="text-gray-700 dark:text-gray-300"
+          [class.text-sm]="!compact"
+          [class.text-xs]="compact"
+        >
           {{ data.secondaryLabel }}:
         </span>
-        <span class="text-sm font-medium text-gray-900 dark:text-white">
+        <span
+          class="font-medium text-gray-900 dark:text-white"
+          [class.text-sm]="!compact"
+          [class.text-xs]="compact"
+        >
           {{ data.secondaryValue }}
         </span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">
+        <span
+          class="text-gray-500 dark:text-gray-400"
+          [class.text-xs]="!compact"
+          [class.text-2xs]="compact"
+        >
           ({{ data.secondaryPercentage }}%)
         </span>
       </div>
 
       <!-- Total -->
-      <div class="pt-2 border-t border-gray-200 dark:border-gray-600">
+      <div
+        class="border-t border-gray-200 dark:border-gray-600"
+        [class.pt-2]="!compact"
+        [class.pt-1]="compact"
+      >
         <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span
+            class="font-medium text-gray-700 dark:text-gray-300"
+            [class.text-sm]="!compact"
+            [class.text-xs]="compact"
+          >
             Total:
           </span>
-          <span class="text-sm font-semibold text-gray-900 dark:text-white">
+          <span
+            class="font-semibold text-gray-900 dark:text-white"
+            [class.text-sm]="!compact"
+            [class.text-xs]="compact"
+          >
             {{ data.total }}
           </span>
         </div>
@@ -84,6 +149,11 @@ export interface TooltipData {
         margin-top: -8px;
       }
 
+      .chart-tooltip.compact {
+        min-width: 160px;
+        margin-top: -6px;
+      }
+
       .chart-tooltip::after {
         content: '';
         position: absolute;
@@ -94,8 +164,18 @@ export interface TooltipData {
         border-top-color: rgb(249 250 251);
       }
 
+      .chart-tooltip.compact::after {
+        border-width: 4px;
+      }
+
       .dark .chart-tooltip::after {
         border-top-color: rgb(31 41 55);
+      }
+
+      /* Custom smaller text class for very small text */
+      .text-2xs {
+        font-size: 0.625rem;
+        line-height: 0.75rem;
       }
     `,
   ],
@@ -104,4 +184,5 @@ export class ChartTooltipComponent {
   @Input() isVisible = false;
   @Input() data: TooltipData | null = null;
   @Input() position = { x: 0, y: 0 };
+  @Input() compact = false;
 }

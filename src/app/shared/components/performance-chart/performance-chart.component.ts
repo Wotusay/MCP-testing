@@ -70,6 +70,7 @@ import type { TooltipData } from '../chart-tooltip/chart-tooltip.component';
         [isVisible]="tooltip.isVisible"
         [data]="tooltip.data"
         [position]="tooltip.position"
+        [compact]="tooltip.compact"
       ></app-chart-tooltip>
     </div>
   `,
@@ -85,6 +86,7 @@ export class PerformanceChartComponent {
     isVisible: false,
     data: null as TooltipData | null,
     position: { x: 0, y: 0 },
+    compact: false,
   };
 
   get maxValue(): number {
@@ -123,6 +125,10 @@ export class PerformanceChartComponent {
     const secondaryPercentage =
       total > 0 ? Math.round((item.secondaryValue / total) * 100) : 0;
 
+    // Determine if this should be a compact tooltip
+    // Consider tooltips with total values less than 100 as "small"
+    const isCompact = total < 100;
+
     this.tooltip.data = {
       day: item.day,
       primaryValue: item.value,
@@ -134,6 +140,7 @@ export class PerformanceChartComponent {
       secondaryPercentage: secondaryPercentage,
     };
 
+    this.tooltip.compact = isCompact;
     this.updateTooltipPosition(event);
     this.tooltip.isVisible = true;
   }
@@ -155,5 +162,6 @@ export class PerformanceChartComponent {
   private hideTooltip(): void {
     this.tooltip.isVisible = false;
     this.tooltip.data = null;
+    this.tooltip.compact = false;
   }
 }
