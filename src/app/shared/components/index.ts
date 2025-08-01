@@ -16,3 +16,4 @@ export * from './performance-chart';
 export * from './funnel-chart';
 export * from './quick-overview';
 export * from './client-table';
+export * from './chart-tooltip';
