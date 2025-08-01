@@ -15,7 +15,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
-      class="font-bold rounded-lg transition duration-200"
+      class="font-bold rounded-lg transition duration-200 focus:outline-none"
       [class]="buttonClasses"
       (click)="buttonClick.emit()"
       [disabled]="disabled"
@@ -39,7 +39,12 @@ export class ButtonComponent {
   }
 
   get buttonClasses(): string {
-    const baseClasses = this.getVariantClasses() + ' ' + this.getSizeClasses();
+    const baseClasses =
+      this.getVariantClasses() +
+      ' ' +
+      this.getSizeClasses() +
+      ' ' +
+      this.getFocusClasses();
     return this.disabled
       ? baseClasses + ' opacity-50 cursor-not-allowed'
       : baseClasses;
@@ -66,5 +71,14 @@ export class ButtonComponent {
       lg: 'py-3 px-6 text-lg',
     };
     return sizes[this.size];
+  }
+
+  private getFocusClasses(): string {
+    const focusClasses = {
+      sm: 'focus:ring-2 focus:ring-primary-500 focus:ring-offset-1',
+      md: 'focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+      lg: 'focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+    };
+    return focusClasses[this.size];
   }
 }

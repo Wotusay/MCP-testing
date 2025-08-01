@@ -10,7 +10,7 @@ export type BadgeVariant = 'success' | 'warning' | 'error' | 'info';
   imports: [NgClass],
   template: `
     <span
-      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors duration-150 hover:opacity-80"
       [ngClass]="badgeClasses"
     >
       {{ text }}

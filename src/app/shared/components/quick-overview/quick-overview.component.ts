@@ -27,7 +27,7 @@ import { QuickMetric } from '../../testing/mock-data';
           <div class="space-y-2">
             <div
               *ngFor="let metric of recentOutreach"
-              class="flex justify-between items-center"
+              class="flex justify-between items-center p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
             >
               <span class="text-sm text-gray-600 dark:text-gray-400">{{
                 metric.label
@@ -63,7 +63,7 @@ import { QuickMetric } from '../../testing/mock-data';
           <div class="space-y-2">
             <div
               *ngFor="let metric of engagementTypes"
-              class="flex justify-between items-center"
+              class="flex justify-between items-center p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
             >
               <span class="text-sm text-gray-600 dark:text-gray-400">{{
                 metric.label
@@ -83,7 +83,7 @@ import { QuickMetric } from '../../testing/mock-data';
           <div class="space-y-2">
             <div
               *ngFor="let metric of todaySchedule"
-              class="flex justify-between items-center"
+              class="flex justify-between items-center p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
             >
               <span class="text-sm text-gray-600 dark:text-gray-400">{{
                 metric.label
@@ -112,7 +112,7 @@ import { QuickMetric } from '../../testing/mock-data';
           <div class="space-y-2">
             <div
               *ngFor="let metric of performanceMetrics"
-              class="flex justify-between items-center"
+              class="flex justify-between items-center p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
             >
               <span class="text-sm text-gray-600 dark:text-gray-400">{{
                 metric.label

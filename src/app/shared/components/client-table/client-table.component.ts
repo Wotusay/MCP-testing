@@ -23,7 +23,7 @@ import { ClientEntry } from '../../testing/mock-data';
           {{ title }}
         </h3>
         <button
-          class="text-sm text-gray-900 dark:text-white bg-transparent border border-gray-300 dark:border-gray-600 px-3 py-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          class="text-sm text-gray-900 dark:text-white bg-transparent border border-gray-300 dark:border-gray-600 px-3 py-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-colors duration-150"
         >
           {{ exportButtonText }}
         </button>
@@ -78,7 +78,7 @@ import { ClientEntry } from '../../testing/mock-data';
           >
             <tr
               *ngFor="let client of clients"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
             >
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
@@ -139,7 +139,7 @@ import { ClientEntry } from '../../testing/mock-data';
                 <div class="relative inline-block text-left">
                   <button
                     (click)="toggleDropdown(client.id)"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded-md p-1 transition-colors duration-150"
                     [attr.aria-expanded]="activeDropdown === client.id"
                     aria-haspopup="true"
                   >
@@ -165,7 +165,7 @@ import { ClientEntry } from '../../testing/mock-data';
                     <div class="py-1 grid" role="none">
                       <button
                         (click)="onEditClient(client)"
-                        class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700"
+                        class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition-colors duration-150"
                         role="menuitem"
                         tabindex="-1"
                       >
@@ -188,7 +188,7 @@ import { ClientEntry } from '../../testing/mock-data';
                       </button>
                       <button
                         (click)="onDeleteClient(client)"
-                        class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:bg-red-50 dark:focus:bg-red-900/20"
+                        class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:bg-red-50 dark:focus:bg-red-900/20 transition-colors duration-150"
                         role="menuitem"
                         tabindex="-1"
                       >
