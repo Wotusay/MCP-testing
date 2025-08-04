@@ -70,6 +70,7 @@ import type { TooltipData } from '../chart-tooltip/chart-tooltip.component';
         [isVisible]="tooltip.isVisible"
         [data]="tooltip.data"
         [position]="tooltip.position"
+        [compact]="tooltip.compact"
       ></app-chart-tooltip>
     </div>
   `,
@@ -85,6 +86,7 @@ export class PerformanceChartComponent {
     isVisible: false,
     data: null as TooltipData | null,
     position: { x: 0, y: 0 },
+    compact: false,
   };
 
   get maxValue(): number {
@@ -123,6 +125,10 @@ export class PerformanceChartComponent {
     const secondaryPercentage =
       total > 0 ? Math.round((item.secondaryValue / total) * 100) : 0;
 
+    // Determine if this should be a compact tooltip
+    // Consider tooltips with total values less than 100 as "small"
+    const isCompact = total < 100;
+
     this.tooltip.data = {
       day: item.day,
       primaryValue: item.value,
@@ -134,6 +140,7 @@ export class PerformanceChartComponent {
       secondaryPercentage: secondaryPercentage,
     };
 
+    this.tooltip.compact = isCompact;
     this.updateTooltipPosition(event);
     this.tooltip.isVisible = true;
   }
@@ -144,10 +151,22 @@ export class PerformanceChartComponent {
       .closest('.bg-white, .dark\\:bg-gray-800')
       ?.getBoundingClientRect();
 
-    if (containerRect) {
+    if (containerRect && this.tooltip.data) {
+      // Calculate the height of the blue bar based on the data
+      const primaryValue = this.tooltip.data.primaryValue;
+      const blueBarHeight = (primaryValue / this.maxValue) * 160;
+
+      // The bar container has h-48 (192px) with justify-end, so bars start from bottom
+      // The blue bar's top position within the bar container is:
+      const blueBarTopOffset = 192 - blueBarHeight;
+
+      // Get the bar container's position within the chart component
+      const barContainerTop = rect.top - containerRect.top;
+
+      // Position tooltip at the top of the blue bar
       this.tooltip.position = {
         x: rect.left + rect.width / 2 - containerRect.left,
-        y: rect.top - containerRect.top,
+        y: barContainerTop + blueBarTopOffset,
       };
     }
   }
@@ -155,5 +174,6 @@ export class PerformanceChartComponent {
   private hideTooltip(): void {
     this.tooltip.isVisible = false;
     this.tooltip.data = null;
+    this.tooltip.compact = false;
   }
 }
