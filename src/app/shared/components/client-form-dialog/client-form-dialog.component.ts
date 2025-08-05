@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -277,7 +285,7 @@ export interface ClientFormData {
     </div>
   `,
 })
-export class ClientFormDialogComponent implements OnInit {
+export class ClientFormDialogComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
   @Input() title = 'Add New Client';
   @Input() initialData: Partial<ClientFormData> = {};
@@ -301,6 +309,17 @@ export class ClientFormDialogComponent implements OnInit {
   errorMessage = '';
 
   ngOnInit() {
+    this.updateFormData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Update form data when initialData changes
+    if (changes['initialData'] && !changes['initialData'].firstChange) {
+      this.updateFormData();
+    }
+  }
+
+  private updateFormData() {
     // Initialize form with any provided data
     if (this.initialData && Object.keys(this.initialData).length > 0) {
       this.formData = { ...this.formData, ...this.initialData };
