@@ -12,6 +12,9 @@ import {
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { routes } from './app.routes';
 import {
@@ -19,6 +22,8 @@ import {
   CacheInterceptor,
   ErrorInterceptor,
 } from './shared/interceptors';
+import { dashboardReducer } from './store/dashboard/dashboard.reducer';
+import { DashboardEffects } from './store/dashboard/dashboard.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +33,18 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
+    // NgRx Store Configuration
+    provideStore({
+      dashboard: dashboardReducer,
+    }),
+    provideEffects([DashboardEffects]),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+      autoPause: true,
+      trace: false,
+      traceLimit: 75,
+    }),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
