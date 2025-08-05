@@ -221,6 +221,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  @ViewChild(ClientFormDialogComponent)
+  clientDialog!: ClientFormDialogComponent;
+
   // Dashboard data properties
   summaryCards: SummaryCard[] = [];
   performanceData: PerformanceChartData[] = [];
@@ -327,7 +330,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.loadDashboardData();
           this.isAddingClient = false;
 
-          // Show success message in dialog
+          // Show success message and auto-close dialog
           this.clientDialog.showSuccess('Client added successfully!');
         },
         error: (error) => {
