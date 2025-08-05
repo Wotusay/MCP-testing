@@ -3,7 +3,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardService } from '../../shared/services';
-import { ClientFormDialogComponent, ClientFormData } from '../../shared/components';
+import {
+  ClientFormDialogComponent,
+  ClientFormData,
+} from '../../shared/components';
 import {
   SummaryCard,
   PerformanceChartData,
@@ -24,6 +27,7 @@ class MockDashboardService {
     todaySchedule: QuickOverviewMetric[];
     performanceMetrics: QuickOverviewMetric[];
     clientEntries: ClientEntry[];
+    clients?: ClientEntry[]; // Support both for backwards compatibility
   }> {
     return of({
       summaryCards: [],
@@ -57,10 +61,36 @@ class MockDashboardService {
           lastContact: '2023-12-02',
         },
       ],
+      clients: [
+        {
+          id: '1',
+          name: 'John Smith',
+          company: 'TechCorp Solutions',
+          email: 'john.smith@techcorp.com',
+          phone: '+1 (555) 123-4567',
+          status: 'Interested',
+          method: 'Email',
+          revenue: 15000,
+          lastContact: '2023-12-01',
+        },
+        {
+          id: '2',
+          name: 'Sarah Johnson',
+          company: 'Digital Marketing Pro',
+          email: 'sarah@digitalmarketing.com',
+          phone: '+1 (555) 987-6543',
+          status: 'Follow-up',
+          method: 'Phone',
+          revenue: 8500,
+          lastContact: '2023-12-02',
+        },
+      ],
     });
   }
 
-  addClient(client: Omit<Client, 'id' | 'created_at' | 'updated_at'>): Observable<Client> {
+  addClient(
+    client: Omit<Client, 'id' | 'created_at' | 'updated_at'>,
+  ): Observable<Client> {
     return of({
       id: 'new-id',
       created_at: new Date().toISOString(),
@@ -86,7 +116,7 @@ class MockDashboardService {
     } as Client);
   }
 
-  deleteClient(id: string): Observable<void> {
+  deleteClient(): Observable<void> {
     return of(undefined);
   }
 }
@@ -186,10 +216,12 @@ describe('DashboardComponent', () => {
       ];
 
       // Mock the clientDialog ViewChild
-      component.clientDialog = {
+      const mockClientDialog = {
         showSuccess: jasmine.createSpy('showSuccess'),
         showError: jasmine.createSpy('showError'),
-      } as any;
+      };
+      component.clientDialog =
+        mockClientDialog as unknown as ClientFormDialogComponent;
     });
 
     it('should handle successful client update', (done) => {
@@ -220,21 +252,22 @@ describe('DashboardComponent', () => {
 
       component.onUpdateClient(updatedClientData);
 
-      expect(mockDashboardService.updateClient).toHaveBeenCalledWith('1', {
-        name: 'John Smith',
-        company: 'TechCorp Solutions',
-        email: 'john.smith@techcorp.com',
-        phone: '+1 (555) 123-4567',
-        status: 'Converted',
-        contact_method: 'Email',
-        revenue: 20000,
-        last_contact: jasmine.any(String),
-      });
-
       // Wait for async operation to complete
       setTimeout(() => {
+        expect(mockDashboardService.updateClient).toHaveBeenCalledWith('1', {
+          name: 'John Smith',
+          company: 'TechCorp Solutions',
+          email: 'john.smith@techcorp.com',
+          phone: '+1 (555) 123-4567',
+          status: 'Converted',
+          contact_method: 'Email',
+          revenue: 20000,
+          last_contact: jasmine.any(String),
+        });
         expect(component.loadDashboardData).toHaveBeenCalled();
-        expect(component.clientDialog.showSuccess).toHaveBeenCalledWith('Client updated successfully!');
+        expect(component.clientDialog.showSuccess).toHaveBeenCalledWith(
+          'Client updated successfully!',
+        );
         expect(component.isAddingClient).toBe(false);
         expect(component.isEditingClient).toBe(false);
         expect(component.editingClientData).toEqual({});
@@ -245,7 +278,7 @@ describe('DashboardComponent', () => {
     it('should handle client update error', (done) => {
       const errorMessage = 'Network error';
       spyOn(mockDashboardService, 'updateClient').and.returnValue(
-        throwError(() => new Error(errorMessage))
+        throwError(() => new Error(errorMessage)),
       );
 
       // Set up editing state
@@ -270,7 +303,9 @@ describe('DashboardComponent', () => {
 
       // Wait for async operation to complete
       setTimeout(() => {
-        expect(component.clientDialog.showError).toHaveBeenCalledWith(errorMessage);
+        expect(component.clientDialog.showError).toHaveBeenCalledWith(
+          errorMessage,
+        );
         expect(component.isAddingClient).toBe(false);
         done();
       }, 100);
@@ -296,7 +331,9 @@ describe('DashboardComponent', () => {
 
       component.onUpdateClient(updatedClientData);
 
-      expect(component.clientDialog.showError).toHaveBeenCalledWith('Client not found. Please try again.');
+      expect(component.clientDialog.showError).toHaveBeenCalledWith(
+        'Client not found. Please try again.',
+      );
       expect(component.isAddingClient).toBe(false);
     });
 
@@ -323,10 +360,12 @@ describe('DashboardComponent', () => {
 
   describe('ViewChild Integration', () => {
     beforeEach(() => {
-      component.clientDialog = {
+      const mockClientDialog = {
         showSuccess: jasmine.createSpy('showSuccess'),
         showError: jasmine.createSpy('showError'),
-      } as any;
+      };
+      component.clientDialog =
+        mockClientDialog as unknown as ClientFormDialogComponent;
     });
 
     it('should have access to clientDialog ViewChild', () => {
@@ -340,8 +379,12 @@ describe('DashboardComponent', () => {
       component.clientDialog.showSuccess('Test success');
       component.clientDialog.showError('Test error');
 
-      expect(component.clientDialog.showSuccess).toHaveBeenCalledWith('Test success');
-      expect(component.clientDialog.showError).toHaveBeenCalledWith('Test error');
+      expect(component.clientDialog.showSuccess).toHaveBeenCalledWith(
+        'Test success',
+      );
+      expect(component.clientDialog.showError).toHaveBeenCalledWith(
+        'Test error',
+      );
     });
   });
 

@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClientFormDialogComponent, ClientFormData } from './client-form-dialog.component';
-import { TestUtils } from '../../testing';
+import {
+  ClientFormDialogComponent,
+  ClientFormData,
+} from './client-form-dialog.component';
 
 describe('ClientFormDialogComponent', () => {
   let component: ClientFormDialogComponent;
@@ -256,7 +258,7 @@ describe('ClientFormDialogComponent', () => {
       // Make target equal to currentTarget (clicking backdrop)
       mockEvent.target = mockEvent.currentTarget;
 
-      component.onBackdropClick(mockEvent as any);
+      component.onBackdropClick(mockEvent as MouseEvent);
 
       expect(component.onCancel).toHaveBeenCalled();
     });
@@ -270,7 +272,7 @@ describe('ClientFormDialogComponent', () => {
       };
       // Make target different from currentTarget (clicking inside modal)
 
-      component.onBackdropClick(mockEvent as any);
+      component.onBackdropClick(mockEvent as MouseEvent);
 
       expect(component.onCancel).not.toHaveBeenCalled();
     });
