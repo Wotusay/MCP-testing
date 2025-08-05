@@ -6,6 +6,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 import {
   SummaryCardComponent,
@@ -16,7 +17,7 @@ import {
   ClientFormDialogComponent,
   ClientFormData,
 } from '../../shared/components';
-import { DashboardService } from '../../shared/services';
+import { DashboardService, NotificationService } from '../../shared/services';
 import {
   SummaryCard,
   PerformanceChartData,
@@ -31,6 +32,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    MatSnackBarModule,
     SummaryCardComponent,
     PerformanceChartComponent,
     FunnelChartComponent,
@@ -242,6 +244,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @angular-eslint/prefer-inject
     private dashboardService: DashboardService,
     // eslint-disable-next-line @angular-eslint/prefer-inject
+    private notificationService: NotificationService,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -321,17 +325,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: () => {
           // Client added successfully, refresh data
           this.loadDashboardData();
-
           // The dialog will auto-close via the success message
           this.isAddingClient = false;
+          // Show success notification
+          this.notificationService.success(
+            `Client "${clientData.name}" from "${clientData.company}" has been added successfully.`,
+          );
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to add client:', error);
           this.isAddingClient = false;
-
-          // Show error message in dialog (if you have access to dialog component)
-          // For now, we'll just log the error
+          // Show error notification
+          this.notificationService.error(
+            `Failed to add client "${clientData.name}". Please try again.`,
+          );
         },
       });
   }
@@ -394,11 +402,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isAddingClient = false;
           this.isEditingClient = false;
           this.editingClientData = {};
+          // Show success notification
+          this.notificationService.success(
+            `Client "${clientData.name}" from "${clientData.company}" has been updated successfully.`,
+          );
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to update client:', error);
           this.isAddingClient = false;
+          // Show error notification
+          this.notificationService.error(
+            `Failed to update client "${clientData.name}". Please try again.`,
+          );
         },
       });
   }
@@ -411,6 +427,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   confirmDeleteClient(): void {
     if (!this.clientToDelete) return;
 
+    const clientName = this.clientToDelete.name;
+    const clientCompany = this.clientToDelete.company;
+
     this.dashboardService
       .deleteClient(this.clientToDelete.id)
       .pipe(takeUntil(this.destroy$))
@@ -420,11 +439,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.loadDashboardData();
           this.isDeleteConfirmOpen = false;
           this.clientToDelete = null;
+          // Show success notification
+          this.notificationService.success(
+            `Client "${clientName}" from "${clientCompany}" has been deleted successfully.`,
+          );
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to delete client:', error);
-          // Show error message
+          this.isDeleteConfirmOpen = false;
+          this.clientToDelete = null;
+          // Show error notification
+          this.notificationService.error(
+            `Failed to delete client "${clientName}". Please try again.`,
+          );
         },
       });
   }
