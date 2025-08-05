@@ -221,9 +221,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  @ViewChild(ClientFormDialogComponent)
-  clientDialog!: ClientFormDialogComponent;
-
   // Dashboard data properties
   summaryCards: SummaryCard[] = [];
   performanceData: PerformanceChartData[] = [];
