@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -217,6 +218,9 @@ import {
 export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  @ViewChild(ClientFormDialogComponent)
+  clientDialog!: ClientFormDialogComponent;
+
   // Dashboard data properties
   summaryCards: SummaryCard[] = [];
   performanceData: PerformanceChartData[] = [];
@@ -321,17 +325,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: () => {
           // Client added successfully, refresh data
           this.loadDashboardData();
-
-          // The dialog will auto-close via the success message
           this.isAddingClient = false;
+
+          // Show success message and auto-close dialog
+          this.clientDialog.showSuccess('Client added successfully!');
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to add client:', error);
           this.isAddingClient = false;
 
-          // Show error message in dialog (if you have access to dialog component)
-          // For now, we'll just log the error
+          // Show error message in dialog
+          this.clientDialog.showError(
+            'Failed to add client. Please try again.',
+          );
         },
       });
   }
@@ -394,11 +401,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isAddingClient = false;
           this.isEditingClient = false;
           this.editingClientData = {};
+
+          // Show success message and auto-close dialog
+          this.clientDialog.showSuccess('Client updated successfully!');
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to update client:', error);
           this.isAddingClient = false;
+
+          // Show error message in dialog
+          this.clientDialog.showError(
+            'Failed to update client. Please try again.',
+          );
         },
       });
   }
