@@ -125,6 +125,7 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   let mockDashboardService: MockDashboardService;
+  let mockClientDialog: { showSuccess: jasmine.Spy; showError: jasmine.Spy };
 
   beforeEach(async () => {
     mockDashboardService = new MockDashboardService();
@@ -216,7 +217,7 @@ describe('DashboardComponent', () => {
       ];
 
       // Mock the clientDialog ViewChild
-      const mockClientDialog = {
+      mockClientDialog = {
         showSuccess: jasmine.createSpy('showSuccess'),
         showError: jasmine.createSpy('showError'),
       };
@@ -224,7 +225,7 @@ describe('DashboardComponent', () => {
         mockClientDialog as unknown as ClientFormDialogComponent;
     });
 
-    it('should handle successful client update', (done) => {
+    it('should handle successful client update', async () => {
       spyOn(mockDashboardService, 'updateClient').and.callThrough();
       spyOn(component, 'loadDashboardData');
 
@@ -252,30 +253,29 @@ describe('DashboardComponent', () => {
 
       component.onUpdateClient(updatedClientData);
 
-      // Wait for async operation to complete
-      setTimeout(() => {
-        expect(mockDashboardService.updateClient).toHaveBeenCalledWith('1', {
-          name: 'John Smith',
-          company: 'TechCorp Solutions',
-          email: 'john.smith@techcorp.com',
-          phone: '+1 (555) 123-4567',
-          status: 'Converted',
-          contact_method: 'Email',
-          revenue: 20000,
-          last_contact: jasmine.any(String),
-        });
-        expect(component.loadDashboardData).toHaveBeenCalled();
-        expect(component.clientDialog.showSuccess).toHaveBeenCalledWith(
-          'Client updated successfully!',
-        );
-        expect(component.isAddingClient).toBe(false);
-        expect(component.isEditingClient).toBe(false);
-        expect(component.editingClientData).toEqual({});
-        done();
-      }, 100);
+      // Wait for async operations to complete
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockDashboardService.updateClient).toHaveBeenCalledWith('1', {
+        name: 'John Smith',
+        company: 'TechCorp Solutions',
+        email: 'john.smith@techcorp.com',
+        phone: '+1 (555) 123-4567',
+        status: 'Converted',
+        contact_method: 'Email',
+        revenue: 20000,
+        last_contact: jasmine.any(String),
+      });
+      expect(component.loadDashboardData).toHaveBeenCalled();
+      expect(mockClientDialog.showSuccess).toHaveBeenCalledWith(
+        'Client updated successfully!',
+      );
+      expect(component.isAddingClient).toBe(false);
+      expect(component.isEditingClient).toBe(false);
+      expect(component.editingClientData).toEqual({});
     });
 
-    it('should handle client update error', (done) => {
+    it('should handle client update error', async () => {
       const errorMessage = 'Network error';
       spyOn(mockDashboardService, 'updateClient').and.returnValue(
         throwError(() => new Error(errorMessage)),
@@ -301,14 +301,11 @@ describe('DashboardComponent', () => {
 
       component.onUpdateClient(updatedClientData);
 
-      // Wait for async operation to complete
-      setTimeout(() => {
-        expect(component.clientDialog.showError).toHaveBeenCalledWith(
-          errorMessage,
-        );
-        expect(component.isAddingClient).toBe(false);
-        done();
-      }, 100);
+      // Wait for async operations to complete
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockClientDialog.showError).toHaveBeenCalledWith(errorMessage);
+      expect(component.isAddingClient).toBe(false);
     });
 
     it('should handle client not found error', () => {
@@ -360,7 +357,8 @@ describe('DashboardComponent', () => {
 
   describe('ViewChild Integration', () => {
     beforeEach(() => {
-      const mockClientDialog = {
+      // Use the same mock as the main beforeEach
+      mockClientDialog = {
         showSuccess: jasmine.createSpy('showSuccess'),
         showError: jasmine.createSpy('showError'),
       };
@@ -379,12 +377,8 @@ describe('DashboardComponent', () => {
       component.clientDialog.showSuccess('Test success');
       component.clientDialog.showError('Test error');
 
-      expect(component.clientDialog.showSuccess).toHaveBeenCalledWith(
-        'Test success',
-      );
-      expect(component.clientDialog.showError).toHaveBeenCalledWith(
-        'Test error',
-      );
+      expect(mockClientDialog.showSuccess).toHaveBeenCalledWith('Test success');
+      expect(mockClientDialog.showError).toHaveBeenCalledWith('Test error');
     });
   });
 
