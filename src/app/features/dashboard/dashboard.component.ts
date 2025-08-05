@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -215,6 +216,9 @@ import {
   `,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  @ViewChild(ClientFormDialogComponent)
+  clientDialog!: ClientFormDialogComponent;
+
   private destroy$ = new Subject<void>();
 
   // Dashboard data properties
@@ -321,17 +325,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: () => {
           // Client added successfully, refresh data
           this.loadDashboardData();
-
-          // The dialog will auto-close via the success message
           this.isAddingClient = false;
+
+          // Show success message in dialog
+          this.clientDialog.showSuccess('Client added successfully!');
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to add client:', error);
           this.isAddingClient = false;
 
-          // Show error message in dialog (if you have access to dialog component)
-          // For now, we'll just log the error
+          // Show error message in dialog
+          this.clientDialog.showError(
+            error.message || 'Failed to add client. Please try again.',
+          );
         },
       });
   }
@@ -369,6 +376,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line no-console
       console.error('Client to update not found');
       this.isAddingClient = false;
+      this.clientDialog.showError('Client not found. Please try again.');
       return;
     }
 
@@ -394,11 +402,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isAddingClient = false;
           this.isEditingClient = false;
           this.editingClientData = {};
+
+          // Show success message in dialog
+          this.clientDialog.showSuccess('Client updated successfully!');
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Failed to update client:', error);
           this.isAddingClient = false;
+
+          // Show error message in dialog
+          this.clientDialog.showError(
+            error.message || 'Failed to update client. Please try again.',
+          );
         },
       });
   }
