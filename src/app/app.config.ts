@@ -24,6 +24,10 @@ import {
 } from './shared/interceptors';
 import { dashboardReducer } from './store/dashboard/dashboard.reducer';
 import { DashboardEffects } from './store/dashboard/dashboard.effects';
+import { authReducer } from './store/auth/auth.reducer';
+import { AuthEffects } from './store/auth/auth.effects';
+import { userReducer } from './store/user/user.reducer';
+import { UserEffects } from './store/user/user.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,8 +40,10 @@ export const appConfig: ApplicationConfig = {
     // NgRx Store Configuration
     provideStore({
       dashboard: dashboardReducer,
+      auth: authReducer,
+      user: userReducer,
     }),
-    provideEffects([DashboardEffects]),
+    provideEffects([DashboardEffects, AuthEffects, UserEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
