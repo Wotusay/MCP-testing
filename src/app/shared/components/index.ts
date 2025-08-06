@@ -9,6 +9,7 @@ export * from './metrics-box';
 export * from './theme-toggle';
 export * from './user-form';
 export * from './client-form-dialog';
+export * from './angular-improvements';
 
 // Dashboard components
 export * from './summary-card';
