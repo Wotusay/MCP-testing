@@ -5,9 +5,11 @@ import {
   OnDestroy,
   ChangeDetectorRef,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { Store } from '@ngrx/store';
 import {
   SummaryCardComponent,
   PerformanceChartComponent,
@@ -17,7 +19,6 @@ import {
   ClientFormDialogComponent,
   ClientFormData,
 } from '../../shared/components';
-import { DashboardService } from '../../shared/services';
 import {
   SummaryCard,
   PerformanceChartData,
@@ -25,6 +26,8 @@ import {
   QuickOverviewMetric,
   ClientEntry,
 } from '../../shared/models';
+import * as DashboardActions from '../../store/dashboard/actions/dashboard.actions';
+import * as DashboardSelectors from '../../store/dashboard/selectors/dashboard.selectors';
 
 @Component({
   selector: 'app-dashboard',
@@ -216,12 +219,42 @@ import {
   `,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private store = inject(Store);
+  private cdr = inject(ChangeDetectorRef);
+
   @ViewChild(ClientFormDialogComponent)
   clientDialog!: ClientFormDialogComponent;
 
-  private destroy$ = new Subject<void>();
+  // Dashboard data properties - now sourced from store
+  summaryCards$ = this.store.select(DashboardSelectors.selectSummaryCards);
+  performanceData$ = this.store.select(
+    DashboardSelectors.selectPerformanceData,
+  );
+  funnelData$ = this.store.select(DashboardSelectors.selectFunnelData);
+  recentOutreach$ = this.store.select(DashboardSelectors.selectRecentOutreach);
+  engagementTypes$ = this.store.select(
+    DashboardSelectors.selectEngagementTypes,
+  );
+  todaySchedule$ = this.store.select(DashboardSelectors.selectTodaySchedule);
+  performanceMetrics$ = this.store.select(
+    DashboardSelectors.selectPerformanceMetrics,
+  );
+  clientEntries$ = this.store.select(DashboardSelectors.selectClients);
 
-  // Dashboard data properties
+  // UI state from store
+  isLoading$ = this.store.select(DashboardSelectors.selectIsAnyDataLoading);
+  errorMessage$ = this.store.select(DashboardSelectors.selectDashboardError);
+  isAddingClient$ = this.store.select(DashboardSelectors.selectAddingClient);
+
+  // Local component state for dialog management
+  isClientDialogOpen = false;
+  isEditingClient = false;
+  editingClientData: Partial<ClientFormData> = {};
+  isDeleteConfirmOpen = false;
+  clientToDelete: ClientEntry | null = null;
+
+  // Temporary properties for template compatibility (will be removed later)
   summaryCards: SummaryCard[] = [];
   performanceData: PerformanceChartData[] = [];
   funnelData: FunnelChartData[] = [];
@@ -230,27 +263,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   todaySchedule: QuickOverviewMetric[] = [];
   performanceMetrics: QuickOverviewMetric[] = [];
   clientEntries: ClientEntry[] = [];
-
-  // Component state
-  isLoading = true;
+  isLoading = false;
   errorMessage = '';
-  isClientDialogOpen = false;
   isAddingClient = false;
-  isEditingClient = false;
-  editingClientData: Partial<ClientFormData> = {};
-  isDeleteConfirmOpen = false;
-  clientToDelete: ClientEntry | null = null;
-
-  // eslint-disable-next-line @angular-eslint/prefer-inject
-  constructor(
-    // eslint-disable-next-line @angular-eslint/prefer-inject
-    private dashboardService: DashboardService,
-    // eslint-disable-next-line @angular-eslint/prefer-inject
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.subscribeToStoreData();
   }
 
   ngOnDestroy(): void {
@@ -258,38 +277,68 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDashboardData(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
+  private subscribeToStoreData(): void {
+    // Subscribe to store data to update local properties for template compatibility
+    this.summaryCards$.pipe(takeUntil(this.destroy$)).subscribe((cards) => {
+      this.summaryCards = cards;
+      this.cdr.markForCheck();
+    });
 
-    this.dashboardService
-      .getAllDashboardData()
+    this.performanceData$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      this.performanceData = data;
+      this.cdr.markForCheck();
+    });
+
+    this.funnelData$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      this.funnelData = data;
+      this.cdr.markForCheck();
+    });
+
+    this.recentOutreach$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      this.recentOutreach = data;
+      this.cdr.markForCheck();
+    });
+
+    this.engagementTypes$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      this.engagementTypes = data;
+      this.cdr.markForCheck();
+    });
+
+    this.todaySchedule$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      this.todaySchedule = data;
+      this.cdr.markForCheck();
+    });
+
+    this.performanceMetrics$
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.summaryCards = data.summaryCards;
-          this.performanceData = data.performanceData;
-          this.funnelData = data.funnelData;
-          this.recentOutreach = data.recentOutreach;
-          this.engagementTypes = data.engagementTypes;
-          this.todaySchedule = data.todaySchedule;
-          this.performanceMetrics = data.performanceMetrics;
-          this.clientEntries = data.clients;
-          this.isLoading = false;
-          // Trigger change detection for OnPush strategy
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to load dashboard data:', error);
-          this.errorMessage =
-            error.message ||
-            'An unexpected error occurred while loading dashboard data.';
-          this.isLoading = false;
-          // Trigger change detection for OnPush strategy
-          this.cdr.markForCheck();
-        },
+      .subscribe((data) => {
+        this.performanceMetrics = data;
+        this.cdr.markForCheck();
       });
+
+    this.clientEntries$.pipe(takeUntil(this.destroy$)).subscribe((clients) => {
+      this.clientEntries = clients;
+      this.cdr.markForCheck();
+    });
+
+    this.isLoading$.pipe(takeUntil(this.destroy$)).subscribe((loading) => {
+      this.isLoading = loading;
+      this.cdr.markForCheck();
+    });
+
+    this.errorMessage$.pipe(takeUntil(this.destroy$)).subscribe((error) => {
+      this.errorMessage = error || '';
+      this.cdr.markForCheck();
+    });
+
+    this.isAddingClient$.pipe(takeUntil(this.destroy$)).subscribe((adding) => {
+      this.isAddingClient = adding;
+      this.cdr.markForCheck();
+    });
+  }
+
+  loadDashboardData(): void {
+    this.store.dispatch(DashboardActions.loadDashboardData());
   }
 
   openNewClientDialog(): void {
@@ -304,8 +353,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onAddClient(clientData: ClientFormData): void {
-    this.isAddingClient = true;
-
     // Transform form data to match Client interface
     const newClient = {
       name: clientData.name,
@@ -318,28 +365,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       last_contact: new Date().toISOString(),
     };
 
-    this.dashboardService
-      .addClient(newClient)
+    this.store.dispatch(DashboardActions.addClient({ client: newClient }));
+
+    // Listen for success to show message and close dialog
+    this.store
+      .select(DashboardSelectors.selectAddingClient)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          // Client added successfully, refresh data
-          this.loadDashboardData();
-          this.isAddingClient = false;
-
-          // Show success message and auto-close dialog
+      .subscribe((adding) => {
+        if (!adding && !this.errorMessage) {
+          // Client added successfully
           this.clientDialog.showSuccess('Client added successfully!');
-        },
-        error: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to add client:', error);
-          this.isAddingClient = false;
-
-          // Show error message in dialog
-          this.clientDialog.showError(
-            error.message || 'Failed to add client. Please try again.',
-          );
-        },
+        }
       });
   }
 
@@ -363,8 +399,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isAddingClient = true; // Reuse the same loading state
-
     // Find the client being edited
     const clientToUpdate = this.clientEntries.find(
       (c) =>
@@ -375,7 +409,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!clientToUpdate) {
       // eslint-disable-next-line no-console
       console.error('Client to update not found');
-      this.isAddingClient = false;
       this.clientDialog.showError('Client not found. Please try again.');
       return;
     }
@@ -392,30 +425,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
       last_contact: new Date().toISOString(),
     };
 
-    this.dashboardService
-      .updateClient(clientToUpdate.id, updates)
+    this.store.dispatch(
+      DashboardActions.updateClient({
+        id: clientToUpdate.id,
+        updates,
+      }),
+    );
+
+    // Listen for success to show message and close dialog
+    this.store
+      .select(DashboardSelectors.selectUpdatingClient)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          // Client updated successfully, refresh data
-          this.loadDashboardData();
-          this.isAddingClient = false;
+      .subscribe((updating) => {
+        if (!updating && !this.errorMessage) {
+          // Client updated successfully
           this.isEditingClient = false;
           this.editingClientData = {};
-
-          // Show success message in dialog
           this.clientDialog.showSuccess('Client updated successfully!');
-        },
-        error: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to update client:', error);
-          this.isAddingClient = false;
-
-          // Show error message in dialog
-          this.clientDialog.showError(
-            error.message || 'Failed to update client. Please try again.',
-          );
-        },
+        }
       });
   }
 
@@ -427,21 +454,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   confirmDeleteClient(): void {
     if (!this.clientToDelete) return;
 
-    this.dashboardService
-      .deleteClient(this.clientToDelete.id)
+    this.store.dispatch(
+      DashboardActions.deleteClient({
+        id: this.clientToDelete.id,
+      }),
+    );
+
+    // Listen for success to close dialog
+    this.store
+      .select(DashboardSelectors.selectDeletingClient)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          // Client deleted successfully, refresh data
-          this.loadDashboardData();
+      .subscribe((deleting) => {
+        if (!deleting && !this.errorMessage) {
+          // Client deleted successfully
           this.isDeleteConfirmOpen = false;
           this.clientToDelete = null;
-        },
-        error: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to delete client:', error);
-          // Show error message
-        },
+        }
       });
   }
 
