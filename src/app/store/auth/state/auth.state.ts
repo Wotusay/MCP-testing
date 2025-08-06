@@ -2,7 +2,7 @@ import {
   AuthUser,
   AuthTokens,
   AuthStatus,
-} from '../../shared/models/auth.models';
+} from '../../../shared/models/auth.models';
 
 export interface AuthState {
   // User data

@@ -4,7 +4,7 @@ import {
   FunnelChartData,
   QuickOverviewMetric,
   ClientEntry,
-} from '../../shared/models/dashboard.models';
+} from '../../../shared/models/dashboard.models';
 
 export interface DashboardState {
   // Data

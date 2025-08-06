@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { map, catchError, switchMap, tap, mergeMap } from 'rxjs/operators';
-import { LoggingService } from '../../shared/services/logging.service';
-import { ErrorHandlingService } from '../../shared/services/error-handling.service';
-import { AuthUser, AuthTokens } from '../../shared/models/auth.models';
-import * as AuthActions from './auth.actions';
+import { LoggingService } from '../../../shared/services/logging.service';
+import { ErrorHandlingService } from '../../../shared/services/error-handling.service';
+import { AuthUser, AuthTokens } from '../../../shared/models/auth.models';
+import * as AuthActions from '../actions/auth.actions';
 
 @Injectable()
 export class AuthEffects {

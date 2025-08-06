@@ -1,6 +1,6 @@
 // Export all auth store related items
-export * from './auth.actions';
-export * from './auth.effects';
-export * from './auth.reducer';
-export * from './auth.selectors';
-export * from './auth.state';
+export * from './actions/auth.actions';
+export * from './effects/auth.effects';
+export * from './reducers/auth.reducer';
+export * from './selectors/auth.selectors';
+export * from './state/auth.state';

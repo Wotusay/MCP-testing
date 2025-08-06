@@ -4,7 +4,7 @@ import {
   AuthTokens,
   LoginCredentials,
   RegisterData,
-} from '../../shared/models/auth.models';
+} from '../../../shared/models/auth.models';
 
 // Authentication Actions
 export const login = createAction(

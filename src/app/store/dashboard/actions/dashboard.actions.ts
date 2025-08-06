@@ -6,7 +6,7 @@ import {
   QuickOverviewMetric,
   ClientEntry,
   Client,
-} from '../../shared/models/dashboard.models';
+} from '../../../shared/models/dashboard.models';
 
 // Load Dashboard Data Actions
 export const loadDashboardData = createAction(

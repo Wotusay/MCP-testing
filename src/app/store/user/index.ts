@@ -1,6 +1,6 @@
 // Export all user store related items
-export * from './user.actions';
-export * from './user.effects';
-export * from './user.reducer';
-export * from './user.selectors';
-export * from './user.state';
+export * from './actions/user.actions';
+export * from './effects/user.effects';
+export * from './reducers/user.reducer';
+export * from './selectors/user.selectors';
+export * from './state/user.state';

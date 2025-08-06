@@ -22,12 +22,12 @@ import {
   CacheInterceptor,
   ErrorInterceptor,
 } from './shared/interceptors';
-import { dashboardReducer } from './store/dashboard/dashboard.reducer';
-import { DashboardEffects } from './store/dashboard/dashboard.effects';
-import { authReducer } from './store/auth/auth.reducer';
-import { AuthEffects } from './store/auth/auth.effects';
-import { userReducer } from './store/user/user.reducer';
-import { UserEffects } from './store/user/user.effects';
+import { dashboardReducer } from './store/dashboard/reducers/dashboard.reducer';
+import { DashboardEffects } from './store/dashboard/effects/dashboard.effects';
+import { authReducer } from './store/auth/reducers/auth.reducer';
+import { AuthEffects } from './store/auth/effects/auth.effects';
+import { userReducer } from './store/user/reducers/user.reducer';
+import { UserEffects } from './store/user/effects/user.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [

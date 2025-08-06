@@ -1,4 +1,4 @@
-import { User } from './user.actions';
+import { User } from '../actions/user.actions';
 
 export interface UserState {
   // Data

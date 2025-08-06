@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { initialDashboardState } from './dashboard.state';
-import * as DashboardActions from './dashboard.actions';
+import { initialDashboardState } from '../state/dashboard.state';
+import * as DashboardActions from '../actions/dashboard.actions';
 
 export const dashboardReducer = createReducer(
   initialDashboardState,

@@ -26,8 +26,8 @@ import {
   QuickOverviewMetric,
   ClientEntry,
 } from '../../shared/models';
-import * as DashboardActions from '../../store/dashboard/dashboard.actions';
-import * as DashboardSelectors from '../../store/dashboard/dashboard.selectors';
+import * as DashboardActions from '../../store/dashboard/actions/dashboard.actions';
+import * as DashboardSelectors from '../../store/dashboard/selectors/dashboard.selectors';
 
 @Component({
   selector: 'app-dashboard',

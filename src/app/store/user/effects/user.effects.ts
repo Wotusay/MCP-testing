@@ -3,8 +3,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { map, catchError, switchMap, mergeMap } from 'rxjs/operators';
-import { User } from './user.actions';
-import * as UserActions from './user.actions';
+import { User } from '../actions/user.actions';
+import * as UserActions from '../actions/user.actions';
 
 @Injectable()
 export class UserEffects {
