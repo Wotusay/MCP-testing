@@ -216,10 +216,10 @@ import {
   `,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-
   @ViewChild(ClientFormDialogComponent)
   clientDialog!: ClientFormDialogComponent;
+
+  private destroy$ = new Subject<void>();
 
   // Dashboard data properties
   summaryCards: SummaryCard[] = [];
@@ -337,7 +337,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           // Show error message in dialog
           this.clientDialog.showError(
-            'Failed to add client. Please try again.',
+            error.message || 'Failed to add client. Please try again.',
           );
         },
       });
@@ -376,6 +376,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line no-console
       console.error('Client to update not found');
       this.isAddingClient = false;
+      this.clientDialog.showError('Client not found. Please try again.');
       return;
     }
 
@@ -402,7 +403,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isEditingClient = false;
           this.editingClientData = {};
 
-          // Show success message and auto-close dialog
+          // Show success message in dialog
           this.clientDialog.showSuccess('Client updated successfully!');
         },
         error: (error) => {
@@ -412,7 +413,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           // Show error message in dialog
           this.clientDialog.showError(
-            'Failed to update client. Please try again.',
+            error.message || 'Failed to update client. Please try again.',
           );
         },
       });
