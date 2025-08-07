@@ -218,13 +218,14 @@ export class BubbleShooterGameService {
       y: movingBubble.y,
     });
 
+    let madeMatch = false;
+
     if (gridPosition && this.isValidGridPosition(gridPosition, state.bubbles)) {
       // Place bubble in grid
       this.placeBubbleInGrid(gridPosition, movingBubble.color, state);
 
       // Check for matches
       const matchedBubbles = this.findMatches(gridPosition, state.bubbles);
-      let madeMatch = false;
 
       if (matchedBubbles.length >= 3) {
         this.removeBubbles(matchedBubbles, state);
@@ -233,22 +234,24 @@ export class BubbleShooterGameService {
         // Reset attempts on successful match
         state.attemptsLeft = this.MAX_ATTEMPTS;
       }
+    }
 
-      // If no match was made, decrement attempts
-      if (!madeMatch) {
-        state.attemptsLeft--;
+    // If no match was made (either no valid position found or no color match), decrement attempts
+    if (!madeMatch) {
+      state.attemptsLeft--;
 
-        // Add new row if attempts exhausted
-        if (state.attemptsLeft <= 0) {
-          this.addNewRow(state);
-          state.attemptsLeft = this.MAX_ATTEMPTS;
-        }
+      // Add new row if attempts exhausted
+      if (state.attemptsLeft <= 0) {
+        this.addNewRow(state);
+        state.attemptsLeft = this.MAX_ATTEMPTS;
       }
+    }
 
-      // Check win/lose conditions
-      this.checkGameEnd(state);
+    // Check win/lose conditions
+    this.checkGameEnd(state);
 
-      // Create new shooting bubble
+    // Always create new shooting bubble (unless game ended)
+    if (state.gameStatus === 'playing') {
       state.currentBubble = this.createNewBubble();
     }
 
