@@ -49,8 +49,8 @@ export class BubbleShooterGameService {
   private readonly BUBBLE_RADIUS = 20;
   private readonly CANVAS_WIDTH = 400;
   private readonly CANVAS_HEIGHT = 600;
-  private readonly GRID_ROWS = 10;
-  private readonly GRID_COLS = 10;
+  private readonly GRID_ROWS = 16;
+  private readonly GRID_COLS = 16;
   private readonly MAX_ATTEMPTS = 3;
   private readonly ANIMATION_SPEED = 8;
 
