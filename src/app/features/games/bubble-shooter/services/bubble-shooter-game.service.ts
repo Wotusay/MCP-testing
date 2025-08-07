@@ -8,15 +8,25 @@ export interface Bubble {
   radius: number;
 }
 
+export interface MovingBubble extends Bubble {
+  dx: number;
+  dy: number;
+  targetX?: number;
+  targetY?: number;
+}
+
 export interface GameState {
   bubbles: Bubble[][];
   currentBubble: Bubble | null;
+  movingBubble: MovingBubble | null;
   score: number;
   gameStatus: 'playing' | 'won' | 'lost';
   rows: number;
   cols: number;
   canvasWidth: number;
   canvasHeight: number;
+  attemptsLeft: number;
+  maxAttempts: number;
 }
 
 export interface Position {
@@ -41,9 +51,12 @@ export class BubbleShooterGameService {
   private readonly CANVAS_HEIGHT = 600;
   private readonly GRID_ROWS = 10;
   private readonly GRID_COLS = 10;
+  private readonly MAX_ATTEMPTS = 3;
+  private readonly ANIMATION_SPEED = 8;
 
   private gameState = new BehaviorSubject<GameState>(this.createInitialState());
   public gameState$ = this.gameState.asObservable();
+  private animationFrameId: number | null = null;
 
   constructor() {
     this.initializeGame();
@@ -53,12 +66,15 @@ export class BubbleShooterGameService {
     return {
       bubbles: [],
       currentBubble: null,
+      movingBubble: null,
       score: 0,
       gameStatus: 'playing',
       rows: this.GRID_ROWS,
       cols: this.GRID_COLS,
       canvasWidth: this.CANVAS_WIDTH,
       canvasHeight: this.CANVAS_HEIGHT,
+      attemptsLeft: this.MAX_ATTEMPTS,
+      maxAttempts: this.MAX_ATTEMPTS,
     };
   }
 
@@ -119,43 +135,126 @@ export class BubbleShooterGameService {
 
   public shootBubble(targetX: number, targetY: number): void {
     const currentState = this.gameState.value;
-    if (currentState.gameStatus !== 'playing' || !currentState.currentBubble) {
+    if (
+      currentState.gameStatus !== 'playing' ||
+      !currentState.currentBubble ||
+      currentState.movingBubble
+    ) {
       return;
     }
 
-    // Calculate trajectory and simulate bubble movement
+    // Create moving bubble with trajectory
     const bubble = currentState.currentBubble;
     const trajectory = this.calculateTrajectory(bubble, targetX, targetY);
-    const finalPosition = this.simulateBubbleMovement(bubble, trajectory);
 
-    if (finalPosition) {
-      // Place bubble in grid
-      const gridPosition = this.getGridPosition(finalPosition);
-      if (
-        gridPosition &&
-        this.isValidGridPosition(gridPosition, currentState.bubbles)
-      ) {
-        this.placeBubbleInGrid(gridPosition, bubble.color, currentState);
+    const movingBubble: MovingBubble = {
+      ...bubble,
+      dx: trajectory.dx,
+      dy: trajectory.dy,
+    };
 
-        // Check for matches and remove them
-        const matchedBubbles = this.findMatches(
-          gridPosition,
-          currentState.bubbles,
-        );
-        if (matchedBubbles.length >= 3) {
-          this.removeBubbles(matchedBubbles, currentState);
-          currentState.score += matchedBubbles.length * 10;
-        }
+    // Start animation
+    currentState.movingBubble = movingBubble;
+    currentState.currentBubble = null; // Hide current bubble during animation
 
-        // Check win/lose conditions
-        this.checkGameEnd(currentState);
+    this.gameState.next(currentState);
+    this.startBubbleAnimation();
+  }
 
-        // Create new shooting bubble
-        currentState.currentBubble = this.createNewBubble();
-
-        this.gameState.next(currentState);
-      }
+  private startBubbleAnimation(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
     }
+
+    const animate = () => {
+      const currentState = this.gameState.value;
+      const movingBubble = currentState.movingBubble;
+
+      if (!movingBubble || currentState.gameStatus !== 'playing') {
+        return;
+      }
+
+      // Update bubble position
+      movingBubble.x += movingBubble.dx;
+      movingBubble.y += movingBubble.dy;
+
+      // Check wall bouncing
+      if (
+        movingBubble.x <= this.BUBBLE_RADIUS ||
+        movingBubble.x >= this.CANVAS_WIDTH - this.BUBBLE_RADIUS
+      ) {
+        movingBubble.dx *= -1;
+      }
+
+      // Check collision with existing bubbles or top boundary
+      const collision = this.checkBubbleCollision(
+        movingBubble.x,
+        movingBubble.y,
+        currentState.bubbles,
+      );
+      const reachedTop = movingBubble.y <= this.BUBBLE_RADIUS;
+
+      if (collision || reachedTop) {
+        // Stop animation and place bubble
+        this.placeBubbleAfterAnimation(movingBubble, currentState);
+        return;
+      }
+
+      // Continue animation
+      this.gameState.next(currentState);
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  }
+
+  private placeBubbleAfterAnimation(
+    movingBubble: MovingBubble,
+    state: GameState,
+  ): void {
+    // Find the best grid position for the bubble
+    const gridPosition = this.getGridPosition({
+      x: movingBubble.x,
+      y: movingBubble.y,
+    });
+
+    if (gridPosition && this.isValidGridPosition(gridPosition, state.bubbles)) {
+      // Place bubble in grid
+      this.placeBubbleInGrid(gridPosition, movingBubble.color, state);
+
+      // Check for matches
+      const matchedBubbles = this.findMatches(gridPosition, state.bubbles);
+      let madeMatch = false;
+
+      if (matchedBubbles.length >= 3) {
+        this.removeBubbles(matchedBubbles, state);
+        state.score += matchedBubbles.length * 10;
+        madeMatch = true;
+        // Reset attempts on successful match
+        state.attemptsLeft = this.MAX_ATTEMPTS;
+      }
+
+      // If no match was made, decrement attempts
+      if (!madeMatch) {
+        state.attemptsLeft--;
+
+        // Add new row if attempts exhausted
+        if (state.attemptsLeft <= 0) {
+          this.addNewRow(state);
+          state.attemptsLeft = this.MAX_ATTEMPTS;
+        }
+      }
+
+      // Check win/lose conditions
+      this.checkGameEnd(state);
+
+      // Create new shooting bubble
+      state.currentBubble = this.createNewBubble();
+    }
+
+    // Clear moving bubble
+    state.movingBubble = null;
+    this.gameState.next(state);
   }
 
   private calculateTrajectory(
@@ -168,44 +267,9 @@ export class BubbleShooterGameService {
     const length = Math.sqrt(dx * dx + dy * dy);
 
     return {
-      dx: (dx / length) * 5, // Speed factor
-      dy: (dy / length) * 5,
+      dx: (dx / length) * this.ANIMATION_SPEED,
+      dy: (dy / length) * this.ANIMATION_SPEED,
     };
-  }
-
-  private simulateBubbleMovement(
-    bubble: Bubble,
-    trajectory: { dx: number; dy: number },
-  ): Position | null {
-    let x = bubble.x;
-    let y = bubble.y;
-    const { dx, dy } = trajectory;
-
-    // Simulate movement until collision
-    while (y > this.BUBBLE_RADIUS) {
-      x += dx;
-      y += dy;
-
-      // Wall bouncing
-      if (
-        x <= this.BUBBLE_RADIUS ||
-        x >= this.CANVAS_WIDTH - this.BUBBLE_RADIUS
-      ) {
-        trajectory.dx *= -1;
-      }
-
-      // Check collision with existing bubbles
-      const collision = this.checkBubbleCollision(
-        x,
-        y,
-        this.gameState.value.bubbles,
-      );
-      if (collision) {
-        return { x, y };
-      }
-    }
-
-    return { x, y }; // Reached top
   }
 
   private checkBubbleCollision(
@@ -417,6 +481,50 @@ export class BubbleShooterGameService {
     }
   }
 
+  private addNewRow(state: GameState): void {
+    // Shift all existing bubbles down one row
+    for (let row = this.GRID_ROWS - 1; row > 0; row--) {
+      if (state.bubbles[row - 1]) {
+        state.bubbles[row] = [...(state.bubbles[row - 1] || [])];
+        // Update y positions
+        for (let col = 0; col < this.GRID_COLS; col++) {
+          if (state.bubbles[row][col]) {
+            const bubbleSize = this.BUBBLE_RADIUS * 2;
+            state.bubbles[row][col].y =
+              this.BUBBLE_RADIUS + row * (bubbleSize * 0.866);
+          }
+        }
+      } else {
+        state.bubbles[row] = [];
+      }
+    }
+
+    // Create new top row
+    state.bubbles[0] = [];
+    const bubbleSize = this.BUBBLE_RADIUS * 2;
+    const offsetX = this.BUBBLE_RADIUS;
+    const offsetY = this.BUBBLE_RADIUS;
+
+    for (let col = 0; col < this.GRID_COLS; col++) {
+      // Only fill some positions to make game playable
+      if (Math.random() < 0.7) {
+        const xOffset = 0; // Top row doesn't need offset
+        const x = offsetX + col * bubbleSize + xOffset;
+        const y = offsetY;
+
+        if (x + this.BUBBLE_RADIUS <= this.CANVAS_WIDTH) {
+          const color = this.getRandomColor();
+          state.bubbles[0][col] = {
+            x,
+            y,
+            color,
+            radius: this.BUBBLE_RADIUS,
+          };
+        }
+      }
+    }
+  }
+
   private checkGameEnd(state: GameState): void {
     // Check if all bubbles are cleared (win condition)
     let hasBubbles = false;
@@ -438,12 +546,12 @@ export class BubbleShooterGameService {
       return;
     }
 
-    // Check if bubbles reached bottom (lose condition)
-    const lastRows = state.bubbles.slice(-3);
-    for (const row of lastRows) {
+    // Check if bubbles reached bottom of canvas (lose condition)
+    const bottomThreshold = this.CANVAS_HEIGHT - this.BUBBLE_RADIUS * 3;
+    for (const row of state.bubbles) {
       if (row) {
         for (const bubble of row) {
-          if (bubble) {
+          if (bubble && bubble.y >= bottomThreshold) {
             state.gameStatus = 'lost';
             return;
           }
@@ -453,10 +561,22 @@ export class BubbleShooterGameService {
   }
 
   public startNewGame(): void {
+    // Stop any ongoing animations
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
     this.initializeGame();
   }
 
   public getCurrentState(): GameState {
     return this.gameState.value;
+  }
+
+  public stopAnimations(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
   }
 }

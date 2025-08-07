@@ -41,13 +41,25 @@ import {
           </p>
         </header>
 
-        <!-- Score Display -->
-        <div class="text-center mb-4" *ngIf="gameState$ | async as gameState">
+        <!-- Score and Attempts Display -->
+        <div
+          class="flex justify-center gap-4 mb-4"
+          *ngIf="gameState$ | async as gameState"
+        >
           <div
             class="inline-flex items-center px-4 py-2 bg-primary-100 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg"
           >
             <span class="text-primary-800 dark:text-primary-200 font-semibold">
               Score: {{ gameState.score }}
+            </span>
+          </div>
+          <div
+            class="inline-flex items-center px-4 py-2 bg-secondary-100 dark:bg-secondary-900/30 border border-secondary-200 dark:border-secondary-800 rounded-lg"
+          >
+            <span
+              class="text-secondary-800 dark:text-secondary-200 font-semibold"
+            >
+              Attempts: {{ gameState.attemptsLeft }}/{{ gameState.maxAttempts }}
             </span>
           </div>
         </div>
@@ -131,9 +143,10 @@ import {
             >
               <li>• Click on the canvas to aim and shoot bubbles</li>
               <li>• Match 3 or more bubbles of the same color to clear them</li>
+              <li>• You have 3 attempts to make a match</li>
+              <li>• After 3 failed attempts, a new row is added</li>
+              <li>• Game over when bubbles reach the bottom</li>
               <li>• Bubbles bounce off walls</li>
-              <li>• Clear all bubbles to win!</li>
-              <li>• Don't let bubbles reach the bottom</li>
             </ul>
           </div>
         </ng-container>
@@ -184,6 +197,7 @@ export class BubbleShooterComponent
   }
 
   ngOnDestroy(): void {
+    this.gameService.stopAnimations();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -223,8 +237,13 @@ export class BubbleShooterComponent
     // Draw grid bubbles
     this.drawBubbles(gameState.bubbles);
 
-    // Draw current shooting bubble
-    if (gameState.currentBubble) {
+    // Draw moving bubble (during animation)
+    if (gameState.movingBubble) {
+      this.drawBubble(gameState.movingBubble);
+    }
+
+    // Draw current shooting bubble (when not moving)
+    if (gameState.currentBubble && !gameState.movingBubble) {
       this.drawBubble(gameState.currentBubble);
     }
   }
@@ -337,13 +356,20 @@ export class BubbleShooterComponent
 
     // Draw aiming line from current bubble to mouse position
     const gameState = this.gameService.getCurrentState();
-    if (gameState.currentBubble && gameState.gameStatus === 'playing') {
+    if (
+      gameState.currentBubble &&
+      gameState.gameStatus === 'playing' &&
+      !gameState.movingBubble
+    ) {
       this.drawAimingLine(
         gameState.currentBubble.x,
         gameState.currentBubble.y,
         x,
         y,
       );
+    } else {
+      // Clear aiming line when bubble is moving
+      this.aimingCtx?.clearRect(0, 0, canvas.width, canvas.height);
     }
   }
 
