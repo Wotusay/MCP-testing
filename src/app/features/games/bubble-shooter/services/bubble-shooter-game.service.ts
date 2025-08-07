@@ -130,7 +130,34 @@ export class BubbleShooterGameService {
   }
 
   private getRandomColor(): string {
-    return this.COLORS[Math.floor(Math.random() * this.COLORS.length)];
+    // Get colors that are currently on the board
+    const availableColors = this.getAvailableColors();
+
+    // If no colors available on board (empty board), use all colors
+    if (availableColors.length === 0) {
+      return this.COLORS[Math.floor(Math.random() * this.COLORS.length)];
+    }
+
+    // Otherwise, only use colors that exist on the board
+    return availableColors[Math.floor(Math.random() * availableColors.length)];
+  }
+
+  private getAvailableColors(): string[] {
+    const currentState = this.gameState.value;
+    const colorsOnBoard = new Set<string>();
+
+    // Scan all bubbles in the grid to find existing colors
+    for (const row of currentState.bubbles) {
+      if (row) {
+        for (const bubble of row) {
+          if (bubble) {
+            colorsOnBoard.add(bubble.color);
+          }
+        }
+      }
+    }
+
+    return Array.from(colorsOnBoard);
   }
 
   public shootBubble(targetX: number, targetY: number): void {
@@ -502,28 +529,25 @@ export class BubbleShooterGameService {
       }
     }
 
-    // Create new top row
+    // Create new top row - fill completely
     state.bubbles[0] = [];
     const bubbleSize = this.BUBBLE_RADIUS * 2;
     const offsetX = this.BUBBLE_RADIUS;
     const offsetY = this.BUBBLE_RADIUS;
 
     for (let col = 0; col < this.GRID_COLS; col++) {
-      // Only fill some positions to make game playable
-      if (Math.random() < 0.7) {
-        const xOffset = 0; // Top row doesn't need offset
-        const x = offsetX + col * bubbleSize + xOffset;
-        const y = offsetY;
+      const xOffset = 0; // Top row doesn't need offset
+      const x = offsetX + col * bubbleSize + xOffset;
+      const y = offsetY;
 
-        if (x + this.BUBBLE_RADIUS <= this.CANVAS_WIDTH) {
-          const color = this.getRandomColor();
-          state.bubbles[0][col] = {
-            x,
-            y,
-            color,
-            radius: this.BUBBLE_RADIUS,
-          };
-        }
+      if (x + this.BUBBLE_RADIUS <= this.CANVAS_WIDTH) {
+        const color = this.getRandomColor();
+        state.bubbles[0][col] = {
+          x,
+          y,
+          color,
+          radius: this.BUBBLE_RADIUS,
+        };
       }
     }
   }
@@ -549,12 +573,14 @@ export class BubbleShooterGameService {
       return;
     }
 
-    // Check if bubbles reached bottom of canvas (lose condition)
-    const bottomThreshold = this.CANVAS_HEIGHT - this.BUBBLE_RADIUS * 3;
+    // Check if bubbles reached the shooting position (lose condition)
+    // The shooting position is at CANVAS_HEIGHT - 50, so check if any bubble
+    // is at or below the shooting area
+    const shootingAreaThreshold = this.CANVAS_HEIGHT - 80; // Give some buffer above shooting bubble
     for (const row of state.bubbles) {
       if (row) {
         for (const bubble of row) {
-          if (bubble && bubble.y >= bottomThreshold) {
+          if (bubble && bubble.y >= shootingAreaThreshold) {
             state.gameStatus = 'lost';
             return;
           }
