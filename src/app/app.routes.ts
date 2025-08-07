@@ -24,11 +24,29 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'wordle',
+    path: 'games',
     loadComponent: () =>
-      import('./features/wordle/wordle.component').then(
+      import('./features/games/games.component').then((m) => m.GamesComponent),
+  },
+  {
+    path: 'games/wordle',
+    loadComponent: () =>
+      import('./features/games/wordle/wordle.component').then(
         (m) => m.WordleComponent,
       ),
+  },
+  {
+    path: 'games/bubble-shooter',
+    loadComponent: () =>
+      import('./features/games/bubble-shooter/bubble-shooter.component').then(
+        (m) => m.BubbleShooterComponent,
+      ),
+  },
+  // Legacy route redirect for existing Wordle bookmarks
+  {
+    path: 'wordle',
+    redirectTo: '/games/wordle',
+    pathMatch: 'full',
   },
   {
     path: 'material-demo',

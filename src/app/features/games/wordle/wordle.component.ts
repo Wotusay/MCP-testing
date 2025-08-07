@@ -12,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { GameBoardComponent } from './components/game-board.component';
 import { GameKeyboardComponent } from './components/game-keyboard.component';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { WordleGameService, GameState } from './services/wordle-game.service';
 
 @Component({
