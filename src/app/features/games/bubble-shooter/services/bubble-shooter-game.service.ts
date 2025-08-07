@@ -58,9 +58,9 @@ export interface SoundEffect {
 export class BubbleShooterGameService {
   private readonly COLORS = [
     '#FF6B6B',
-    '#4ECDC4',
-    '#45B7D1',
-    '#96CEB4',
+    '#3D54D9FF',
+    '#72058AFF',
+    '#11E783FF',
     '#FECA57',
     '#FF9FF3',
   ];
@@ -70,7 +70,7 @@ export class BubbleShooterGameService {
   private readonly GRID_ROWS = 16;
   private readonly GRID_COLS = 16;
   private readonly MAX_ATTEMPTS = 3;
-  private readonly ANIMATION_SPEED = 8;
+  private readonly ANIMATION_SPEED = 12;
 
   private gameState = new BehaviorSubject<GameState>(this.createInitialState());
   public gameState$ = this.gameState.asObservable();
