@@ -42,7 +42,7 @@ import {
           </p>
         </header>
 
-        <!-- Score and Attempts Display -->
+        <!-- Score and Next Bubble Preview -->
         <div
           class="flex justify-center gap-4 mb-4"
           *ngIf="gameState$ | async as gameState"
@@ -55,11 +55,26 @@ import {
             </span>
           </div>
           <div
-            class="inline-flex items-center px-4 py-2 bg-secondary-100 dark:bg-secondary-900/30 border border-secondary-200 dark:border-secondary-800 rounded-lg"
+            class="inline-flex items-center px-4 py-2 bg-secondary-100 dark:bg-secondary-900/30 border border-secondary-200 dark:border-secondary-800 rounded-lg gap-2"
           >
             <span
               class="text-secondary-800 dark:text-secondary-200 font-semibold"
             >
+              Next:
+            </span>
+            <div
+              class="w-6 h-6 rounded-full border-2 border-secondary-300 dark:border-secondary-600"
+              [style.background-color]="gameState.nextBubbleColor"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Attempts Display (positioned near the shooting bubble) -->
+        <div class="text-center mb-2" *ngIf="gameState$ | async as gameState">
+          <div
+            class="inline-flex items-center px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-full text-sm"
+          >
+            <span class="text-yellow-800 dark:text-yellow-200 font-medium">
               Attempts: {{ gameState.attemptsLeft }}/{{ gameState.maxAttempts }}
             </span>
           </div>

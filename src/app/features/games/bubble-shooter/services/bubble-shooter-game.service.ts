@@ -28,6 +28,7 @@ export interface GameState {
   canvasHeight: number;
   attemptsLeft: number;
   maxAttempts: number;
+  nextBubbleColor: string;
 }
 
 export interface Position {
@@ -95,6 +96,7 @@ export class BubbleShooterGameService {
       canvasHeight: this.CANVAS_HEIGHT,
       attemptsLeft: this.MAX_ATTEMPTS,
       maxAttempts: this.MAX_ATTEMPTS,
+      nextBubbleColor: this.getRandomColor(), // Initialize with any color
     };
   }
 
@@ -104,8 +106,11 @@ export class BubbleShooterGameService {
     // Initialize bubble grid
     state.bubbles = this.createBubbleGrid();
 
-    // Create first shooting bubble
-    state.currentBubble = this.createNewBubble();
+    // Set the next bubble color based on available colors on the board
+    state.nextBubbleColor = this.getRandomColorForBoard(state.bubbles);
+
+    // Create first shooting bubble using a random color
+    state.currentBubble = this.createInitialBubble();
 
     this.gameState.next(state);
   }
@@ -140,7 +145,7 @@ export class BubbleShooterGameService {
     return grid;
   }
 
-  private createNewBubble(): Bubble {
+  private createInitialBubble(): Bubble {
     return {
       x: this.CANVAS_WIDTH / 2,
       y: this.CANVAS_HEIGHT - 50,
@@ -149,13 +154,30 @@ export class BubbleShooterGameService {
     };
   }
 
+  private createNewBubble(): Bubble {
+    const currentState = this.gameState?.value;
+    // Use nextBubbleColor if available, otherwise generate a random color
+    const color = currentState?.nextBubbleColor || this.getRandomColor();
+
+    return {
+      x: this.CANVAS_WIDTH / 2,
+      y: this.CANVAS_HEIGHT - 50,
+      color,
+      radius: this.BUBBLE_RADIUS,
+    };
+  }
+
   private getRandomColor(): string {
+    return this.COLORS[Math.floor(Math.random() * this.COLORS.length)];
+  }
+
+  private getRandomColorForBoard(bubbleGrid: Bubble[][]): string {
     // Get colors that are currently on the board
-    const availableColors = this.getAvailableColors();
+    const availableColors = this.getAvailableColorsFromGrid(bubbleGrid);
 
     // If no colors available on board (empty board), use all colors
     if (availableColors.length === 0) {
-      return this.COLORS[Math.floor(Math.random() * this.COLORS.length)];
+      return this.getRandomColor();
     }
 
     // Otherwise, only use colors that exist on the board
@@ -164,10 +186,14 @@ export class BubbleShooterGameService {
 
   private getAvailableColors(): string[] {
     const currentState = this.gameState.value;
+    return this.getAvailableColorsFromGrid(currentState.bubbles);
+  }
+
+  private getAvailableColorsFromGrid(bubbleGrid: Bubble[][]): string[] {
     const colorsOnBoard = new Set<string>();
 
     // Scan all bubbles in the grid to find existing colors
-    for (const row of currentState.bubbles) {
+    for (const row of bubbleGrid) {
       if (row) {
         for (const bubble of row) {
           if (bubble) {
@@ -282,8 +308,7 @@ export class BubbleShooterGameService {
         this.removeBubbles(matchedBubbles, state);
         state.score += matchedBubbles.length * 10;
         madeMatch = true;
-        // Reset attempts on successful match
-        state.attemptsLeft = this.MAX_ATTEMPTS;
+        // Don't reset attempts on successful match - let the player keep their attempts
       }
     }
 
@@ -307,6 +332,8 @@ export class BubbleShooterGameService {
 
     // Always create new shooting bubble (unless game ended)
     if (state.gameStatus === 'playing') {
+      // Update next bubble color for the preview
+      state.nextBubbleColor = this.getRandomColorForBoard(state.bubbles);
       state.currentBubble = this.createNewBubble();
     }
 
