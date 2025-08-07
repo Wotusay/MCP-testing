@@ -113,7 +113,8 @@ import {
           >
             <p class="font-semibold">😔 Game Over!</p>
             <p class="text-sm">
-              The bubbles reached the shooting area. Final Score: {{ gameState.score }}
+              The bubbles reached the shooting area. Final Score:
+              {{ gameState.score }}
             </p>
           </div>
 

@@ -246,12 +246,10 @@ export class BubbleShooterGameService {
     });
 
     let madeMatch = false;
-    let bubblePlaced = false;
 
     if (gridPosition && this.isValidGridPosition(gridPosition, state.bubbles)) {
       // Place bubble in grid
       this.placeBubbleInGrid(gridPosition, movingBubble.color, state);
-      bubblePlaced = true;
 
       // Check for matches only if bubble was successfully placed
       const matchedBubbles = this.findMatches(gridPosition, state.bubbles);
@@ -519,11 +517,11 @@ export class BubbleShooterGameService {
 
   private addNewRow(state: GameState): void {
     // Check if adding a new row would cause game over
-    // If the second-to-last row (row 8) has bubbles, adding a row would fill row 9
-    // which is too close to the shooting position
-    const gameOverRow = this.GRID_ROWS - 2; // Row 8 (0-indexed)
+    // If the last row (row 9) has bubbles, adding a row would cause game over
+    // More forgiving - only check the very last row
+    const gameOverRow = this.GRID_ROWS - 1; // Row 9 (0-indexed)
     let hasBottomRowBubbles = false;
-    
+
     if (state.bubbles[gameOverRow]) {
       for (let col = 0; col < this.GRID_COLS; col++) {
         if (state.bubbles[gameOverRow][col]) {
@@ -532,8 +530,8 @@ export class BubbleShooterGameService {
         }
       }
     }
-    
-    // If bottom area has bubbles, adding a new row would cause game over
+
+    // If the very last row has bubbles, adding a new row would cause game over
     if (hasBottomRowBubbles) {
       state.gameStatus = 'lost';
       return;
@@ -601,15 +599,13 @@ export class BubbleShooterGameService {
     }
 
     // Check if bubbles reached the danger zone (lose condition)
-    // The danger zone is rows 8 and 9 (close to shooting position)
-    const dangerRow = this.GRID_ROWS - 2; // Row 8 (0-indexed)
-    for (let row = dangerRow; row < this.GRID_ROWS; row++) {
-      if (state.bubbles[row]) {
-        for (let col = 0; col < this.GRID_COLS; col++) {
-          if (state.bubbles[row][col]) {
-            state.gameStatus = 'lost';
-            return;
-          }
+    // More forgiving - only check the very last row (row 9)
+    const dangerRow = this.GRID_ROWS - 1; // Row 9 (0-indexed)
+    if (state.bubbles[dangerRow]) {
+      for (let col = 0; col < this.GRID_COLS; col++) {
+        if (state.bubbles[dangerRow][col]) {
+          state.gameStatus = 'lost';
+          return;
         }
       }
     }
