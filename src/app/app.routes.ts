@@ -24,6 +24,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'wordle',
+    loadComponent: () =>
+      import('./features/wordle/wordle.component').then(
+        (m) => m.WordleComponent,
+      ),
+  },
+  {
     path: 'material-demo',
     loadComponent: () =>
       import('./features/material-demo/material-demo.component').then(
