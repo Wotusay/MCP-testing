@@ -246,12 +246,14 @@ export class BubbleShooterGameService {
     });
 
     let madeMatch = false;
+    let bubblePlaced = false;
 
     if (gridPosition && this.isValidGridPosition(gridPosition, state.bubbles)) {
       // Place bubble in grid
       this.placeBubbleInGrid(gridPosition, movingBubble.color, state);
+      bubblePlaced = true;
 
-      // Check for matches
+      // Check for matches only if bubble was successfully placed
       const matchedBubbles = this.findMatches(gridPosition, state.bubbles);
 
       if (matchedBubbles.length >= 3) {
@@ -263,18 +265,22 @@ export class BubbleShooterGameService {
       }
     }
 
-    // If no match was made (either no valid position found or no color match), decrement attempts
+    // If no match was made, decrement attempts
+    // This includes both cases: bubble couldn't be placed OR bubble was placed but no match
     if (!madeMatch) {
       state.attemptsLeft--;
 
       // Add new row if attempts exhausted
       if (state.attemptsLeft <= 0) {
         this.addNewRow(state);
-        state.attemptsLeft = this.MAX_ATTEMPTS;
+        // Only reset attempts if game didn't end due to adding row
+        if (state.gameStatus === 'playing') {
+          state.attemptsLeft = this.MAX_ATTEMPTS;
+        }
       }
     }
 
-    // Check win/lose conditions
+    // Check win/lose conditions after all changes
     this.checkGameEnd(state);
 
     // Always create new shooting bubble (unless game ended)
@@ -512,6 +518,27 @@ export class BubbleShooterGameService {
   }
 
   private addNewRow(state: GameState): void {
+    // Check if adding a new row would cause game over
+    // If the second-to-last row (row 8) has bubbles, adding a row would fill row 9
+    // which is too close to the shooting position
+    const gameOverRow = this.GRID_ROWS - 2; // Row 8 (0-indexed)
+    let hasBottomRowBubbles = false;
+    
+    if (state.bubbles[gameOverRow]) {
+      for (let col = 0; col < this.GRID_COLS; col++) {
+        if (state.bubbles[gameOverRow][col]) {
+          hasBottomRowBubbles = true;
+          break;
+        }
+      }
+    }
+    
+    // If bottom area has bubbles, adding a new row would cause game over
+    if (hasBottomRowBubbles) {
+      state.gameStatus = 'lost';
+      return;
+    }
+
     // Shift all existing bubbles down one row
     for (let row = this.GRID_ROWS - 1; row > 0; row--) {
       if (state.bubbles[row - 1]) {
@@ -573,14 +600,13 @@ export class BubbleShooterGameService {
       return;
     }
 
-    // Check if bubbles reached the shooting position (lose condition)
-    // The shooting position is at CANVAS_HEIGHT - 50, so check if any bubble
-    // is at or below the shooting area
-    const shootingAreaThreshold = this.CANVAS_HEIGHT - 80; // Give some buffer above shooting bubble
-    for (const row of state.bubbles) {
-      if (row) {
-        for (const bubble of row) {
-          if (bubble && bubble.y >= shootingAreaThreshold) {
+    // Check if bubbles reached the danger zone (lose condition)
+    // The danger zone is rows 8 and 9 (close to shooting position)
+    const dangerRow = this.GRID_ROWS - 2; // Row 8 (0-indexed)
+    for (let row = dangerRow; row < this.GRID_ROWS; row++) {
+      if (state.bubbles[row]) {
+        for (let col = 0; col < this.GRID_COLS; col++) {
+          if (state.bubbles[row][col]) {
             state.gameStatus = 'lost';
             return;
           }

@@ -113,7 +113,7 @@ import {
           >
             <p class="font-semibold">😔 Game Over!</p>
             <p class="text-sm">
-              The bubbles reached the bottom. Final Score: {{ gameState.score }}
+              The bubbles reached the shooting area. Final Score: {{ gameState.score }}
             </p>
           </div>
 
@@ -145,7 +145,7 @@ import {
               <li>• Match 3 or more bubbles of the same color to clear them</li>
               <li>• You have 3 attempts to make a match</li>
               <li>• After 3 failed attempts, a new row is added</li>
-              <li>• Game over when bubbles reach the bottom</li>
+              <li>• Game over when bubbles reach the shooting area</li>
               <li>• Bubbles bounce off walls</li>
             </ul>
           </div>
