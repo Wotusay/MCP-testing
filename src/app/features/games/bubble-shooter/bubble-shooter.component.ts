@@ -17,6 +17,7 @@ import {
   BubbleShooterGameService,
   GameState,
   Bubble,
+  Particle,
 } from './services/bubble-shooter-game.service';
 
 @Component({
@@ -238,6 +239,9 @@ export class BubbleShooterComponent
     // Draw grid bubbles
     this.drawBubbles(gameState.bubbles);
 
+    // Draw particles (shattering effects)
+    this.drawParticles(gameState.particles);
+
     // Draw moving bubble (during animation)
     if (gameState.movingBubble) {
       this.drawBubble(gameState.movingBubble);
@@ -302,7 +306,23 @@ export class BubbleShooterComponent
     this.ctx.stroke();
   }
 
-  private drawAimingLine(
+  private drawParticles(particles: Particle[]): void {
+    for (const particle of particles) {
+      const alpha = 1 - particle.life / particle.maxLife;
+
+      // Draw particle
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x, particle.y, particle.radius, 0, 2 * Math.PI);
+      this.ctx.fillStyle = particle.color;
+      this.ctx.globalAlpha = alpha;
+      this.ctx.fill();
+
+      // Reset alpha
+      this.ctx.globalAlpha = 1;
+    }
+  }
+
+  private drawAimingArrow(
     startX: number,
     startY: number,
     endX: number,
@@ -316,20 +336,63 @@ export class BubbleShooterComponent
     // Clear aiming canvas
     this.aimingCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // Draw aiming line
+    // Calculate direction
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    // Limit the arrow length to prevent it from going too far
+    const maxLength = 150;
+    const actualLength = Math.min(length, maxLength);
+
+    const unitX = dx / length;
+    const unitY = dy / length;
+
+    const arrowEndX = startX + unitX * actualLength;
+    const arrowEndY = startY + unitY * actualLength;
+
+    // Draw aiming line with gradient
+    const gradient = this.aimingCtx.createLinearGradient(
+      startX,
+      startY,
+      arrowEndX,
+      arrowEndY,
+    );
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
+
     this.aimingCtx.beginPath();
     this.aimingCtx.moveTo(startX, startY);
-    this.aimingCtx.lineTo(endX, endY);
-    this.aimingCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-    this.aimingCtx.lineWidth = 2;
-    this.aimingCtx.setLineDash([5, 5]);
+    this.aimingCtx.lineTo(arrowEndX, arrowEndY);
+    this.aimingCtx.strokeStyle = gradient;
+    this.aimingCtx.lineWidth = 4;
+    this.aimingCtx.setLineDash([]);
     this.aimingCtx.stroke();
 
-    // Draw aim dot
+    // Draw arrow head
+    const arrowSize = 12;
+    const arrowX1 = arrowEndX - arrowSize * unitX - arrowSize * 0.3 * -unitY;
+    const arrowY1 = arrowEndY - arrowSize * unitY - arrowSize * 0.3 * unitX;
+    const arrowX2 = arrowEndX - arrowSize * unitX + arrowSize * 0.3 * -unitY;
+    const arrowY2 = arrowEndY - arrowSize * unitY + arrowSize * 0.3 * unitX;
+
     this.aimingCtx.beginPath();
-    this.aimingCtx.arc(endX, endY, 4, 0, 2 * Math.PI);
-    this.aimingCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    this.aimingCtx.moveTo(arrowEndX, arrowEndY);
+    this.aimingCtx.lineTo(arrowX1, arrowY1);
+    this.aimingCtx.moveTo(arrowEndX, arrowEndY);
+    this.aimingCtx.lineTo(arrowX2, arrowY2);
+    this.aimingCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+    this.aimingCtx.lineWidth = 3;
+    this.aimingCtx.stroke();
+
+    // Draw circular indicator at the end
+    this.aimingCtx.beginPath();
+    this.aimingCtx.arc(arrowEndX, arrowEndY, 6, 0, 2 * Math.PI);
+    this.aimingCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
     this.aimingCtx.fill();
+    this.aimingCtx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    this.aimingCtx.lineWidth = 1;
+    this.aimingCtx.stroke();
   }
 
   onCanvasClick(event: MouseEvent): void {
@@ -355,21 +418,21 @@ export class BubbleShooterComponent
 
     this.mousePosition = { x, y };
 
-    // Draw aiming line from current bubble to mouse position
+    // Draw aiming arrow from current bubble to mouse position
     const gameState = this.gameService.getCurrentState();
     if (
       gameState.currentBubble &&
       gameState.gameStatus === 'playing' &&
       !gameState.movingBubble
     ) {
-      this.drawAimingLine(
+      this.drawAimingArrow(
         gameState.currentBubble.x,
         gameState.currentBubble.y,
         x,
         y,
       );
     } else {
-      // Clear aiming line when bubble is moving
+      // Clear aiming arrow when bubble is moving
       this.aimingCtx?.clearRect(0, 0, canvas.width, canvas.height);
     }
   }

@@ -19,6 +19,7 @@ export interface GameState {
   bubbles: Bubble[][];
   currentBubble: Bubble | null;
   movingBubble: MovingBubble | null;
+  particles: Particle[];
   score: number;
   gameStatus: 'playing' | 'won' | 'lost';
   rows: number;
@@ -32,6 +33,22 @@ export interface GameState {
 export interface Position {
   x: number;
   y: number;
+}
+
+export interface Particle {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  color: string;
+  radius: number;
+  life: number;
+  maxLife: number;
+}
+
+export interface SoundEffect {
+  type: 'shoot' | 'match' | 'gameOver' | 'win' | 'bounce';
+  volume?: number;
 }
 
 @Injectable({
@@ -57,6 +74,8 @@ export class BubbleShooterGameService {
   private gameState = new BehaviorSubject<GameState>(this.createInitialState());
   public gameState$ = this.gameState.asObservable();
   private animationFrameId: number | null = null;
+  private particleAnimationId: number | null = null;
+  private audioContext: AudioContext | null = null;
 
   constructor() {
     this.initializeGame();
@@ -67,6 +86,7 @@ export class BubbleShooterGameService {
       bubbles: [],
       currentBubble: null,
       movingBubble: null,
+      particles: [],
       score: 0,
       gameStatus: 'playing',
       rows: this.GRID_ROWS,
@@ -170,6 +190,9 @@ export class BubbleShooterGameService {
       return;
     }
 
+    // Play shooting sound
+    this.playSound({ type: 'shoot' });
+
     // Create moving bubble with trajectory
     const bubble = currentState.currentBubble;
     const trajectory = this.calculateTrajectory(bubble, targetX, targetY);
@@ -211,6 +234,7 @@ export class BubbleShooterGameService {
         movingBubble.x >= this.CANVAS_WIDTH - this.BUBBLE_RADIUS
       ) {
         movingBubble.dx *= -1;
+        this.playSound({ type: 'bounce' });
       }
 
       // Check collision with existing bubbles or top boundary
@@ -460,15 +484,168 @@ export class BubbleShooterGameService {
     return neighbors;
   }
 
+  private createShatteringEffect(bubble: Bubble): Particle[] {
+    const particles: Particle[] = [];
+    const particleCount = 8;
+
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount;
+      const speed = 2 + Math.random() * 3;
+
+      particles.push({
+        x: bubble.x,
+        y: bubble.y,
+        dx: Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        color: bubble.color,
+        radius: 3 + Math.random() * 3,
+        life: 0,
+        maxLife: 30 + Math.random() * 20,
+      });
+    }
+
+    return particles;
+  }
+
+  private updateParticles(state: GameState): void {
+    state.particles = state.particles.filter((particle) => {
+      particle.x += particle.dx;
+      particle.y += particle.dy;
+      particle.dy += 0.1; // gravity
+      particle.life++;
+
+      return particle.life < particle.maxLife;
+    });
+  }
+
+  private startParticleAnimation(): void {
+    if (this.particleAnimationId) {
+      return; // Already running
+    }
+
+    const animate = () => {
+      const currentState = this.gameState.value;
+
+      if (currentState.particles.length > 0) {
+        this.updateParticles(currentState);
+        this.gameState.next(currentState);
+        this.particleAnimationId = requestAnimationFrame(animate);
+      } else {
+        this.particleAnimationId = null;
+      }
+    };
+
+    this.particleAnimationId = requestAnimationFrame(animate);
+  }
+
+  private initAudioContext(): void {
+    if (!this.audioContext) {
+      try {
+        this.audioContext = new (window.AudioContext ||
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ((window as any).webkitAudioContext as typeof AudioContext))();
+      } catch {
+        // Audio context not supported - will remain null
+      }
+    }
+  }
+
+  private playSound(effect: SoundEffect): void {
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+
+    // Configure sound based on effect type
+    switch (effect.type) {
+      case 'shoot':
+        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          200,
+          this.audioContext.currentTime + 0.1,
+        );
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext.currentTime + 0.1,
+        );
+        break;
+      case 'match':
+        oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          800,
+          this.audioContext.currentTime + 0.2,
+        );
+        gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext.currentTime + 0.2,
+        );
+        break;
+      case 'bounce':
+        oscillator.frequency.setValueAtTime(300, this.audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.05, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext.currentTime + 0.05,
+        );
+        break;
+      case 'gameOver':
+        oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          100,
+          this.audioContext.currentTime + 0.5,
+        );
+        gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext.currentTime + 0.5,
+        );
+        break;
+      case 'win':
+        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          800,
+          this.audioContext.currentTime + 0.3,
+        );
+        gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          this.audioContext.currentTime + 0.3,
+        );
+        break;
+    }
+
+    oscillator.start();
+    oscillator.stop(this.audioContext.currentTime + 0.5);
+  }
+
   private removeBubbles(
     positions: { row: number; col: number }[],
     state: GameState,
   ): void {
+    // Create shattering effects for each bubble being removed
     for (const position of positions) {
-      if (state.bubbles[position.row]) {
+      if (
+        state.bubbles[position.row] &&
+        state.bubbles[position.row][position.col]
+      ) {
+        const bubble = state.bubbles[position.row][position.col];
+        const particles = this.createShatteringEffect(bubble);
+        state.particles.push(...particles);
         delete state.bubbles[position.row][position.col];
       }
     }
+
+    // Play matching sound effect
+    this.playSound({ type: 'match' });
+
+    // Start particle animation if not already running
+    this.startParticleAnimation();
 
     // Remove floating bubbles
     this.removeFloatingBubbles(state);
@@ -489,6 +666,9 @@ export class BubbleShooterGameService {
       if (state.bubbles[row]) {
         for (let col = 0; col < this.GRID_COLS; col++) {
           if (state.bubbles[row][col] && !connected.has(`${row},${col}`)) {
+            const bubble = state.bubbles[row][col];
+            const particles = this.createShatteringEffect(bubble);
+            state.particles.push(...particles);
             delete state.bubbles[row][col];
             state.score += 5; // Bonus points for floating bubbles
           }
@@ -595,6 +775,7 @@ export class BubbleShooterGameService {
     if (!hasBubbles) {
       state.gameStatus = 'won';
       state.score += 1000; // Bonus for winning
+      this.playSound({ type: 'win' });
       return;
     }
 
@@ -605,6 +786,7 @@ export class BubbleShooterGameService {
       for (let col = 0; col < this.GRID_COLS; col++) {
         if (state.bubbles[dangerRow][col]) {
           state.gameStatus = 'lost';
+          this.playSound({ type: 'gameOver' });
           return;
         }
       }
@@ -613,10 +795,7 @@ export class BubbleShooterGameService {
 
   public startNewGame(): void {
     // Stop any ongoing animations
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
+    this.stopAnimations();
     this.initializeGame();
   }
 
@@ -628,6 +807,10 @@ export class BubbleShooterGameService {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
+    }
+    if (this.particleAnimationId) {
+      cancelAnimationFrame(this.particleAnimationId);
+      this.particleAnimationId = null;
     }
   }
 }
