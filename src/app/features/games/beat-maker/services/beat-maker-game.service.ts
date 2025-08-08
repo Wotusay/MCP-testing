@@ -63,11 +63,15 @@ export class BeatMakerGameService {
 
   private async initializeAudioContext(): Promise<void> {
     try {
-      this.audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      // Initialize Web Audio API context with fallback for older browsers
+      const AudioContextConstructor =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      this.audioContext = new AudioContextConstructor();
       await this.createDrumSounds();
-    } catch (error) {
-      console.error('Failed to initialize audio context:', error);
+    } catch {
+      // Audio context initialization failed - game will continue without sound
     }
   }
 
@@ -78,8 +82,8 @@ export class BeatMakerGameService {
       try {
         const buffer = await this.createDrumBuffer(track.id);
         return { ...track, audioBuffer: buffer };
-      } catch (error) {
-        console.error(`Failed to create sound for ${track.id}:`, error);
+      } catch {
+        // Failed to create sound buffer - continue without this track
         return track;
       }
     });
@@ -103,27 +107,47 @@ export class BeatMakerGameService {
     switch (soundType) {
       case 'kick':
         duration = 0.5;
-        buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        buffer = this.audioContext.createBuffer(
+          1,
+          sampleRate * duration,
+          sampleRate,
+        );
         this.generateKickSound(buffer);
         break;
       case 'snare':
         duration = 0.2;
-        buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        buffer = this.audioContext.createBuffer(
+          1,
+          sampleRate * duration,
+          sampleRate,
+        );
         this.generateSnareSound(buffer);
         break;
       case 'hihat':
         duration = 0.1;
-        buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        buffer = this.audioContext.createBuffer(
+          1,
+          sampleRate * duration,
+          sampleRate,
+        );
         this.generateHiHatSound(buffer);
         break;
       case 'openhat':
         duration = 0.3;
-        buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        buffer = this.audioContext.createBuffer(
+          1,
+          sampleRate * duration,
+          sampleRate,
+        );
         this.generateOpenHatSound(buffer);
         break;
       default:
         duration = 0.1;
-        buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+        buffer = this.audioContext.createBuffer(
+          1,
+          sampleRate * duration,
+          sampleRate,
+        );
     }
 
     return buffer;
@@ -132,7 +156,7 @@ export class BeatMakerGameService {
   private generateKickSound(buffer: AudioBuffer): void {
     const data = buffer.getChannelData(0);
     const sampleRate = buffer.sampleRate;
-    
+
     for (let i = 0; i < buffer.length; i++) {
       const t = i / sampleRate;
       const frequency = 60 * Math.exp(-t * 30); // Frequency sweep down
@@ -144,7 +168,7 @@ export class BeatMakerGameService {
   private generateSnareSound(buffer: AudioBuffer): void {
     const data = buffer.getChannelData(0);
     const sampleRate = buffer.sampleRate;
-    
+
     for (let i = 0; i < buffer.length; i++) {
       const t = i / sampleRate;
       const noise = (Math.random() * 2 - 1) * 0.3;
@@ -157,7 +181,7 @@ export class BeatMakerGameService {
   private generateHiHatSound(buffer: AudioBuffer): void {
     const data = buffer.getChannelData(0);
     const sampleRate = buffer.sampleRate;
-    
+
     for (let i = 0; i < buffer.length; i++) {
       const t = i / sampleRate;
       const noise = (Math.random() * 2 - 1) * 0.1;
@@ -169,7 +193,7 @@ export class BeatMakerGameService {
   private generateOpenHatSound(buffer: AudioBuffer): void {
     const data = buffer.getChannelData(0);
     const sampleRate = buffer.sampleRate;
-    
+
     for (let i = 0; i < buffer.length; i++) {
       const t = i / sampleRate;
       const noise = (Math.random() * 2 - 1) * 0.08;
@@ -181,8 +205,8 @@ export class BeatMakerGameService {
   private initializePattern(): void {
     const currentState = this.gameStateSubject.value;
     const pattern: { [trackId: string]: boolean[] } = {};
-    
-    this.defaultTracks.forEach(track => {
+
+    this.defaultTracks.forEach((track) => {
       pattern[track.id] = new Array(currentState.steps).fill(false);
     });
 
@@ -195,13 +219,13 @@ export class BeatMakerGameService {
   public toggleStep(trackId: string, stepIndex: number): void {
     const currentState = this.gameStateSubject.value;
     const newPattern = { ...currentState.pattern };
-    
+
     if (!newPattern[trackId]) {
       newPattern[trackId] = new Array(currentState.steps).fill(false);
     }
-    
+
     newPattern[trackId][stepIndex] = !newPattern[trackId][stepIndex];
-    
+
     this.gameStateSubject.next({
       ...currentState,
       pattern: newPattern,
@@ -210,7 +234,7 @@ export class BeatMakerGameService {
 
   public play(): void {
     if (!this.audioContext) {
-      console.error('Audio context not initialized');
+      // Audio context not available - skip playback
       return;
     }
 
@@ -253,8 +277,8 @@ export class BeatMakerGameService {
   public clearPattern(): void {
     const currentState = this.gameStateSubject.value;
     const clearedPattern: { [trackId: string]: boolean[] } = {};
-    
-    Object.keys(currentState.pattern).forEach(trackId => {
+
+    Object.keys(currentState.pattern).forEach((trackId) => {
       clearedPattern[trackId] = new Array(currentState.steps).fill(false);
     });
 
@@ -298,15 +322,15 @@ export class BeatMakerGameService {
     if (!this.audioContext) return;
 
     const currentState = this.gameStateSubject.value;
-    const track = currentState.tracks.find(t => t.id === trackId);
-    
+    const track = currentState.tracks.find((t) => t.id === trackId);
+
     if (track?.audioBuffer) {
       const source = this.audioContext.createBufferSource();
       const gainNode = this.audioContext.createGain();
-      
+
       source.buffer = track.audioBuffer;
       gainNode.gain.value = currentState.volume;
-      
+
       source.connect(gainNode);
       gainNode.connect(this.audioContext.destination);
       source.start();
@@ -319,7 +343,10 @@ export class BeatMakerGameService {
     const currentState = this.gameStateSubject.value;
     if (!currentState.isPlaying) return;
 
-    while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+    while (
+      this.nextNoteTime <
+      this.audioContext.currentTime + this.scheduleAheadTime
+    ) {
       this.scheduleNote(this.nextNoteTime, currentState.currentStep);
       this.nextStep(currentState);
     }
@@ -331,16 +358,16 @@ export class BeatMakerGameService {
 
   private scheduleNote(time: number, step: number): void {
     const currentState = this.gameStateSubject.value;
-    
+
     // Play sounds for this step
-    currentState.tracks.forEach(track => {
+    currentState.tracks.forEach((track) => {
       if (currentState.pattern[track.id]?.[step] && track.audioBuffer) {
         const source = this.audioContext!.createBufferSource();
         const gainNode = this.audioContext!.createGain();
-        
+
         source.buffer = track.audioBuffer;
         gainNode.gain.value = currentState.volume;
-        
+
         source.connect(gainNode);
         gainNode.connect(this.audioContext!.destination);
         source.start(time);
