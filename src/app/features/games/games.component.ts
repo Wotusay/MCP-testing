@@ -183,5 +183,14 @@ export class GamesComponent {
       difficulty: 'Hard',
       category: 'Arcade',
     },
+    {
+      title: 'Beat Maker',
+      description:
+        'Create musical beats with our interactive drum sequencer! Mix kick, snare, and hi-hat patterns, adjust tempo, and save your creations.',
+      route: '/games/beat-maker',
+      icon: '🎵',
+      difficulty: 'Easy',
+      category: 'Music',
+    },
   ];
 }

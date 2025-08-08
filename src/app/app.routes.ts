@@ -56,6 +56,13 @@ export const routes: Routes = [
         (m) => m.AstroDashComponent,
       ),
   },
+  {
+    path: 'games/beat-maker',
+    loadComponent: () =>
+      import('./features/games/beat-maker/beat-maker.component').then(
+        (m) => m.BeatMakerComponent,
+      ),
+  },
   // Legacy route redirect for existing Wordle bookmarks
   {
     path: 'wordle',
