@@ -186,9 +186,9 @@ import {
                 </div>
 
                 <!-- Step Numbers -->
-                <div class="flex mb-2">
+                <div class="flex gap-2 mb-2">
                   <div class="w-16 sm:w-20"></div>
-                  <div class="flex-1 grid grid-cols-16 gap-0.5 sm:gap-1">
+                  <div class="flex-1 grid grid-flow-col gap-0.5 sm:gap-1">
                     <div
                       *ngFor="
                         let step of getStepArray(gameState.steps);
@@ -204,7 +204,7 @@ import {
                 <!-- Drum Tracks -->
                 <div
                   *ngFor="let track of gameState.tracks"
-                  class="flex mb-1.5 sm:mb-2"
+                  class="flex  gap-2 mb-1.5 sm:mb-2"
                 >
                   <!-- Track Label -->
                   <div class="w-16 sm:w-20 flex items-center">
@@ -218,7 +218,7 @@ import {
                   </div>
 
                   <!-- Step Buttons -->
-                  <div class="flex-1 grid grid-cols-16 gap-0.5 sm:gap-1">
+                  <div class="flex-1 grid grid-flow-col gap-0.5 sm:gap-1">
                     <button
                       *ngFor="
                         let step of getStepArray(gameState.steps);
