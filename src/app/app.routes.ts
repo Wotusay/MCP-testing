@@ -49,6 +49,13 @@ export const routes: Routes = [
         (m) => m.TypingTestComponent,
       ),
   },
+  {
+    path: 'games/astro-dash',
+    loadComponent: () =>
+      import('./features/games/astro-dash/astro-dash.component').then(
+        (m) => m.AstroDashComponent,
+      ),
+  },
   // Legacy route redirect for existing Wordle bookmarks
   {
     path: 'wordle',
