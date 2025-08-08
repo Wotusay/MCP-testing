@@ -194,6 +194,72 @@ describe('AstroDashComponent', () => {
     expect(mockGameService.handleKeyUp).toHaveBeenCalledWith('ArrowUp');
   });
 
+  it('should prevent default behavior for game control keys when game is active', () => {
+    // Set game to playing state
+    const playingState = {
+      ...mockInitialState,
+      gameStatus: 'playing' as const,
+    };
+    gameStateSubject.next(playingState);
+    mockGameService.getCurrentState.and.returnValue(playingState);
+
+    const gameControlKeys = ['ArrowUp', 'ArrowDown', 'w', 's', ' '];
+
+    gameControlKeys.forEach((key) => {
+      const keyDownEvent = new KeyboardEvent('keydown', { key });
+      const preventDefaultSpy = spyOn(keyDownEvent, 'preventDefault');
+
+      component.onKeyDown(keyDownEvent);
+
+      expect(preventDefaultSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('should prevent default behavior for game control keys when game is paused', () => {
+    // Set game to paused state
+    const pausedState = { ...mockInitialState, gameStatus: 'paused' as const };
+    gameStateSubject.next(pausedState);
+    mockGameService.getCurrentState.and.returnValue(pausedState);
+
+    const keyDownEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+    const preventDefaultSpy = spyOn(keyDownEvent, 'preventDefault');
+
+    component.onKeyDown(keyDownEvent);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
+  it('should not prevent default behavior for game control keys when game is waiting', () => {
+    // Game is in waiting state (default mock state)
+    const keyDownEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+    const preventDefaultSpy = spyOn(keyDownEvent, 'preventDefault');
+
+    component.onKeyDown(keyDownEvent);
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not prevent default behavior for non-game control keys', () => {
+    // Set game to playing state
+    const playingState = {
+      ...mockInitialState,
+      gameStatus: 'playing' as const,
+    };
+    gameStateSubject.next(playingState);
+    mockGameService.getCurrentState.and.returnValue(playingState);
+
+    const nonGameKeys = ['Enter', 'Escape', 'Tab', 'a', 'z'];
+
+    nonGameKeys.forEach((key) => {
+      const keyDownEvent = new KeyboardEvent('keydown', { key });
+      const preventDefaultSpy = spyOn(keyDownEvent, 'preventDefault');
+
+      component.onKeyDown(keyDownEvent);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+  });
+
   it('should have canvas element with correct dimensions', () => {
     const canvas = fixture.debugElement.query(By.css('canvas'));
 

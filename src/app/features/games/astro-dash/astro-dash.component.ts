@@ -275,6 +275,21 @@ export class AstroDashComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
+    const gameState = this.gameService.getCurrentState();
+
+    // Prevent default behavior for game control keys when game is active
+    if (
+      gameState.gameStatus === 'playing' ||
+      gameState.gameStatus === 'paused'
+    ) {
+      const key = event.key.toLowerCase();
+      const gameControlKeys = ['arrowup', 'arrowdown', 'w', 's', ' '];
+
+      if (gameControlKeys.includes(key)) {
+        event.preventDefault();
+      }
+    }
+
     this.gameService.handleKeyDown(event.key);
   }
 
