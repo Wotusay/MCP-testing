@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TypingTestComponent } from './typing-test.component';
 
 describe('TypingTestComponent', () => {
@@ -12,7 +13,10 @@ describe('TypingTestComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TypingTestComponent],
-      providers: [{ provide: Router, useValue: mockRouter }],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: Router, useValue: mockRouter },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TypingTestComponent);
@@ -81,6 +85,8 @@ describe('TypingTestComponent', () => {
   });
 
   it('should calculate progress correctly', () => {
+    // Set mode to words first so progress is based on character count
+    component.setMode('words');
     component.startNewTest();
     // Mock some progress
     component.session.update((session) => ({
