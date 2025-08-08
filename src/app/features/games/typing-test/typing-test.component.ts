@@ -200,12 +200,14 @@ interface TestConfig {
 
           <!-- Text Display -->
           <div
-            class="bg-white dark:bg-gray-800 rounded-lg p-8 border-2 border-secondary-200 dark:border-secondary-700 focus-within:border-primary-500 transition-colors duration-200"
+            class="bg-white dark:bg-gray-800 rounded-lg p-8 border-2 border-secondary-200 dark:border-secondary-700 focus-within:border-primary-500 transition-colors duration-200 overflow-hidden"
           >
             <div
-              class="text-xl leading-relaxed font-mono"
+              class="text-xl leading-relaxed font-mono break-words overflow-wrap-anywhere"
               [style.font-size]="'1.25rem'"
               [style.line-height]="'2rem'"
+              [style.word-break]="'break-word'"
+              [style.overflow-wrap]="'anywhere'"
             >
               <span
                 *ngFor="let char of textChars(); let i = index"
