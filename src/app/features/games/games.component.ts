@@ -165,5 +165,14 @@ export class GamesComponent {
       difficulty: 'Easy',
       category: 'Arcade',
     },
+    {
+      title: 'Typing Test',
+      description:
+        'Test your typing speed and accuracy with configurable tests. Track your WPM and improve your keyboard skills.',
+      route: '/games/typing-test',
+      icon: '⌨️',
+      difficulty: 'Medium',
+      category: 'Skill',
+    },
   ];
 }
