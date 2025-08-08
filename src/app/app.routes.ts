@@ -42,6 +42,13 @@ export const routes: Routes = [
         (m) => m.BubbleShooterComponent,
       ),
   },
+  {
+    path: 'games/typing-test',
+    loadComponent: () =>
+      import('./features/games/typing-test/typing-test.component').then(
+        (m) => m.TypingTestComponent,
+      ),
+  },
   // Legacy route redirect for existing Wordle bookmarks
   {
     path: 'wordle',
