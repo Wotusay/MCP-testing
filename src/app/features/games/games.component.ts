@@ -174,5 +174,14 @@ export class GamesComponent {
       difficulty: 'Medium',
       category: 'Skill',
     },
+    {
+      title: 'Astro Dash',
+      description:
+        'Fast-paced endless runner through space! Dodge asteroids, collect power-ups, and survive as long as possible in this retro arcade adventure.',
+      route: '/games/astro-dash',
+      icon: '🚀',
+      difficulty: 'Hard',
+      category: 'Arcade',
+    },
   ];
 }
