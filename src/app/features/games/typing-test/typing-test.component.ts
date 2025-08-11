@@ -10,6 +10,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import {
+  TypingStatsComponent,
+  TypingConfigComponent,
+  TestConfig,
+} from '../../../shared/components';
 
 interface TypingSession {
   text: string;
@@ -25,17 +30,11 @@ interface TypingSession {
   remainingTime: number;
 }
 
-interface TestConfig {
-  mode: 'time' | 'words';
-  duration: number; // seconds for time mode, word count for words mode
-  difficulty: 'easy' | 'medium' | 'hard';
-}
-
 @Component({
   selector: 'app-typing-test',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, TypingStatsComponent, TypingConfigComponent],
   template: `
     <div
       class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200"
@@ -84,119 +83,25 @@ interface TestConfig {
 
         <!-- Test Configuration -->
         <div *ngIf="!session().startTime && !session().isComplete" class="mb-8">
-          <div
-            class="bg-secondary-50 dark:bg-secondary-800 rounded-lg p-6 border border-secondary-200 dark:border-secondary-700"
-          >
-            <h3 class="text-h4 mb-4 text-center">Test Settings</h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <!-- Mode Selection -->
-              <div>
-                <label
-                  class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2"
-                >
-                  Test Mode
-                </label>
-                <div class="flex gap-2">
-                  <button
-                    *ngFor="let mode of modeOptions"
-                    (click)="setMode(mode)"
-                    [class]="getModeButtonClass(mode)"
-                  >
-                    {{ mode === 'time' ? 'Timed' : 'Word Count' }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Duration/Count Selection -->
-              <div>
-                <label
-                  class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2"
-                >
-                  {{
-                    config().mode === 'time'
-                      ? 'Duration (seconds)'
-                      : 'Word Count'
-                  }}
-                </label>
-                <div class="flex gap-2 flex-wrap">
-                  <button
-                    *ngFor="let option of getDurationOptions()"
-                    (click)="setDuration(option)"
-                    [class]="getDurationButtonClass(option)"
-                  >
-                    {{ option }}{{ config().mode === 'time' ? 's' : '' }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Difficulty Selection -->
-              <div>
-                <label
-                  class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2"
-                >
-                  Difficulty
-                </label>
-                <div class="flex gap-2">
-                  <button
-                    *ngFor="let diff of difficultyOptions"
-                    (click)="setDifficulty(diff)"
-                    [class]="getDifficultyButtonClass(diff)"
-                  >
-                    {{ diff | titlecase }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6 text-center">
-              <button
-                (click)="startNewTest()"
-                class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              >
-                Start Test
-              </button>
-            </div>
-          </div>
+          <app-typing-config
+            [config]="config()"
+            (configChange)="onConfigChange($event)"
+            (startTest)="startNewTest()"
+          ></app-typing-config>
         </div>
 
         <!-- Typing Test Area -->
         <div *ngIf="session().startTime && !session().isComplete" class="mb-8">
-          <!-- Stats Bar -->
-          <div
-            class="flex justify-center gap-8 mb-6 p-4 bg-secondary-50 dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700"
-          >
-            <div class="text-center">
-              <div
-                class="text-2xl font-bold text-primary-600 dark:text-primary-400"
-              >
-                {{ session().wpm }}
-              </div>
-              <div class="text-sm text-secondary-600 dark:text-secondary-400">
-                WPM
-              </div>
-            </div>
-            <div class="text-center">
-              <div
-                class="text-2xl font-bold text-success-600 dark:text-success-400"
-              >
-                {{ session().accuracy }}%
-              </div>
-              <div class="text-sm text-secondary-600 dark:text-secondary-400">
-                Accuracy
-              </div>
-            </div>
-            <div *ngIf="config().mode === 'time'" class="text-center">
-              <div
-                class="text-2xl font-bold text-warning-600 dark:text-warning-400"
-              >
-                {{ session().remainingTime }}
-              </div>
-              <div class="text-sm text-secondary-600 dark:text-secondary-400">
-                Seconds
-              </div>
-            </div>
-          </div>
+          <!-- Live Stats -->
+          <app-typing-stats
+            [stats]="{
+              wpm: session().wpm,
+              accuracy: session().accuracy,
+              remainingTime: session().remainingTime,
+              isComplete: false,
+            }"
+            [config]="{ mode: config().mode }"
+          ></app-typing-stats>
 
           <!-- Text Display -->
           <div
@@ -255,69 +160,36 @@ interface TestConfig {
         </div>
 
         <!-- Results Screen -->
-        <div *ngIf="session().isComplete" class="mb-8">
-          <div
-            class="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg p-8 border border-primary-200 dark:border-primary-800"
+        <app-typing-stats
+          *ngIf="session().isComplete"
+          [stats]="{
+            wpm: session().wpm,
+            accuracy: session().accuracy,
+            remainingTime: session().remainingTime,
+            isComplete: true,
+            duration: getTestDuration(),
+          }"
+          [config]="{ mode: config().mode }"
+        ></app-typing-stats>
+
+        <!-- Action Buttons for Results -->
+        <div
+          *ngIf="session().isComplete"
+          class="flex justify-center gap-4 mb-8"
+        >
+          <button
+            (click)="startNewTest()"
+            class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
-            <h2 class="text-h2 text-center mb-8">Test Complete! 🎉</h2>
+            Try Again
+          </button>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div
-                class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-secondary-200 dark:border-secondary-700"
-              >
-                <div
-                  class="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2"
-                >
-                  {{ session().wpm }}
-                </div>
-                <div class="text-secondary-600 dark:text-secondary-400">
-                  Words Per Minute
-                </div>
-              </div>
-
-              <div
-                class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-secondary-200 dark:border-secondary-700"
-              >
-                <div
-                  class="text-4xl font-bold text-success-600 dark:text-success-400 mb-2"
-                >
-                  {{ session().accuracy }}%
-                </div>
-                <div class="text-secondary-600 dark:text-secondary-400">
-                  Accuracy
-                </div>
-              </div>
-
-              <div
-                class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-secondary-200 dark:border-secondary-700"
-              >
-                <div
-                  class="text-4xl font-bold text-warning-600 dark:text-warning-400 mb-2"
-                >
-                  {{ getTestDuration() }}s
-                </div>
-                <div class="text-secondary-600 dark:text-secondary-400">
-                  Duration
-                </div>
-              </div>
-            </div>
-
-            <div class="flex justify-center gap-4">
-              <button
-                (click)="startNewTest()"
-                class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              >
-                Try Again
-              </button>
-
-              <button
-                (click)="goBack()"
-                class="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              >
-                Back to Games
-              </button>
-            </div>
-          </div>
+          <button
+            (click)="goBack()"
+            class="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+          >
+            Back to Games
+          </button>
         </div>
       </div>
     </div>
@@ -329,14 +201,6 @@ export class TypingTestComponent implements OnInit, OnDestroy {
   // Inject dependencies using modern inject() function
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
-
-  // Template arrays for proper typing
-  readonly modeOptions: ('time' | 'words')[] = ['time', 'words'];
-  readonly difficultyOptions: ('easy' | 'medium' | 'hard')[] = [
-    'easy',
-    'medium',
-    'hard',
-  ];
 
   // Reactive signals for state management
   session = signal<TypingSession>({
@@ -378,48 +242,11 @@ export class TypingTestComponent implements OnInit, OnDestroy {
     this.router.navigate(['/games']);
   }
 
-  setMode(mode: 'time' | 'words'): void {
-    this.config.update((config) => ({ ...config, mode }));
-    this.setDuration(mode === 'time' ? 60 : 25);
-  }
-
-  setDuration(duration: number): void {
-    this.config.update((config) => ({ ...config, duration }));
-  }
-
-  setDifficulty(difficulty: 'easy' | 'medium' | 'hard'): void {
-    this.config.update((config) => ({ ...config, difficulty }));
-    this.generateText();
-  }
-
-  getModeButtonClass(mode: string): string {
-    const baseClasses =
-      'px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800';
-    return this.config().mode === mode
-      ? `${baseClasses} bg-primary-600 text-white`
-      : `${baseClasses} bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 hover:bg-secondary-200 dark:hover:bg-secondary-600`;
-  }
-
-  getDurationOptions(): number[] {
-    return this.config().mode === 'time'
-      ? [15, 30, 60, 120]
-      : [10, 25, 50, 100];
-  }
-
-  getDurationButtonClass(duration: number): string {
-    const baseClasses =
-      'px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800';
-    return this.config().duration === duration
-      ? `${baseClasses} bg-primary-600 text-white`
-      : `${baseClasses} bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 hover:bg-secondary-200 dark:hover:bg-secondary-600`;
-  }
-
-  getDifficultyButtonClass(difficulty: string): string {
-    const baseClasses =
-      'px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800';
-    return this.config().difficulty === difficulty
-      ? `${baseClasses} bg-primary-600 text-white`
-      : `${baseClasses} bg-secondary-100 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 hover:bg-secondary-200 dark:hover:bg-secondary-600`;
+  onConfigChange(newConfig: TestConfig): void {
+    this.config.set(newConfig);
+    if (newConfig.difficulty !== this.config().difficulty) {
+      this.generateText();
+    }
   }
 
   startNewTest(): void {

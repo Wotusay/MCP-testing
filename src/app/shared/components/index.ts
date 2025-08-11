@@ -11,6 +11,19 @@ export * from './user-form';
 export * from './client-form-dialog';
 export * from './angular-improvements';
 
+// Navigation components
+export * from './navigation-link';
+export * from './desktop-navigation';
+export * from './mobile-navigation';
+
+// Layout components
+export * from './app-header';
+export * from './app-footer';
+
+// Game components
+export * from './typing-stats';
+export * from './typing-config';
+
 // Dashboard components
 export * from './summary-card';
 export * from './performance-chart';

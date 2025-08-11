@@ -5,26 +5,18 @@ import {
   AfterViewInit,
   inject,
 } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
 import {
-  StatusBadgeComponent,
   PerformanceMonitoringService,
-  ThemeToggleComponent,
+  AppHeaderComponent,
+  AppFooterComponent,
 } from './shared';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    StatusBadgeComponent,
-    ThemeToggleComponent,
-    NgIf,
-  ],
+  imports: [RouterOutlet, AppHeaderComponent, AppFooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
