@@ -27,61 +27,7 @@
         </div>
 
         <!-- Desktop Navigation -->
-        <div class="hidden lg:flex items-center space-x-4">
-          <nav class="flex space-x-4">
-            <a
-              routerLink="/home"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Home
-            </a>
-            <a
-              routerLink="/about"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              About
-            </a>
-            <a
-              routerLink="/contact"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Contact
-            </a>
-            <a
-              routerLink="/games"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Games
-            </a>
-            <a
-              routerLink="/material-demo"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Material Demo
-            </a>
-            <a
-              routerLink="/design-system"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Design System
-            </a>
-            <a
-              routerLink="/dashboard"
-              routerLinkActive="text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20"
-              class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              Dashboard
-            </a>
-          </nav>
-          <!-- Theme Toggle -->
-          <app-theme-toggle></app-theme-toggle>
-        </div>
+        <app-desktop-navigation></app-desktop-navigation>
 
         <!-- Mobile Menu Button and Theme Toggle -->
         <div class="lg:hidden flex items-center space-x-2">
@@ -120,56 +66,10 @@
       </div>
 
       <!-- Mobile Navigation Menu -->
-      <div
-        class="lg:hidden transition-all duration-300 ease-in-out overflow-hidden"
-        [class.max-h-64]="isMobileMenuOpen()"
-        [class.max-h-0]="!isMobileMenuOpen()"
-        [class.opacity-100]="isMobileMenuOpen()"
-        [class.opacity-0]="!isMobileMenuOpen()"
-      >
-        <nav class="pb-4 space-y-1">
-          <a
-            routerLink="/home"
-            routerLinkActive="bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-400"
-            (click)="closeMobileMenu()"
-            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            Home
-          </a>
-          <a
-            routerLink="/about"
-            routerLinkActive="bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-400"
-            (click)="closeMobileMenu()"
-            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            About
-          </a>
-          <a
-            routerLink="/contact"
-            routerLinkActive="bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-400"
-            (click)="closeMobileMenu()"
-            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            Contact
-          </a>
-          <a
-            routerLink="/games"
-            routerLinkActive="bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-400"
-            (click)="closeMobileMenu()"
-            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            Games
-          </a>
-          <a
-            routerLink="/dashboard"
-            routerLinkActive="bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-400"
-            (click)="closeMobileMenu()"
-            class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-          >
-            Dashboard
-          </a>
-        </nav>
-      </div>
+      <app-mobile-navigation
+        [isOpen]="isMobileMenuOpen()"
+        (linkClick)="closeMobileMenu()"
+      ></app-mobile-navigation>
     </div>
   </header>
 

@@ -5,13 +5,15 @@ import {
   AfterViewInit,
   inject,
 } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { NgIf } from '@angular/common';
 
 import {
   StatusBadgeComponent,
   PerformanceMonitoringService,
   ThemeToggleComponent,
+  DesktopNavigationComponent,
+  MobileNavigationComponent,
 } from './shared';
 
 @Component({
@@ -19,10 +21,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
     StatusBadgeComponent,
     ThemeToggleComponent,
+    DesktopNavigationComponent,
+    MobileNavigationComponent,
     NgIf,
   ],
   templateUrl: './app.html',

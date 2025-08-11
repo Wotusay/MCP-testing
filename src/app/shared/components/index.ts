@@ -11,6 +11,11 @@ export * from './user-form';
 export * from './client-form-dialog';
 export * from './angular-improvements';
 
+// Navigation components
+export * from './navigation-link';
+export * from './desktop-navigation';
+export * from './mobile-navigation';
+
 // Dashboard components
 export * from './summary-card';
 export * from './performance-chart';
