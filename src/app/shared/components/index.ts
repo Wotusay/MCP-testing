@@ -16,6 +16,10 @@ export * from './navigation-link';
 export * from './desktop-navigation';
 export * from './mobile-navigation';
 
+// Layout components
+export * from './app-header';
+export * from './app-footer';
+
 // Dashboard components
 export * from './summary-card';
 export * from './performance-chart';

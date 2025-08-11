@@ -6,27 +6,17 @@ import {
   inject,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NgIf } from '@angular/common';
 
 import {
-  StatusBadgeComponent,
   PerformanceMonitoringService,
-  ThemeToggleComponent,
-  DesktopNavigationComponent,
-  MobileNavigationComponent,
+  AppHeaderComponent,
+  AppFooterComponent,
 } from './shared';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterOutlet,
-    StatusBadgeComponent,
-    ThemeToggleComponent,
-    DesktopNavigationComponent,
-    MobileNavigationComponent,
-    NgIf,
-  ],
+  imports: [RouterOutlet, AppHeaderComponent, AppFooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
