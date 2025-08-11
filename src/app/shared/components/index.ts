@@ -20,6 +20,10 @@ export * from './mobile-navigation';
 export * from './app-header';
 export * from './app-footer';
 
+// Game components
+export * from './typing-stats';
+export * from './typing-config';
+
 // Dashboard components
 export * from './summary-card';
 export * from './performance-chart';
