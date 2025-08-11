@@ -44,14 +44,24 @@ describe('TypingTestComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/games']);
   });
 
-  it('should update mode and duration when setMode is called', () => {
-    component.setMode('words');
+  it('should update mode and duration when config changes', () => {
+    const newConfig = {
+      mode: 'words' as const,
+      duration: 25,
+      difficulty: 'medium' as const,
+    };
+    component.onConfigChange(newConfig);
     expect(component.config().mode).toBe('words');
     expect(component.config().duration).toBe(25);
   });
 
-  it('should update difficulty when setDifficulty is called', () => {
-    component.setDifficulty('easy');
+  it('should update difficulty when config changes', () => {
+    const newConfig = {
+      mode: 'time' as const,
+      duration: 60,
+      difficulty: 'easy' as const,
+    };
+    component.onConfigChange(newConfig);
     expect(component.config().difficulty).toBe('easy');
   });
 
@@ -68,25 +78,14 @@ describe('TypingTestComponent', () => {
     expect(session.accuracy).toBe(100);
   });
 
-  it('should get correct mode button class', () => {
-    const activeClass = component.getModeButtonClass('time');
-    const inactiveClass = component.getModeButtonClass('words');
-
-    expect(activeClass).toContain('bg-primary-600');
-    expect(inactiveClass).toContain('bg-secondary-100');
-  });
-
-  it('should get correct duration options based on mode', () => {
-    component.setMode('time');
-    expect(component.getDurationOptions()).toEqual([15, 30, 60, 120]);
-
-    component.setMode('words');
-    expect(component.getDurationOptions()).toEqual([10, 25, 50, 100]);
-  });
-
   it('should calculate progress correctly', () => {
     // Set mode to words first so progress is based on character count
-    component.setMode('words');
+    const newConfig = {
+      mode: 'words' as const,
+      duration: 25,
+      difficulty: 'medium' as const,
+    };
+    component.onConfigChange(newConfig);
     component.startNewTest();
     // Mock some progress
     component.session.update((session) => ({
