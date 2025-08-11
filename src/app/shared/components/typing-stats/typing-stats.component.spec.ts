@@ -51,7 +51,14 @@ describe('TypingStatsComponent', () => {
   });
 
   it('should not display remaining time for words mode', () => {
-    component.config = { mode: 'words' };
+    // Set input using the proper setInput method to trigger OnPush change detection
+    fixture.componentRef.setInput('config', { mode: 'words' });
+    fixture.componentRef.setInput('stats', {
+      wpm: 60,
+      accuracy: 95,
+      remainingTime: 30,
+      isComplete: false,
+    });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -60,13 +67,17 @@ describe('TypingStatsComponent', () => {
   });
 
   it('should display completion stats when test is complete', () => {
-    component.stats = {
+    // Set input using the proper setInput method to trigger OnPush change detection
+    fixture.componentRef.setInput('stats', {
       wpm: 75,
       accuracy: 98,
       remainingTime: 0,
       isComplete: true,
       duration: 60,
-    };
+    });
+    fixture.componentRef.setInput('config', {
+      mode: 'time',
+    });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
